@@ -10,7 +10,7 @@ def butterFilter(signal,datosFiltrado):
     else:
         analogVal=False
     datosFiltrado.mostrar()
-    print(analogVal)
+    #print(analogVal)
     b, a = scipy.signal.butter(datosFiltrado.order, [datosFiltrado.arrayA,datosFiltrado.arrayB], datosFiltrado.Type, analog=analogVal)
     y = scipy.signal.filtfilt(a,b,signal,axis=0)
     ret = abs(y)

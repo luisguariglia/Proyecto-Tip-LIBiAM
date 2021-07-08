@@ -59,6 +59,6 @@ class MatplotlibWidget(QWidget):
         self.ax.grid()
 
 
-app = QtWidgets.QApplication(sys.argv) # Create an instance of QtWidgets.QApplication
-window = Ui() # Create an instance of our class
-app.exec_() # Start the application
+app = QtWidgets.QApplication(sys.argv)
+window = Ui()
+app.exec_()
