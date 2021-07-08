@@ -1,9 +1,8 @@
-import matplotlib.pyplot as plt
-import pandas as p
 from scipy.signal import filtfilt
 import scipy
 import numpy as np
 
+#------->archivo para tod0 lo relacionado a los filtros
 def butterFilter(signal,datosFiltrado):
     signal= np.nan_to_num(signal, copy=False)
     if(datosFiltrado.Analog=="True"):
@@ -27,3 +26,20 @@ def butterFilterDos(signal):
 def RMS(y):
     rms = np.sqrt(np.mean(y ** 2))
     return y
+
+class datosButter():
+    #valores por defecto
+    def __init__(self):
+        self.order = 3
+        self.arrayA = 0.02
+        self.arrayB = 0.4
+        self.Type= "bandpass"
+        self.Analog="True"
+    def mostrar(self):
+        print("----------")
+        print(self.order)
+        print(self.arrayA)
+        print(self.arrayB)
+        print(self.Type)
+        print(self.Analog)
+        print("----------")
