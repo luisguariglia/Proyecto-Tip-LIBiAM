@@ -43,5 +43,5 @@ class butterConfigClass(QtWidgets.QMainWindow):
         self.datos.Type = self.findChild(QtWidgets.QComboBox, 'comboBoxType').currentText()
         self.datos.Analog = self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').currentText()
 
-        self.padre.pintarGraficaSegundaVez()
+        self.padre.actualizarGrafico()
         self.close()
