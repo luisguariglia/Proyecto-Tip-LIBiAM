@@ -1,10 +1,9 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from matplotlib import pyplot as plt
 import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import funciones
-
 
 class ScrollableWindow(QtWidgets.QMainWindow):
     def button_clicked(self):
@@ -24,10 +23,13 @@ class ScrollableWindow(QtWidgets.QMainWindow):
         if not filepath[0]:
             return
 
+        self.myInput.setText("")
+        self.myInput.setText(filepath[0])
+
         # Se lee el archivo .csv para interactuar con él a futuro.
         archivo = pd.read_csv(filepath[0], encoding='cp1252', skiprows=788)
         # Con esta función se traen todas las electromiografías del archivo seleccionado.
-        listaEMG = funciones.listar_emg2(archivo)
+        listaEMG = funciones.listar_emg(archivo)
 
         def mostrar_grafica(_self):
             """
@@ -68,7 +70,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
                 # Si la cantidad de checkbox que se chequearon es 1, entonces solamente hay un eje y se inserta
                 # la señal en ese eje.
                 if  len(lista_checkbox_checkeados) == 1:
-                    emg_completo = funciones.listar_emg_especifica2(lista_checkbox_checkeados[0].text(), archivo)
+                    emg_completo = funciones.listar_emg_especifica(lista_checkbox_checkeados[0].text(), archivo)
                     axes.plot(archivo[emg_completo[0]], archivo[emg_completo[1]], linewidth=0.3,
                               label=f"Electromiografía {lista_checkbox_checkeados[0].text()}")
                     axes.set_xlabel("s")
@@ -78,7 +80,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
                 # insertan las señales en sus respectivos ejes.
                 else:
                     for x in range(len(lista_checkbox_checkeados)):
-                        emg_completo = funciones.listar_emg_especifica2(lista_checkbox_checkeados[x].text(), archivo)
+                        emg_completo = funciones.listar_emg_especifica(lista_checkbox_checkeados[x].text(), archivo)
                         axes[x].plot(archivo[emg_completo[0]], archivo[emg_completo[1]], linewidth=0.3,
                                      label=f"Electromiografía {lista_checkbox_checkeados[x].text()} ")
                         axes[x].set_xlabel("s")
@@ -87,16 +89,12 @@ class ScrollableWindow(QtWidgets.QMainWindow):
             else:
                 _self.widget.layout().removeWidget(_self.canvas)
                 _self.widget.layout().removeWidget(_self.scroll)
-                #_self.widget.layout().removeWidget(_self.nav)
 
                 _self.canvas = FigureCanvas()
                 _self.canvas.draw()
                 _self.scroll = QtWidgets.QScrollArea(_self.widget)
                 _self.scroll.setWidget(_self.canvas)
                 _self.widget.layout().addWidget(_self.scroll)
-                #_self.nav = NavigationToolbar(self.canvas, self.widget)
-                #_self.widget.layout().addWidget(self.nav)
-                _self.widget.layout().addWidget(self.scroll)
                 _self.widget.layout().update()
 
         # Si todavía no se generó ningún checkbox es porque es la primera vez que se selecciona un archivo .csv,
@@ -115,7 +113,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
         # En cambio, si ya existen checkbox, es debido a que no es la primera vez que se seleccionó
         # un archivo .csv, por lo tanto hay que borrar los checkboxes anteriores y crear los nuevos.
         else:
-            self.var = 70
+            self.var = 90
             for j in range(self.grid_checkbox.count()):
                 self.current_checkbox = getattr(self.grid_checkbox, f"EMG {j + 1}")
                 self.grid_checkbox.removeWidget(self.current_checkbox)
@@ -132,26 +130,33 @@ class ScrollableWindow(QtWidgets.QMainWindow):
                 checkBoxA.show()
 
     def __init__(self):
-        self.var = 70
+        self.var = 90
         self.checkboxs = 0
         self.q_app = QtWidgets.QApplication([])
         QtWidgets.QMainWindow.__init__(self)
 
         # Para fijar el tamaño de la ventana.
-        self.setFixedSize(1820, 1000)
+        # self.setFixedSize(1900, 1000)
+
+        self.setWindowState(QtCore.Qt.WindowMaximized)
         self.widget = QtWidgets.QWidget()
         self.setCentralWidget(self.widget)
+        self.setWindowTitle("Ejemplo con gráficas")
 
         self.grid_checkbox = QtWidgets.QGridLayout()
 
         # Botón donde se selecciona el archivo .csv
         self.b1 = QtWidgets.QPushButton(self)
         self.b1.setText("Seleccione un archivo")
-        self.b1.setGeometry(20, 50, 120, 30)
+        self.b1.setGeometry(100, 20, 120, 30)
         self.b1.clicked.connect(self.button_clicked)
 
+        self.myInput = QtWidgets.QLineEdit(self)
+        self.myInput.setEnabled(False)
+        self.myInput.setGeometry(250, 20, 500, 30)
+
         self.widget.setLayout(QtWidgets.QVBoxLayout())
-        self.widget.layout().setContentsMargins(150, 7, 30, 30)
+        self.widget.layout().setContentsMargins(100, 70, 30, 30)
         self.widget.layout().setSpacing(20)
 
         # Se crea el canvas, es donde se insertarán las señales a medida que se chequeen los checkbox.
