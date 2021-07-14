@@ -1,12 +1,12 @@
 import pandas as pd
 
-def listar_emg_especifica2(emg_seleccionada, archivo_csv):
+def listar_emg_especifica(emg_seleccionada, archivo_csv):
     """
     Busca solamente las columnas especificas a una EMG seleccionada previamente.
 
     :param emg_seleccionada: Es el nombre de la electromiografía seleccionada, por ejemplo "EMG 1" (String)
-    :archivo_csv: Un archivo con extensión ".csv".
-    :return: Retorna una lista con todas las columnas referentes a la EMG seleccionada previamente.
+    :archivo_csv: Un archivo con extensión ".csv"
+    :return: Retorna una lista con todas las columnas relacionadas a la EMG seleccionada previamente.
     """
     emg = emg_seleccionada
     datos = archivo_csv
@@ -31,12 +31,12 @@ def listar_emg_especifica2(emg_seleccionada, archivo_csv):
     return lista
 
 
-def listar_emg2(archivo_csv):
+def listar_emg(archivo_csv):
     """
     Busca en cada columna la palabra EMG y la agrega a una lista.
 
-    :param archivo_csv: Un archivo con extensión ".csv".
-    :return: Retorna una lista con todas las columnas que contienen la palabra EMG
+    :param archivo_csv: Un archivo con extensión ".csv"
+    :return: Retorna una lista con todas las columnas que contienen la palabra EMG.
     """
 
     datos = archivo_csv

@@ -1,0 +1,11 @@
+venv
+.idea
+__pycache__
+./Joaquin/venv
+./Luis/venv
+./Luis/.idea
+./Luis/__pycache__
+./Joaquin/.idea
+./Joaquin/__pycache__
+
+
