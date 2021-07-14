@@ -150,9 +150,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QPushButton" name="pushButtonPicos">
        <property name="text">
-        <string>Picos</string>
+        <string>Valores Picos</string>
        </property>
       </widget>
      </item>

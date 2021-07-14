@@ -1,3 +1,4 @@
+import math
 import time
 
 from PyQt5 import QtWidgets, uic
@@ -5,6 +6,8 @@ import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from scipy.signal import find_peaks
+
 import filtersHelper
 import csvHelper
 from butterConfig import butterConfigClass
@@ -81,11 +84,26 @@ class MatplotlibWidget(QWidget):
         self.ax.plot(self.datos[0], self.datos[1])
         self.ax.set(xlabel='time (s)', ylabel='voltage (mV)',
                     title='Grafico 1')
+        self.mostrarPicos()
         self.ax.grid()
         self.canvas.draw()
         self.canvas.flush_events()
+    def mostrarPicos(self):
+        peaks = find_peaks(self.datos[1], height=(pow(10, 15)), threshold=1, distance=400)
+        height = peaks[1]['peak_heights']  # list of the heights of the peaks
+        peak_pos = self.datos[0][peaks[0]]  # list of the peaks positions
+
+        tiempo=[0]                                          #odio python
+        for pos in peak_pos:
+            tiempo.append(pos)
+
+        for i in range(0, height.size):
+            numeroAMostrar = str( "{:.2f}".format(height[i]/(pow(10,15))) )
+            self.ax.annotate( numeroAMostrar +"x10e15",xy=(tiempo[i+1], height[i]))
 
 
+        self.ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
+        self.ax.legend()
 
 app = QtWidgets.QApplication(sys.argv)
 window = Ui()
