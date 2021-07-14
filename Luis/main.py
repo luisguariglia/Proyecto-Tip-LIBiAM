@@ -1,17 +1,11 @@
-import math
-import time
 
 from PyQt5 import QtWidgets, uic
-import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
 from scipy.signal import find_peaks
 
 import filtersHelper
 import csvHelper
 from butterConfig import butterConfigClass
-from PyQt5 import QtCore, QtGui, QtWidgets
 
 import sys
 import matplotlib
