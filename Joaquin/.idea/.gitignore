@@ -1,9 +1,10 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-__pycache__/
-csv/
-Include/
-Lib/
-Scripts/
-pyvenv.cfg
+.idea
+__pycache__
+csv
+Include
+Lib
+Scripts
+Luis
