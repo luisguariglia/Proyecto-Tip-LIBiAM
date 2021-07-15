@@ -51,6 +51,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
             if _self.checkboxs > 0:
                 fig, axes = plt.subplots(nrows=cant_checkboxs_checkeados,
                                          ncols=1, figsize=(18, 4 * cant_checkboxs_checkeados))
+                plt.close(fig)
                 fig.tight_layout()
 
                 _self.widget.layout().removeWidget(_self.canvas)
