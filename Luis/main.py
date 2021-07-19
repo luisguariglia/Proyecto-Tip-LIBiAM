@@ -37,14 +37,14 @@ class Ui(QtWidgets.QWidget):
         self.matplotlibwidget = MatplotlibWidget(self.ventanaConfig)
 
 
-        self.actualizarGrafico(True)
+        self.actualizarGrafico()
 
         self.layoutvertical = QVBoxLayout(self.grafica)
         self.layoutvertical.addWidget(self.matplotlibwidget)
 
-    def actualizarGrafico(self,conPicos):
+    def actualizarGrafico(self):
         self.matplotlibwidget.setFiltros(self.ventanaConfig.datos)
-        if(conPicos):
+        if(self.picosConfig.datos.checkbox):
             self.matplotlibwidget.updateGraph(self.picosConfig.datos)
         else:
             self.matplotlibwidget.updateGraph()

@@ -16,7 +16,7 @@ class picosConfigClass(QtWidgets.QMainWindow):
         self.findChild(QtWidgets.QDoubleSpinBox, 'campo1').setValue(self.datos.campo1)
         self.findChild(QtWidgets.QDoubleSpinBox, 'campo2').setValue(self.datos.campo2)
         self.findChild(QtWidgets.QDoubleSpinBox, 'campo3').setValue(self.datos.campo3)
-        self.findChild(QtWidgets.QAbstractButton, 'checkBoxMostrarPicos').setChecked(True)
+        self.findChild(QtWidgets.QAbstractButton, 'checkBoxMostrarPicos').setChecked(self.datos.checkbox)
 
 
         self.padre=padre
@@ -32,10 +32,8 @@ class picosConfigClass(QtWidgets.QMainWindow):
         self.datos.campo2 = self.findChild(QtWidgets.QDoubleSpinBox, 'campo2').value()
         self.datos.campo3 = self.findChild(QtWidgets.QDoubleSpinBox, 'campo3').value()
 
-        if(self.datos.checkbox):
-            self.padre.actualizarGrafico(True)
-        else:
-            self.padre.actualizarGrafico(False)
+
+        self.padre.actualizarGrafico()
         self.close()
 
 
