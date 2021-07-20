@@ -6,8 +6,6 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 import funciones
 
 class ScrollableWindow(QtWidgets.QMainWindow):
-
-
     def button_clicked(self):
         """
         Función para seleccionar archivo .csv, carga este archivo y luego
@@ -53,6 +51,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
             if _self.checkboxs > 0:
                 fig, axes = plt.subplots(nrows=cant_checkboxs_checkeados,
                                          ncols=1, figsize=(18, 4 * cant_checkboxs_checkeados))
+                plt.close(fig)
                 fig.tight_layout()
 
                 _self.widget.layout().removeWidget(_self.canvas)
@@ -137,15 +136,16 @@ class ScrollableWindow(QtWidgets.QMainWindow):
         self.q_app = QtWidgets.QApplication([])
         QtWidgets.QMainWindow.__init__(self)
 
+        # Para fijar el tamaño de la ventana.
+        # self.setFixedSize(1900, 1000)
 
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.widget = QtWidgets.QWidget()
         self.setCentralWidget(self.widget)
         self.setWindowTitle("Ejemplo con gráficas")
 
-
         self.grid_checkbox = QtWidgets.QGridLayout()
-        #self.grid_checkbox.setStyleSheet("background-color: yellow;")
+
         # Botón donde se selecciona el archivo .csv
         self.b1 = QtWidgets.QPushButton(self)
         self.b1.setText("Seleccione un archivo")
@@ -163,6 +163,7 @@ class ScrollableWindow(QtWidgets.QMainWindow):
         # Se crea el canvas, es donde se insertarán las señales a medida que se chequeen los checkbox.
         self.canvas = FigureCanvas()
         self.canvas.draw()
+
         self.scroll = QtWidgets.QScrollArea(self.widget)
         self.scroll.setWidget(self.canvas)
         self.nav = NavigationToolbar(self.canvas, self.widget)
