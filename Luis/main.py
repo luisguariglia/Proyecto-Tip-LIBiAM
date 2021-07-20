@@ -1,8 +1,9 @@
-
+import numpy as np
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator
 from scipy.signal import find_peaks
-
+import matplotlib.dates as mdates
 import filtersHelper
 import csvHelper
 from PicosConfig import picosConfigClass
@@ -86,15 +87,34 @@ class MatplotlibWidget(QWidget):
     def updateGraph(self,datosPicos=None):
         self.ax.clear()
 
+        # Only show ticks on the left and bottom spines
+        self.ax.yaxis.set_ticks_position('left')
+        self.ax.xaxis.set_ticks_position('bottom')
+
         self.ax.plot(self.datos[0], self.datos[1])
         self.ax.set(xlabel='time (s)', ylabel='voltage (mV)',
                     title='Grafico 1')
 
         if datosPicos is not None:
+            print("")
             self.mostrarPicos(datosPicos)
+
+        #-------------------------------------
+
+        self.ax.xaxis.set_minor_locator(MultipleLocator(0.5))
+        self.ax.xaxis.set_major_locator(MultipleLocator(1))
+
+        self.ax.tick_params(which='minor', length=5, width=2, color='r')
+
+        # -------------------------------------
+        self.ax.set_xmargin(0)
+        #self.ax.autoscale_view()
+
         self.ax.grid()
         self.canvas.draw()
+        self.figure.tight_layout()
         self.canvas.flush_events()
+
     def mostrarPicos(self,datosPicos):
         peaks = find_peaks(self.datos[1], height=(datosPicos.campo1*pow(10, 15)), threshold=datosPicos.campo2, distance=datosPicos.campo3)
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
