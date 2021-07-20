@@ -76,6 +76,7 @@ class MatplotlibWidget(QWidget):
         self.datos=self.datosOriginales
 
     def setFiltros(self,datosFiltrado):
+        print("")
         self.leerDatos() #esto hay que hacerlo mas eficiente
         filter_signal = filtersHelper.butterFilter(self.datosOriginales[1],datosFiltrado)
         filter_signal = filtersHelper.butterFilterDos(filter_signal)

@@ -129,7 +129,11 @@
          </spacer>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="numA"/>
+         <widget class="QDoubleSpinBox" name="numA">
+          <property name="prefix">
+           <string/>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
