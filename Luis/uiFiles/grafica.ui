@@ -72,6 +72,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Butter2</string>
        </property>
@@ -79,6 +82,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_6">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Rectificar</string>
        </property>
@@ -86,6 +92,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_7">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Envelopamento </string>
        </property>
@@ -123,8 +132,20 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_5">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Guardar</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -137,6 +158,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_3">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>RMS</string>
        </property>
@@ -144,6 +168,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_4">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Calcular Integral</string>
        </property>

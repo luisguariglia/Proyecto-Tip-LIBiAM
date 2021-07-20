@@ -1,47 +1,46 @@
 from PyQt5 import QtWidgets, uic
 import filtersHelper
 
-#------->ventana de configuracion de filtro butter
-class butterConfigClass(QtWidgets.QMainWindow):
+#------->ventana de configuracion de picos
+class picosConfigClass(QtWidgets.QMainWindow):
     def __init__(self,padre):
-        super(butterConfigClass, self).__init__()
-        uic.loadUi('uiFiles/graphConfig.ui', self)
-        self.aceptar=self.findChild(QtWidgets.QPushButton, 'aceptar')
-        self.cancelar = self.findChild(QtWidgets.QPushButton, 'cancelar')
+        super(picosConfigClass, self).__init__()
+        uic.loadUi('uiFiles/picosConfig.ui', self)
+        self.aceptar=self.findChild(QtWidgets.QPushButton, 'aceptar_btn')
+        self.cancelar = self.findChild(QtWidgets.QPushButton, 'cancelar_btn')
         self.cancelar.clicked.connect(self.close)
         self.aceptar.clicked.connect(self.modificarFiltro)
-        self.datos = filtersHelper.datosButter()
-        self.findChild(QtWidgets.QSpinBox, 'order').setValue(self.datos.order)
-        self.findChild(QtWidgets.QDoubleSpinBox, 'numA').setValue(self.datos.arrayA)
-        self.findChild(QtWidgets.QDoubleSpinBox, 'numB').setValue(self.datos.arrayB)
 
-        #seteo los valores iniciales en la UI
-        self.findChild(QtWidgets.QComboBox, 'comboBoxType').addItems(["lowpass","highpass","bandpass","bandstop"])
-        self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').addItems(["True","False"])
+        self.datos = datosPicos()
 
-        index = self.findChild(QtWidgets.QComboBox, 'comboBoxType').findText(self.datos.Type)
+        self.findChild(QtWidgets.QDoubleSpinBox, 'campo1').setValue(self.datos.campo1)
+        self.findChild(QtWidgets.QDoubleSpinBox, 'campo2').setValue(self.datos.campo2)
+        self.findChild(QtWidgets.QDoubleSpinBox, 'campo3').setValue(self.datos.campo3)
+        self.findChild(QtWidgets.QAbstractButton, 'checkBoxMostrarPicos').setChecked(self.datos.checkbox)
 
-        #indico en que pocision estan los combobox
-        if index >= 0:
-            self.findChild(QtWidgets.QComboBox, 'comboBoxType').setCurrentIndex(index)
-
-        index = self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').findText(self.datos.Analog)
-        if index >= 0:
-            self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').setCurrentIndex(index)
 
         self.padre=padre
 
     def mostrar(self):
         self.show()
-    #esto se llama cuando se le da click en aceptar
+
+    #sto se llama cuando se le da click en aceptar
     def modificarFiltro(self):
         # variantes de filtro
-        self.datos.order = self.findChild(QtWidgets.QSpinBox, 'order').value()
-        self.datos.arrayA = self.findChild(QtWidgets.QDoubleSpinBox, 'numA').value()
-        self.datos.arrayB = self.findChild(QtWidgets.QDoubleSpinBox, 'numB').value()
+        self.datos.checkbox = self.findChild(QtWidgets.QAbstractButton, 'checkBoxMostrarPicos').isChecked()
+        self.datos.campo1 = self.findChild(QtWidgets.QDoubleSpinBox, 'campo1').value()
+        self.datos.campo2 = self.findChild(QtWidgets.QDoubleSpinBox, 'campo2').value()
+        self.datos.campo3 = self.findChild(QtWidgets.QDoubleSpinBox, 'campo3').value()
 
-        self.datos.Type = self.findChild(QtWidgets.QComboBox, 'comboBoxType').currentText()
-        self.datos.Analog = self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').currentText()
 
         self.padre.actualizarGrafico()
         self.close()
+
+
+class datosPicos():
+    #valores por defecto
+    def __init__(self):
+        self.checkbox = False
+        self.campo1 = 2
+        self.campo2 = 1
+        self.campo3 = 400

@@ -5,6 +5,7 @@ from scipy.signal import find_peaks
 
 import filtersHelper
 import csvHelper
+from PicosConfig import picosConfigClass
 from butterConfig import butterConfigClass
 
 import sys
@@ -23,9 +24,15 @@ class Ui(QtWidgets.QWidget):
         uic.loadUi('uiFiles/grafica.ui', self)
 
         self.show()
+        #filtros
         self.ventanaConfig = butterConfigClass(self)
         self.button = self.findChild(QtWidgets.QPushButton, 'boton1')
         self.button.clicked.connect(self.ventanaConfig.mostrar)
+        #picos
+        self.picosConfig = picosConfigClass(self)
+        self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'pushButtonPicos')
+        self.buttonPícos.clicked.connect(self.picosConfig.mostrar)
+
         self.grafica = self.findChild(QtWidgets.QWidget, 'grafica')
         self.matplotlibwidget = MatplotlibWidget(self.ventanaConfig)
 
@@ -37,7 +44,10 @@ class Ui(QtWidgets.QWidget):
 
     def actualizarGrafico(self):
         self.matplotlibwidget.setFiltros(self.ventanaConfig.datos)
-        self.matplotlibwidget.updateGraph()
+        if(self.picosConfig.datos.checkbox):
+            self.matplotlibwidget.updateGraph(self.picosConfig.datos)
+        else:
+            self.matplotlibwidget.updateGraph()
 
 #widget de matplotlib
 class MatplotlibWidget(QWidget):
@@ -66,24 +76,27 @@ class MatplotlibWidget(QWidget):
         self.datos=self.datosOriginales
 
     def setFiltros(self,datosFiltrado):
+        print("")
         self.leerDatos() #esto hay que hacerlo mas eficiente
         filter_signal = filtersHelper.butterFilter(self.datosOriginales[1],datosFiltrado)
         filter_signal = filtersHelper.butterFilterDos(filter_signal)
         filter_signal = filtersHelper.RMS(filter_signal)
         self.datos[1]=filter_signal
 
-    def updateGraph(self):
+    def updateGraph(self,datosPicos=None):
         self.ax.clear()
 
         self.ax.plot(self.datos[0], self.datos[1])
         self.ax.set(xlabel='time (s)', ylabel='voltage (mV)',
                     title='Grafico 1')
-        self.mostrarPicos()
+
+        if datosPicos is not None:
+            self.mostrarPicos(datosPicos)
         self.ax.grid()
         self.canvas.draw()
         self.canvas.flush_events()
-    def mostrarPicos(self):
-        peaks = find_peaks(self.datos[1], height=(pow(10, 15)), threshold=1, distance=400)
+    def mostrarPicos(self,datosPicos):
+        peaks = find_peaks(self.datos[1], height=(datosPicos.campo1*pow(10, 15)), threshold=datosPicos.campo2, distance=datosPicos.campo3)
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
         peak_pos = self.datos[0][peaks[0]]  # list of the peaks positions
 
