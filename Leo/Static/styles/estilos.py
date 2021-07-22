@@ -5,25 +5,25 @@ def estilos_tree_widget_graficas():
     }
     
     QTreeWidget::branch:has-siblings:!adjoins-item {
-        border-image: url(static/img/vline.png) 0;    
+        border-image: url(Static/img/vline.png) 0;    
     }
     
     QTreeWidget::branch:has-siblings:adjoins-item {
-        border-image: url(static/img/branch-more.png) 0;
+        border-image: url(Static/img/branch-more.png) 0;
     }
                 
     QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(static/img/branch-end.png) 0;
+        border-image: url(Static/img/branch-end.png) 0;
     }
     
     QTreeWidget::branch:has-children:!has-siblings:closed,
     QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(static/img/branch-closed.png);
+        border-image: none;image: url(Static/img/branch-closed.png);
     }
     
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(static/img/branch-open.png);
+        border-image: none;image: url(Static/img/branch-open.png);
     }
     """
 
@@ -32,12 +32,12 @@ def estilos_tree_widget_vistas():
     return """
     QTreeWidget::branch:has-children:!has-siblings:closed,
     QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(static/img/branch-closed.png);
+        border-image: none;image: url(Static/img/branch-closed.png);
     }
     
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(static/img/branch-open.png);
+        border-image: none;image: url(Static/img/branch-open.png);
     } 
     """
 
@@ -102,7 +102,7 @@ def estilos_combobox_archivos_csv():
     }
 
     QComboBox::down-arrow {
-        image: url(static/img/branch-open.png);
+        image: url(Static/img/branch-open.png);
     }
 
     QComboBox::down-arrow:on {

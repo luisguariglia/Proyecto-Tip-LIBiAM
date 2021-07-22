@@ -38,8 +38,7 @@ def listar_emg(archivo_csv):
         Retorna una lista con todas las columnas que contienen la palabra EMG.
     """
 
-    datos = archivo_csv
-    columnas = datos.columns
+    columnas = archivo_csv.columns
     lista = []
     for i in range(1, len(columnas), 2):  # SALTEARSE LAS COLUMNAS X[S]
         cadena = columnas[i]
