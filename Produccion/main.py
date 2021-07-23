@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import (QWidget,QAction ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint
@@ -13,6 +13,11 @@ from Static.styles import estilos
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Vista import Vista
+import sys
+from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 """class tree_widget(QTreeWidget):
     rightClicked = pyqtSignal(QPoint)
@@ -37,10 +42,46 @@ class ventana_principal(QWidget):
         self.vistas = []
         self.contador_vistas = 0
 
+        # AGREGO MENU DE ARRIBA
+        menubar = QMenuBar()
+        self.layout().addWidget(menubar, 0)
+
+        actionFile = menubar.addMenu("Archivo")
+        actionFile.addAction("Abrir .csv")
+        actionFile.addAction("Nuevo")
+        actionFile.addAction("Abrir")
+        actionFile.addAction("Guardar")
+        actionFile.addSeparator()
+        actionFile.addAction("Salir")
+
+        editarMenu=menubar.addMenu("Editar")
+        editarMenu.addAction("")
+
+        filtradoMenu = menubar.addMenu("Filtrado")
+        filtradoMenu.addAction("Configuracion")
+
+        menubar.addMenu("Vista")
+
+        ayudaMenu=menubar.addMenu("Ayuda")
+        ayudaMenu.addAction("Documentacion")
+        ayudaMenu.addAction("Sobre nosotros")
+
+
+
         # CONTENEDOR DEL TOL BAR
         self.widget_tool_bar = QWidget()
-        #self.widget_tool_bar.setMaximumHeight(int)
-        self.layout().addWidget(self.widget_tool_bar, 1)
+        self.widget_tool_bar.setMaximumHeight(25)
+        self.widget_tool_bar.setMaximumHeight(25)
+        # self.layout().addWidget(self.widget_tool_bar, 2)
+
+        # CARGO EL ARCHIVO UI
+        botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
+        self.layout().addWidget(botonesFiltrado, 1)
+
+        # RANCIADA
+        btn = botonesFiltrado.findChild(QtWidgets.QPushButton, 'nuevaVista')
+        btn.pressed.connect(self.nueva_vista)
+
 
         # CONTENEDOR DEL PANEL Y GRÁFICAS
         self.widget_content = QWidget()
@@ -50,7 +91,8 @@ class ventana_principal(QWidget):
 
         # CONTENEDOR DE TREE GRÁFICAS
         self.widget_izq = QWidget()
-#        self.widget_izq.setMaximumHeight()
+        self.widget_izq.setMaximumWidth(275)
+        self.widget_izq.setMinimumWidth(275)
         self.widget_izq.setLayout(QVBoxLayout())
         self.widget_izq.layout().setContentsMargins(2, 0, 10, 20)
         self.widget_izq.layout().setSpacing(0)
@@ -63,10 +105,7 @@ class ventana_principal(QWidget):
         self.widget_der.tabCloseRequested.connect(self.eliminar_vista)
         self.widget_content.layout().addWidget(self.widget_der, 8)
 
-        # RANCIADA
-        btn = QPushButton(self.widget_tool_bar)
-        btn.setText("nueva vista")
-        btn.pressed.connect(self.nueva_vista)
+
 
         #CONTENEDOR DE COMBOBOX Y TOOLBAR DE ARCHIVOS CSV
         widget_archivos_csv = QWidget()
