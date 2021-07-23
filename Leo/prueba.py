@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import (QWidget, QTreeWidget, QToolBar, QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtWidgets import (QWidget,QAction ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint
 import pandas
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -14,7 +14,12 @@ from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Vista import Vista
 
-
+"""class tree_widget(QTreeWidget):
+    rightClicked = pyqtSignal(QPoint)
+    def __init__(self,parent=None):
+        super(tree_widget, self).__init__()
+        self.rightClicked.connect(self.handle_rightClicked)
+"""
 class ventana_principal(QWidget):
 
     def __init__(self, parent=None, *args):
@@ -34,6 +39,7 @@ class ventana_principal(QWidget):
 
         # CONTENEDOR DEL TOL BAR
         self.widget_tool_bar = QWidget()
+        #self.widget_tool_bar.setMaximumHeight(int)
         self.layout().addWidget(self.widget_tool_bar, 1)
 
         # CONTENEDOR DEL PANEL Y GRÁFICAS
@@ -44,6 +50,7 @@ class ventana_principal(QWidget):
 
         # CONTENEDOR DE TREE GRÁFICAS
         self.widget_izq = QWidget()
+#        self.widget_izq.setMaximumHeight()
         self.widget_izq.setLayout(QVBoxLayout())
         self.widget_izq.layout().setContentsMargins(2, 0, 10, 20)
         self.widget_izq.layout().setSpacing(0)
@@ -106,10 +113,33 @@ class ventana_principal(QWidget):
 
         # ÁRBOL DE VISTAS
         self.treeView2 = QTreeWidget()
+        self.treeView2.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
 
+    def handle_rightClicked(self, pos):
+
+        item = self.treeView2.itemAt(pos)
+        if item is None:
+            return
+        menu = QtWidgets.QMenu()
+        if item.parent() is not None:
+            print_shrek = QAction("Print Shrek")
+            print_shrek.triggered.connect(lambda checked, item=item: self.print_shrek())
+            menu.addAction(print_shrek)
+        elif item.parent() is None:
+            print_burro = QAction("Print Burro")
+            print_burro.triggered.connect(lambda checked, item=item: self.print_burro())
+            menu.addAction(print_burro)
+        menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
+
+    def print_shrek(self):
+        print("Shrek")
+
+    def print_burro(self):
+        print("Burro")
 
     def agregar_csv(self):
         """
@@ -146,11 +176,14 @@ class ventana_principal(QWidget):
             if nombre_archivo == archivo.get_nombre_archivo():
                 for emg in archivo.get_electromiografias():
                     EMG = QTreeWidgetItem([emg.get_nombre_corto()])
+
                     graficas = emg.get_graficas()
                     for grafica in graficas:
                         grafica = QTreeWidgetItem([grafica.get_nombre_columna_grafica()])
                         EMG.addChild(grafica)
+
                     self.tree_widget.addTopLevelItem(EMG)
+
 
     def agregar_grafica_a_vista(self, item, col):
         index = self.widget_der.indexOf(self.widget_der.currentWidget())
@@ -258,6 +291,7 @@ class ventana_principal(QWidget):
 
     def leo(self):
         print("xd")
+
 
 
     def eliminar_vista(self,tab_index):
