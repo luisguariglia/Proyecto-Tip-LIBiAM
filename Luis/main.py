@@ -1,6 +1,7 @@
 import numpy as np
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout
+from matplotlib.patches import Polygon
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator
 from scipy.signal import find_peaks
 import matplotlib.dates as mdates
@@ -8,7 +9,7 @@ import filtersHelper
 import csvHelper
 from PicosConfig import picosConfigClass
 from butterConfig import butterConfigClass
-
+import pandas as pd
 import sys
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -109,7 +110,7 @@ class MatplotlibWidget(QWidget):
         # -------------------------------------
         self.ax.set_xmargin(0)
         #self.ax.autoscale_view()
-
+        self.mostrarIntegral()
         self.ax.grid()
         self.canvas.draw()
         self.figure.tight_layout()
@@ -131,6 +132,27 @@ class MatplotlibWidget(QWidget):
 
         self.ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         self.ax.legend()
+
+    def mostrarIntegral(self):
+        a, b = 5.5, 5.7  # integral limits
+        aux=self.datos[0].values
+
+        iy = []
+        ix = []
+        for i in range(0, aux.size):
+            if(aux[i]>a and aux[i]<b):
+                iy.append(self.datos[1][i])
+                ix.append(aux[i])
+
+
+        verts = [(a, 0), *zip(ix, iy), (b, 0)]
+        poly = Polygon(verts, facecolor='0.9', edgecolor='0.5')
+        self.ax.add_patch(poly)
+
+        # self.ax.set_xticks((a, b))
+        # self.ax.set_xticklabels(('$a$', '$b$'))
+        # self.ax.set_yticks([])
+
 
 app = QtWidgets.QApplication(sys.argv)
 window = Ui()
