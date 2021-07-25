@@ -3,24 +3,24 @@ def estilos_tree_widget_graficas():
     QTreeWidget{
         margin-bottom:6px;
     }
-    
+
     QTreeWidget::branch:has-siblings:!adjoins-item {
         border-image: url(Static/img/vline.png) 0;    
     }
-    
+
     QTreeWidget::branch:has-siblings:adjoins-item {
         border-image: url(Static/img/branch-more.png) 0;
     }
-                
+
     QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
         border-image: url(Static/img/branch-end.png) 0;
     }
-    
+
     QTreeWidget::branch:has-children:!has-siblings:closed,
     QTreeWidget::branch:closed:has-children:has-siblings {
         border-image: none;image: url(Static/img/branch-closed.png);
     }
-    
+
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
         border-image: none;image: url(Static/img/branch-open.png);
@@ -34,11 +34,11 @@ def estilos_tree_widget_vistas():
     QTreeWidget::branch:closed:has-children:has-siblings {
         border-image: none;image: url(Static/img/branch-closed.png);
     }
-    
+
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
         border-image: none;image: url(Static/img/branch-open.png);
-    } 
+    }
     """
 
 
@@ -48,13 +48,13 @@ def estilos_toolbar_archvos_csv():
         border:0px;
         margin-right:1px;
     }
-    
+
     QToolButton{
         margin-left:7px;
         border-radius:2px;
         border:9px;
     }
-    
+
     QToolButton:hover{
         background-color:#E0E0E0;
     }
@@ -72,7 +72,7 @@ def estilos_combobox_archivos_csv():
             padding: 1px 18px 1px 6px;
             min-width: 6em;
     }
-    
+
     QComboBox:editable {
         background-color: white;
     }
@@ -109,4 +109,39 @@ def estilos_combobox_archivos_csv():
         top: 1px;
         left: 1px;
     }
+    """
+
+
+def estilos_widget_inicio():
+    return """
+    QWidget{
+        border:2px solid #FAFAFA;
+    }
+
+
+    """
+
+
+def estilos_widget_header_inicio():
+    return """
+        QWidget{
+            border-bottom:0px;
+        }
+
+        QLabel{
+            margin:0px;
+            padding:0px;
+            border:0px;
+        }
+    """
+
+
+def estilos_widget_content():
+    return """
+        QWidget{
+            margin:2px;
+            padding:0px;
+            background-color:#004A82;
+            border:0px;
+        }
     """
