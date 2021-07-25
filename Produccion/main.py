@@ -245,7 +245,7 @@ class ventana_principal(QWidget):
         widget_labels.layout().setSpacing(16)
         widget_labels.layout().setContentsMargins(14,10,10,30)
 
-        QFontDatabase.addApplicationFont("Roboto-Light.ttf")
+        QFontDatabase.addApplicationFont("Static/fonts/Roboto-Light.ttf")
         label2.setFont(QFont('Roboto',12))
 
         widget_labels.layout().addWidget(label1)
