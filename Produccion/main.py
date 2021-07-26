@@ -6,7 +6,7 @@ import pandas
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-import sys
+import os
 import config
 import funciones
 from Static.Strings import strings
@@ -19,6 +19,14 @@ from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+
+
+def load_fonts_from_dir(directory):
+    families = set()
+    for fi in QDir(directory).entryInfoList(["*.ttf"]):
+        _id = QFontDatabase.addApplicationFont(fi.absoluteFilePath())
+        families |= set(QFontDatabase.applicationFontFamilies(_id))
+    return families
 
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
@@ -47,6 +55,9 @@ class ventana_principal(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.archivos_csv = []
 
+        #CARGAR FUENTES AL PROYECTO
+        #font_dir = CURRENT_DIRECTORY + config.PATH_FONTS
+        load_fonts_from_dir(os.fspath(config.PATH_FONTS))
         # VALORES PANEL VISTAS
         self.vistas = []
         self.contador_vistas = 0
@@ -133,7 +144,7 @@ class ventana_principal(QWidget):
         #CONTENEDOR DE LOS ARCHIVOS CSV
         widget_lista_archivos = QWidget()
         widget_lista_archivos.setLayout(QVBoxLayout())
-        widget_lista_archivos.layout().setContentsMargins(2,2,2,2)
+        widget_lista_archivos.layout().setContentsMargins(2, 2, 2, 2)
         widget_lista_archivos.layout().setSpacing(0)
 
         #COMBOBOX DE ARCHIVOS CSV
@@ -154,7 +165,7 @@ class ventana_principal(QWidget):
         widget_botones_csv.addAction(icono_agregar, 'agregar', self.agregar_csv)
         widget_botones_csv.addAction(icono_hide,'ocultar',self.leo)
 
-        widget_archivos_csv.layout().addWidget(widget_lista_archivos,7)
+        widget_archivos_csv.layout().addWidget(widget_lista_archivos, 7)
         widget_archivos_csv.layout().addWidget(widget_botones_csv, 3)
 
         #ÁRBOL DE GRÁFICAS
@@ -245,8 +256,10 @@ class ventana_principal(QWidget):
         widget_labels.layout().setSpacing(16)
         widget_labels.layout().setContentsMargins(14,10,10,30)
 
-        QFontDatabase.addApplicationFont("Static/fonts/Roboto-Light.ttf")
-        label2.setFont(QFont('Roboto',12))
+
+        db = QFontDatabase()
+        font = db.font("Roboto Light", "Regular", 12)
+        label2.setFont(font)
 
         widget_labels.layout().addWidget(label1)
         widget_labels.layout().addWidget(label2)
