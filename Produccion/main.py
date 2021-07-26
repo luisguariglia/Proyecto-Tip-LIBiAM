@@ -262,7 +262,6 @@ class ventana_principal(QWidget):
         widget_contenedor_imagenes.setLayout(QVBoxLayout())
         widget_contenedor_imagenes.layout().setAlignment(Qt.AlignCenter)
         widget_contenedor_imagenes.layout().setContentsMargins(0,0,0,0)
-        #widget_contenedor_imagenes.setStyleSheet("background-color:#FAFAFA;padding:0x;margin:0px;")
 
         widget_contenedor_imagenes.setGraphicsEffect(shadow)
         widget_derecha_section.layout().addWidget(widget_contenedor_imagenes)
@@ -297,33 +296,36 @@ class ventana_principal(QWidget):
 
         self.widget_der.insertTab(0, widget_inicio, "Inicio")
 
+        self.animation1 = QPropertyAnimation(self)
+        self.animation1.setPropertyName(b'pos')
+        self.animation1.setEasingCurve(QEasingCurve.InOutCubic)
+        self.animation1.setStartValue(QPoint(0, 0))
+        self.animation1.setEndValue(QPoint(450, 0))
+        self.animation1.setDuration(1000)
+
+        self.animation2 = QPropertyAnimation(self)
+        self.animation2.setPropertyName(b'pos')
+        self.animation2.setEasingCurve(QEasingCurve.InOutCubic)
+        self.animation2.setStartValue(QPoint(-450, 0))
+        self.animation2.setEndValue(QPoint(0, 0))
+        self.animation2.setDuration(1000)
+
         timer = QTimer(widget_imagenes)
         timer.timeout.connect(self.animation)
         timer.start(4500)
 
 
     def animation(self):
-        animation1 = QPropertyAnimation(self)
-        animation1.setTargetObject(self.lista_labels[self.contador])
-        animation1.setPropertyName(b'pos')
-        animation1.setEasingCurve(QEasingCurve.InOutCubic)
-        animation1.setStartValue(QPoint(0, 0))
-        animation1.setEndValue(QPoint(450, 0))
-        animation1.setDuration(1000)
+        self.animation1.setTargetObject(self.lista_labels[self.contador])
+
 
         if self.contador == len(self.lista_labels) - 1:
             self.contador = -1
 
-        animation2 = QPropertyAnimation(self)
-        animation2.setTargetObject(self.lista_labels[self.contador + 1])
-        animation2.setPropertyName(b'pos')
-        animation2.setEasingCurve(QEasingCurve.InOutCubic)
-        animation2.setStartValue(QPoint(-450, 0))
-        animation2.setEndValue(QPoint(0, 0))
-        animation2.setDuration(1000)
+        self.animation2.setTargetObject(self.lista_labels[self.contador + 1])
 
-        animation1.start()
-        animation2.start()
+        self.animation1.start()
+        self.animation2.start()
 
         self.contador += 1
 
