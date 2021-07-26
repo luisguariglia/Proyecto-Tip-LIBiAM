@@ -117,10 +117,24 @@ class ventana_principal(QWidget):
         self.widget_izq = QWidget()
         self.widget_izq.setMaximumWidth(275)
         self.widget_izq.setMinimumWidth(275)
-        self.widget_izq.setLayout(QVBoxLayout())
-        self.widget_izq.layout().setContentsMargins(2, 0, 10, 20)
+        self.widget_izq.setLayout(QHBoxLayout())
+        self.widget_izq.setStyleSheet("background-color:white;margin:0px;padding:0px;")
+        self.widget_izq.layout().setContentsMargins(0, 0, 0, 0)
         self.widget_izq.layout().setSpacing(0)
         self.widget_content.layout().addWidget(self.widget_izq, 2)
+
+        self.widget_buttons_toggle = QWidget()
+        self.widget_buttons_toggle.setMaximumWidth(15)
+        self.widget_buttons_toggle.setStyleSheet("border:1px solid gray;")
+        self.widget_buttons_toggle.setLayout(QVBoxLayout())
+
+        self.widget_paneles = QWidget()
+        self.widget_paneles.setLayout(QVBoxLayout())
+        self.widget_paneles.layout().setContentsMargins(2, 0, 0, 20)
+        self.widget_paneles.layout().setSpacing(0)
+
+        self.widget_izq.layout().addWidget(self.widget_buttons_toggle, 1)
+        self.widget_izq.layout().addWidget(self.widget_paneles, 9)
 
         # CONTENEDOR DE LAS VISTAS
         self.widget_der = QTabWidget()
@@ -130,8 +144,6 @@ class ventana_principal(QWidget):
         self.widget_der.tabCloseRequested.connect(self.eliminar_vista)
         self.widget_content.layout().addWidget(self.widget_der, 8)
 
-
-
         #CONTENEDOR DE COMBOBOX Y TOOLBAR DE ARCHIVOS CSV
         widget_archivos_csv = QWidget()
         widget_archivos_csv.setLayout(QHBoxLayout())
@@ -139,7 +151,7 @@ class ventana_principal(QWidget):
         widget_archivos_csv.layout().setSpacing(0)
         widget_archivos_csv.setStyleSheet("background-color:white;border:1px solid gray;border-bottom:0px;")
         widget_archivos_csv.setFixedHeight(24)
-        self.widget_izq.layout().addWidget(widget_archivos_csv)
+        self.widget_paneles.layout().addWidget(widget_archivos_csv)
 
         #CONTENEDOR DE LOS ARCHIVOS CSV
         widget_lista_archivos = QWidget()
@@ -173,7 +185,7 @@ class ventana_principal(QWidget):
         self.tree_widget.setStyleSheet(estilos.estilos_tree_widget_graficas())
         self.tree_widget.setHeaderHidden(True)
         self.tree_widget.itemDoubleClicked.connect(self.agregar_grafica_a_vista)
-        self.widget_izq.layout().addWidget(self.tree_widget, 5)
+        self.widget_paneles.layout().addWidget(self.tree_widget, 5)
 
         # ÁRBOL DE VISTAS
         self.treeView2 = QTreeWidget()
@@ -181,7 +193,7 @@ class ventana_principal(QWidget):
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
-        self.widget_izq.layout().addWidget(self.treeView2, 4)
+        self.widget_paneles.layout().addWidget(self.treeView2, 4)
 
     def ventana_inicio(self):
         shadow = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
