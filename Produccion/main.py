@@ -1,8 +1,9 @@
 from PyQt5 import QtWidgets, QtCore, uic
-from PyQt5.QtWidgets import (QWidget,QAction ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
-from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap
+from PyQt5.QtWidgets import (QWidget,QAction ,QTreeWidget ,QToolBar, QMenu,QComboBox, QGraphicsScene, QGraphicsView,QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap,QPainter
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 import pandas
+from time import sleep
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -28,11 +29,16 @@ def load_fonts_from_dir(directory):
         families |= set(QFontDatabase.applicationFontFamilies(_id))
     return families
 
+class buttonleo(QPushButton):
+    def __init__(self):
+        super(buttonleo, self).__init__()
+
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
         super(tree_widget_item_vista, self).__init__()
         self.setText(0,text)
         self.name = name
+
 
     def set_name_object(self,name):
         self.name = name
@@ -124,21 +130,57 @@ class ventana_principal(QWidget):
         self.widget_content.layout().addWidget(self.widget_izq, 2)
 
         self.widget_buttons_toggle = QWidget()
-        self.widget_buttons_toggle.setMaximumWidth(15)
-        self.widget_buttons_toggle.setStyleSheet("border:1px solid gray;")
-        self.widget_buttons_toggle.setLayout(QVBoxLayout())
+        self.widget_buttons_toggle.setMaximumWidth(18)
+        self.widget_buttons_toggle.setStyleSheet("QWidget{border:0px solid black;border-top:1px solid gray;}")
+        self.widget_buttons_toggle.setLayout(QHBoxLayout())
+        self.widget_buttons_toggle.layout().setContentsMargins(0,2,0,0)
+        self.widget_buttons_toggle.layout().setSpacing(0)
+        self.widget_buttons_toggle.layout().setAlignment(Qt.AlignTop)
+
+        self.scene = QGraphicsScene()
+
+        graphicView = QGraphicsView(self.scene, self)
+        graphicView.setContentsMargins(0, 0, 0, 0)
+        graphicView.setStyleSheet("QGraphicsView{border:none;}")
+        graphicView.setMaximumHeight(400)
+        graphicView.setAlignment(Qt.AlignTop)
+
+        wid = QWidget()
+        wid.setLayout(QHBoxLayout())
+        bt = QPushButton("Panel")
+
+        bt.setFixedHeight(16)
+        bt.setFixedWidth(75)
+
+        # wid.setStyleSheet("background-color:yellow;margin:0px;padding:2px;")
+        wid.layout().setContentsMargins(0, 0, 0, 0)
+        wid.layout().setSpacing(20)
+        wid.layout().addWidget(bt)
+        wid1 = self.scene.addWidget(wid)
+
+        wid1.setRotation(-90)
+        wid1.setPos(50, 50)
+        self.widget_buttons_toggle.layout().addWidget(graphicView)
 
         self.widget_paneles = QWidget()
         self.widget_paneles.setLayout(QVBoxLayout())
-        self.widget_paneles.layout().setContentsMargins(2, 0, 0, 20)
+        self.widget_paneles.layout().setContentsMargins(0, 0, 0, 20)
         self.widget_paneles.layout().setSpacing(0)
 
         self.widget_izq.layout().addWidget(self.widget_buttons_toggle, 1)
         self.widget_izq.layout().addWidget(self.widget_paneles, 9)
 
+        #SE GUARDA LOS ANCHOS DE LOS ELEMENTOS PARA RECUPERARLOS LUEGO DE MINIMIZAR
+        self.ancho_widget_izq = self.widget_izq.width()
+        self.ancho_widget_paneles = self.widget_paneles.width()
+        self.ancho_widget_buttons_toggle = self.widget_buttons_toggle.width()
+        print(self.ancho_widget_buttons_toggle)
+        self.widget_buttons_toggle.setFixedWidth(0)
+
         # CONTENEDOR DE LAS VISTAS
         self.widget_der = QTabWidget()
         self.ventana_inicio()
+        #self.widget_der.setStyleSheet("background-color:red;")
         self.widget_der.setMovable(True)
         self.widget_der.setTabsClosable(True)
         self.widget_der.tabCloseRequested.connect(self.eliminar_vista)
@@ -527,6 +569,7 @@ class ventana_principal(QWidget):
 
     def leo(self):
         print("xd")
+
 
     def eliminar_vista(self, tab_index):
 
