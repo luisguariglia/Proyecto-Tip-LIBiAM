@@ -31,9 +31,6 @@ def load_fonts_from_dir(directory):
         families |= set(QFontDatabase.applicationFontFamilies(_id))
     return families
 
-class buttonleo(QPushButton):
-    def __init__(self):
-        super(buttonleo, self).__init__()
 
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
@@ -64,8 +61,8 @@ class ventana_principal(QWidget):
         self.archivos_csv = []
 
         #CARGAR FUENTES AL PROYECTO
-        #font_dir = CURRENT_DIRECTORY + config.PATH_FONTS
         load_fonts_from_dir(os.fspath(config.PATH_FONTS))
+
         # VALORES PANEL VISTAS
         self.vistas = []
         self.contador_vistas = 0
@@ -98,14 +95,6 @@ class ventana_principal(QWidget):
         ayudaMenu.addAction("Documentacion")
         ayudaMenu.addAction("Sobre nosotros")
 
-
-
-        # CONTENEDOR DEL TOL BAR
-        self.widget_tool_bar = QWidget()
-        self.widget_tool_bar.setMaximumHeight(25)
-        self.widget_tool_bar.setMaximumHeight(25)
-        # self.layout().addWidget(self.widget_tool_bar, 2)
-
         # CARGO EL ARCHIVO UI
         botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
         self.layout().addWidget(botonesFiltrado, 1)
@@ -114,47 +103,49 @@ class ventana_principal(QWidget):
         btn = botonesFiltrado.findChild(QPushButton, 'nuevaVista')
         btn.pressed.connect(self.nueva_vista)
 
-
         # CONTENEDOR DEL PANEL Y GRÁFICAS
         self.widget_content = QWidget()
         self.widget_content.setLayout(QHBoxLayout())
         self.widget_content.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.widget_content, 9)
 
+        self.width = self.widget_content.screen().geometry().width()
+        self.height = self.widget_content.screen().geometry().height()
+
         # CONTENEDOR DE TREE GRÁFICAS
-        self.widget_izq = QWidget()
-        self.widget_izq.setMaximumWidth(275)
-        self.widget_izq.setMinimumWidth(275)
-        self.widget_izq.setLayout(QHBoxLayout())
+        self.widget_izq = QWidget(self.widget_content)
+        self.widget_izq.setGeometry(0,0,275,int(self.height * 0.85))
+        self.widget_izq.setLayout(QVBoxLayout())
         self.widget_izq.setStyleSheet("background-color:white;margin:0px;padding:0px;")
         self.widget_izq.layout().setContentsMargins(0, 0, 0, 0)
         self.widget_izq.layout().setSpacing(0)
-        self.widget_content.layout().addWidget(self.widget_izq, 2)
 
-        self.widget_buttons_toggle = QWidget()
-        self.widget_buttons_toggle.setMaximumWidth(18)
-        self.widget_buttons_toggle.setStyleSheet("QWidget{border:0px solid black;border-top:1px solid gray;}")
+        #CONTENEDOR DE BOTONES TOGGLE
+        self.widget_buttons_toggle = QWidget(self.widget_content)
+        self.widget_buttons_toggle.setGeometry(0,0,20,int(self.height * 0.9))
+        self.widget_buttons_toggle.move(-20,0)
+        self.widget_buttons_toggle.setStyleSheet("QWidget{border:0px solid black;}")
         self.widget_buttons_toggle.setLayout(QHBoxLayout())
         self.widget_buttons_toggle.layout().setContentsMargins(0,2,0,0)
         self.widget_buttons_toggle.layout().setSpacing(0)
         self.widget_buttons_toggle.layout().setAlignment(Qt.AlignTop)
 
+        #WIDGET PARA ROTAR LOS BOTONES -90 GRADOS
         self.scene = QGraphicsScene()
-
         graphicView = QGraphicsView(self.scene, self)
         graphicView.setContentsMargins(0, 0, 0, 0)
         graphicView.setStyleSheet("QGraphicsView{border:none;}")
         graphicView.setMaximumHeight(400)
         graphicView.setAlignment(Qt.AlignTop)
 
+        #<ELEMENTOS NECESARIOS PARA EL WIDGET ANTERIOR>
         wid = QWidget()
         wid.setLayout(QHBoxLayout())
         bt = QPushButton("Panel")
-
+        bt.clicked.connect(self.maximizar_panel)
         bt.setFixedHeight(16)
         bt.setFixedWidth(75)
 
-        # wid.setStyleSheet("background-color:yellow;margin:0px;padding:2px;")
         wid.layout().setContentsMargins(0, 0, 0, 0)
         wid.layout().setSpacing(20)
         wid.layout().addWidget(bt)
@@ -162,31 +153,18 @@ class ventana_principal(QWidget):
 
         wid1.setRotation(-90)
         wid1.setPos(50, 50)
+        #</ELEMENTOS NECESARIOS PARA EL WIDGET ANTERIOR>
+
         self.widget_buttons_toggle.layout().addWidget(graphicView)
 
-        self.widget_paneles = QWidget()
-        self.widget_paneles.setLayout(QVBoxLayout())
-        self.widget_paneles.layout().setContentsMargins(0, 0, 0, 20)
-        self.widget_paneles.layout().setSpacing(0)
-
-        self.widget_izq.layout().addWidget(self.widget_buttons_toggle, 1)
-        self.widget_izq.layout().addWidget(self.widget_paneles, 9)
-
-        #SE GUARDA LOS ANCHOS DE LOS ELEMENTOS PARA RECUPERARLOS LUEGO DE MINIMIZAR
-        self.ancho_widget_izq = self.widget_izq.width()
-        self.ancho_widget_paneles = self.widget_paneles.width()
-        self.ancho_widget_buttons_toggle = self.widget_buttons_toggle.width()
-        print(self.ancho_widget_buttons_toggle)
-        self.widget_buttons_toggle.setFixedWidth(0)
-
-        # CONTENEDOR DE LAS VISTAS
-        self.widget_der = QTabWidget()
+        # CONTENEDOR GRÁFICAS
+        self.widget_der = QTabWidget(self.widget_content)
+        self.widget_der.setGeometry(280,0,int(self.width - 275),int(self.height * 0.9))
         self.ventana_inicio()
-        #self.widget_der.setStyleSheet("background-color:red;")
         self.widget_der.setMovable(True)
         self.widget_der.setTabsClosable(True)
         self.widget_der.tabCloseRequested.connect(self.eliminar_vista)
-        self.widget_content.layout().addWidget(self.widget_der, 8)
+
 
         #CONTENEDOR DE COMBOBOX Y TOOLBAR DE ARCHIVOS CSV
         widget_archivos_csv = QWidget()
@@ -195,7 +173,7 @@ class ventana_principal(QWidget):
         widget_archivos_csv.layout().setSpacing(0)
         widget_archivos_csv.setStyleSheet("background-color:white;border:1px solid gray;border-bottom:0px;")
         widget_archivos_csv.setFixedHeight(24)
-        self.widget_paneles.layout().addWidget(widget_archivos_csv)
+        self.widget_izq.layout().addWidget(widget_archivos_csv)
 
         #CONTENEDOR DE LOS ARCHIVOS CSV
         widget_lista_archivos = QWidget()
@@ -217,9 +195,9 @@ class ventana_principal(QWidget):
         icono_hide = QIcon("Static/img/hide.svg")
         icono_remove = QIcon("Static/img/eliminar.svg")
         icono_agregar = QIcon("Static/img/add.svg")
-        widget_botones_csv.addAction(icono_remove, 'eliminar', self.leo)
+        widget_botones_csv.addAction(icono_remove, 'eliminar', self.eliminar_csv)
         widget_botones_csv.addAction(icono_agregar, 'agregar', self.agregar_csv)
-        widget_botones_csv.addAction(icono_hide,'ocultar',self.leo)
+        widget_botones_csv.addAction(icono_hide,'ocultar',self.minimizar_panel)
 
         widget_archivos_csv.layout().addWidget(widget_lista_archivos, 7)
         widget_archivos_csv.layout().addWidget(widget_botones_csv, 3)
@@ -229,7 +207,7 @@ class ventana_principal(QWidget):
         self.tree_widget.setStyleSheet(estilos.estilos_tree_widget_graficas())
         self.tree_widget.setHeaderHidden(True)
         self.tree_widget.itemDoubleClicked.connect(self.agregar_grafica_a_vista)
-        self.widget_paneles.layout().addWidget(self.tree_widget, 5)
+        self.widget_izq.layout().addWidget(self.tree_widget, 5)
 
         # ÁRBOL DE VISTAS
         self.treeView2 = QTreeWidget()
@@ -237,7 +215,7 @@ class ventana_principal(QWidget):
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
-        self.widget_paneles.layout().addWidget(self.treeView2, 4)
+        self.widget_izq.layout().addWidget(self.treeView2, 4)
 
         # filtros
         self.ventanaConfig = butterConfigClass(self)
@@ -302,13 +280,11 @@ class ventana_principal(QWidget):
         label1 = QLabel("LIBiAM")
         label1.setStyleSheet("color:black;font:bold 28px;")
 
-
         label2 = QLabel()
         label2.setText(strings.descripcion_de_LIBiAM() + "\n\n" + strings.descripcion_de_LIBiAM2())
         label2.setWordWrap(True)
         label2.setMinimumHeight(230)
         label2.setAlignment(Qt.AlignTop)
-
 
         widget_izquierda_section = QWidget()
         widget_izquierda_section.setLayout(QVBoxLayout())
@@ -321,7 +297,6 @@ class ventana_principal(QWidget):
         widget_labels.setGraphicsEffect(shadow2)
         widget_labels.layout().setSpacing(16)
         widget_labels.layout().setContentsMargins(14,10,10,30)
-
 
         db = QFontDatabase()
         font = db.font("Roboto Light", "Regular", 12)
@@ -394,10 +369,8 @@ class ventana_principal(QWidget):
         timer.start(4500)
 
 
-
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
-
 
         if self.contador == len(self.lista_labels) - 1:
             self.contador = -1
@@ -664,10 +637,63 @@ class ventana_principal(QWidget):
         self.vistas.append(Vista(item_vista, widget, self.contador_vistas))
         self.treeView2.addTopLevelItem(item_vista)
 
-
-    def leo(self):
+    def eliminar_csv(self):
         print("xd")
 
+    def minimizar_panel(self):
+
+        self.anim = QPropertyAnimation(self.widget_der, b"pos")
+        self.anim.setEndValue(QPoint(20, 0))
+        self.anim.setDuration(350)
+
+        self.anim_2 = QPropertyAnimation(self.widget_der, b"size")
+        self.anim_2.setEndValue(QSize(int((self.width - 20)), int(self.height * 0.9)))
+        self.anim_2.setDuration(350)
+
+        self.anim3 = QPropertyAnimation(self.widget_izq, b"pos")
+        self.anim3.setEndValue(QPoint(-275, 0))
+        self.anim3.setDuration(350)
+
+        self.anim4 = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
+        self.anim4.setEndValue(QPoint(0, 0))
+        self.anim4.setDuration(400)
+
+        self.anim_group = QSequentialAnimationGroup()
+        self.anim_group.addAnimation(self.anim3)
+        self.anim_group.addAnimation(self.anim4)
+
+        self.anim.start()
+        self.anim_2.start()
+        self.anim_group.start()
+
+    def maximizar_panel(self):
+
+
+        self.anim_wid_toggle_buttons = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
+        self.anim_wid_toggle_buttons.setEndValue(QPoint(-20, 0))
+        self.anim_wid_toggle_buttons.setDuration(200)
+        self.anim_wid_toggle_buttons.finished.connect(self.maximizar_panel_2)
+        self.anim_wid_toggle_buttons.start()
+
+
+
+
+    def maximizar_panel_2(self):
+        self.anim_wid_der = QPropertyAnimation(self.widget_der, b"pos")
+        self.anim_wid_der.setEndValue(QPoint(280, 0))
+        self.anim_wid_der.setDuration(350)
+
+        self.anim_2_wid_der = QPropertyAnimation(self.widget_der, b"size")
+        self.anim_2_wid_der.setEndValue(QSize(int((self.width - 280)), int(self.height * 0.9)))
+        self.anim_2_wid_der.setDuration(350)
+
+        self.anim_wid_izq = QPropertyAnimation(self.widget_izq, b"pos")
+        self.anim_wid_izq.setEndValue(QPoint(0, 0))
+        self.anim_wid_izq.setDuration(350)
+
+        self.anim_wid_der.start()
+        self.anim_2_wid_der.start()
+        self.anim_wid_izq.start()
 
     def eliminar_vista(self, tab_index):
 
