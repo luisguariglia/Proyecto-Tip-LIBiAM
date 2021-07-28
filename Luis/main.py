@@ -110,7 +110,7 @@ class MatplotlibWidget(QWidget):
         # -------------------------------------
         self.ax.set_xmargin(0)
         #self.ax.autoscale_view()
-        self.mostrarIntegral()
+        # self.mostrarIntegral()
         self.ax.grid()
         self.canvas.draw()
         self.figure.tight_layout()
