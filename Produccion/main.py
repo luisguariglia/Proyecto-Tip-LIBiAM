@@ -1,7 +1,10 @@
 from PyQt5 import QtWidgets, QtCore, uic
-from PyQt5.QtWidgets import (QWidget,QAction ,QTreeWidget ,QToolBar, QMenu,QComboBox, QGraphicsScene, QGraphicsView,QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
-from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap,QPainter
+from PyQt5.QtWidgets import (QLabel,QGraphicsDropShadowEffect,QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
+from Modelo.Vista import Vista
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import *
 import pandas
 from time import sleep
 from matplotlib import pyplot as plt
@@ -10,16 +13,15 @@ from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigatio
 import os
 import config
 import funciones
+import sys
+from ConfigVentanas.butterConfig import butterConfigClass
+from ConfigVentanas.ValoresEnGrafica import valoresEnGraficaClass
+from Helpers import filtersHelper
 from Static.Strings import strings
 from Static.styles import estilos
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from Modelo.Vista import Vista
-import sys
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+
 
 
 def load_fonts_from_dir(directory):
@@ -109,7 +111,7 @@ class ventana_principal(QWidget):
         self.layout().addWidget(botonesFiltrado, 1)
 
         # RANCIADA
-        btn = botonesFiltrado.findChild(QtWidgets.QPushButton, 'nuevaVista')
+        btn = botonesFiltrado.findChild(QPushButton, 'nuevaVista')
         btn.pressed.connect(self.nueva_vista)
 
 
@@ -236,6 +238,16 @@ class ventana_principal(QWidget):
         self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
         self.widget_paneles.layout().addWidget(self.treeView2, 4)
+
+        # filtros
+        self.ventanaConfig = butterConfigClass(self)
+        self.button = self.findChild(QPushButton, 'butterBtn')
+        self.button.clicked.connect(self.ventanaConfig.mostrar)
+
+        # picos
+        self.picosConfig = valoresEnGraficaClass(self)
+        self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
+        self.buttonPícos.clicked.connect(self.picosConfig.mostrar)
 
     def ventana_inicio(self):
         shadow = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
@@ -382,6 +394,7 @@ class ventana_principal(QWidget):
         timer.start(4500)
 
 
+
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
 
@@ -424,8 +437,8 @@ class ventana_principal(QWidget):
         :return:
         """
 
-        options = QtWidgets.QFileDialog.Options()
-        filepath = QtWidgets.QFileDialog.getOpenFileName(self, "Seleccione un archivo", "",config.FILES_CSV, options=options)
+        options = QFileDialog.Options()
+        filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "",config.FILES_CSV, options=options)
 
         # Si se cancela la ventana emergente al seleccionar un archivo .csv
         if not filepath[0]:
@@ -445,6 +458,8 @@ class ventana_principal(QWidget):
         else:
             self.combo.addItem(nombre_archivo)
 
+    def rectificarEMG(self):
+        print("Texto de Ejemplo")
 
     def actualizar_tree(self):
         self.tree_widget.clear()
@@ -488,8 +503,9 @@ class ventana_principal(QWidget):
                         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
                         graficas = vista.get_graficas()
                         archivo = graficas[0].get_archivo()
+                        aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()],self.ventanaConfig.datos)
                         axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
-                                  archivo[graficas[0].get_nombre_columna_grafica()], linewidth=0.3)
+                                  aux, linewidth=0.3)
                         plt.close(fig)
                         fig.tight_layout()
 
@@ -512,8 +528,9 @@ class ventana_principal(QWidget):
 
                         for x in range(cant_vistas):
                             archivo = graficas[x].get_archivo()
+                            aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],self.ventanaConfig.datos)
                             axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
-                                  archivo[graficas[x].get_nombre_columna_grafica()], linewidth=0.3)
+                                  aux, linewidth=0.3)
                         plt.close(fig)
                         fig.tight_layout()
 
@@ -536,11 +553,92 @@ class ventana_principal(QWidget):
 
                     self.treeView2.expandItem(self.treeView2.topLevelItem(index))
 
+    def setFiltros(self, datos, datosFiltrado):
+        # self.leerDatos()  # esto hay que hacerlo mas eficiente
+        filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
+        filter_signal = filtersHelper.butterFilterDos(filter_signal)
+        filter_signal = filtersHelper.RMS(filter_signal)
+        return filter_signal
+
+
+    def actualizarGrafico(self):
+        current_widget = self.widget_der.currentWidget()
+        object_name = current_widget.objectName()
+        if not object_name == "Inicio":
+            widget_tab = self.widget_der.currentWidget()
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if vista is not None:
+
+                if cant_graficas == 1:
+
+                    widget_tab.layout().removeWidget(vista.get_canvas())
+                    widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                    widget_tab.layout().removeWidget(vista.get_scroll())
+
+                    widget_tab.setLayout(QVBoxLayout())
+                    widget_tab.layout().setContentsMargins(10, 10, 10, 35)
+                    widget_tab.layout().setSpacing(20)
+                    scroll_area = QScrollArea(widget_tab)
+
+                    fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
+                    graficas = vista.get_graficas()
+                    archivo = graficas[0].get_archivo()
+                    aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], self.ventanaConfig.datos)
+                    axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
+                              aux, linewidth=0.3)
+                    plt.close(fig)
+                    fig.tight_layout()
+
+                    canvas = FigureCanvas(fig)
+                    scroll_area.setWidget(canvas)
+                    nav_toolbar = NavigationToolbar(canvas, widget_tab)
+
+                    vista.set_canvas(canvas)
+                    vista.set_scroll(scroll_area)
+                    vista.set_nav_toolbar(nav_toolbar)
+
+                    canvas.draw()
+                    widget_tab.layout().addWidget(nav_toolbar)
+                    widget_tab.layout().addWidget(scroll_area)
+
+                elif cant_graficas > 1:
+                    fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
+                    graficas = vista.get_graficas()
+
+                    for x in range(cant_graficas):
+                        archivo = graficas[x].get_archivo()
+                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], self.ventanaConfig.datos)
+                        axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
+                                     aux, linewidth=0.3)
+                    plt.close(fig)
+                    fig.tight_layout()
+
+                    widget_tab.layout().removeWidget(vista.get_canvas())
+                    widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                    widget_tab.layout().removeWidget(vista.get_scroll())
+
+                    canvas = FigureCanvas(fig)
+                    scroll_area = QScrollArea(widget_tab)
+                    scroll_area.setWidget(canvas)
+                    nav_toolbar = NavigationToolbar(canvas, widget_tab)
+
+                    vista.set_canvas(canvas)
+                    vista.set_scroll(scroll_area)
+                    vista.set_nav_toolbar(nav_toolbar)
+
+                    canvas.draw()
+                    widget_tab.layout().addWidget(nav_toolbar)
+                    widget_tab.layout().addWidget(scroll_area)
+
+
+
     def get_grafica(self,nombre_columna):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
         return Grafica(nombre_columna,nom_col,dt_archivo)
+
 
     def get_archivo_en_combobox(self):
         nombre_archivo_en_combobox = self.combo.currentText()
