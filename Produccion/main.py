@@ -661,7 +661,7 @@ class ventana_principal(QWidget):
 
         self.anim4 = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim4.setEndValue(QPoint(0, 0))
-        self.anim4.setDuration(400)
+        self.anim4.setDuration(450)
 
         self.anim_group = QSequentialAnimationGroup()
         self.anim_group.addAnimation(self.anim3)
