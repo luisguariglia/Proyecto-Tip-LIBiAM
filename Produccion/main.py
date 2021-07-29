@@ -643,7 +643,14 @@ class ventana_principal(QWidget):
         self.treeView2.addTopLevelItem(item_vista)
 
     def eliminar_csv(self):
-        print("xd")
+        if self.combo.currentText() == "Agregue un archivo csv":
+            print("mmm")
+        else:
+            print(self.combo.currentText())
+            self.archivos_csv.pop(self.combo.currentIndex())
+            self.combo.removeItem(self.combo.currentIndex())
+            if self.combo.count() == 0:
+                self.combo.addItem("Agregue un archivo csv")
 
     def minimizar_panel(self):
 
@@ -722,6 +729,8 @@ class ventana_principal(QWidget):
             if self.vistas[i].get_widget() == widget:
                 self.vistas.pop(i)
                 break
+
+
 
 def main():
     app = QApplication(sys.argv)
