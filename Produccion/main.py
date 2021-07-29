@@ -143,11 +143,11 @@ class ventana_principal(QWidget):
         wid.setLayout(QHBoxLayout())
         bt = QPushButton("Panel")
         bt.clicked.connect(self.maximizar_panel)
-        bt.setFixedHeight(16)
+        bt.setFixedHeight(20)
         bt.setFixedWidth(75)
 
         wid.layout().setContentsMargins(0, 0, 0, 0)
-        wid.layout().setSpacing(20)
+        wid.layout().setSpacing(25)
         wid.layout().addWidget(bt)
         wid1 = self.scene.addWidget(wid)
 
@@ -228,7 +228,9 @@ class ventana_principal(QWidget):
         self.buttonPícos.clicked.connect(self.picosConfig.mostrar)
 
     def ventana_inicio(self):
-        shadow = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
+
+        #SOMBRAS PARA CUADRO DE TEXTO E IMAGENES
+        shadow = QGraphicsDropShadowEffect(blurRadius=20, xOffset=8, yOffset=8)
         shadow2 = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
 
         widget_inicio = QWidget()
@@ -289,19 +291,20 @@ class ventana_principal(QWidget):
         widget_izquierda_section = QWidget()
         widget_izquierda_section.setLayout(QVBoxLayout())
         widget_izquierda_section.layout().setContentsMargins(8,10,10,20)
-        widget_izquierda_section.layout().setAlignment(Qt.AlignTop)
+        widget_izquierda_section.layout().setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
         widget_labels = QWidget()
         widget_labels.setLayout(QVBoxLayout())
+        widget_labels.setMaximumWidth(600)
         widget_labels.setStyleSheet("QWidget{background-color:white;border-radius:4px} QLabel{margin:0px;}")
         widget_labels.setGraphicsEffect(shadow2)
         widget_labels.layout().setSpacing(16)
+        widget_labels.layout().setAlignment(Qt.AlignHCenter)
         widget_labels.layout().setContentsMargins(14,10,10,30)
 
         db = QFontDatabase()
         font = db.font("Roboto Light", "Regular", 12)
         label2.setFont(font)
-
         widget_labels.layout().addWidget(label1)
         widget_labels.layout().addWidget(label2)
 
@@ -309,10 +312,12 @@ class ventana_principal(QWidget):
         widget_derecha_section = QWidget()
 
         widget_derecha_section.setLayout(QVBoxLayout())
-        widget_derecha_section.layout().setContentsMargins(40,15,40,15)
-        widget_derecha_section.layout().setAlignment(Qt.AlignTop)
+        widget_derecha_section.layout().setContentsMargins(0,15,0,0)
+        widget_derecha_section.layout().setAlignment(Qt.AlignHCenter | Qt.AlignTop)
 
         widget_contenedor_imagenes = QWidget()
+        widget_contenedor_imagenes.setFixedWidth(455)
+        widget_contenedor_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.setLayout(QVBoxLayout())
         widget_contenedor_imagenes.layout().setAlignment(Qt.AlignCenter)
         widget_contenedor_imagenes.layout().setContentsMargins(0,0,0,0)
@@ -321,24 +326,24 @@ class ventana_principal(QWidget):
         widget_derecha_section.layout().addWidget(widget_contenedor_imagenes)
 
         widget_imagenes = QWidget(widget_contenedor_imagenes)
-        widget_imagenes.setFixedWidth(452)
-        widget_imagenes.setFixedHeight(270)
+        widget_imagenes.setFixedWidth(455)
+        widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
         img1 = QPixmap('Static/img/img_content3.jpg')
         img2 = QPixmap('Static/img/img_content2.jpg')
-        img3 = QPixmap('Static/img/img_content1.jpg')
+        img3 = QPixmap('Static/img/img_content.jpg')
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
-        lab1.move(-500, 0)
+        lab1.move(-455, 0)
 
         lab2 = QLabel(widget_imagenes)
         lab2.move(0,0)
         lab2.setPixmap(img2)
 
         lab3 = QLabel(widget_imagenes)
-        lab3.move(-500, 0)
+        lab3.move(-455, 0)
         lab3.setPixmap(img3)
 
         self.lista_labels.append(lab2)
@@ -354,13 +359,13 @@ class ventana_principal(QWidget):
         self.animation1.setPropertyName(b'pos')
         self.animation1.setEasingCurve(QEasingCurve.InOutCubic)
         self.animation1.setStartValue(QPoint(0, 0))
-        self.animation1.setEndValue(QPoint(450, 0))
+        self.animation1.setEndValue(QPoint(455, 0))
         self.animation1.setDuration(1000)
 
         self.animation2 = QPropertyAnimation(self)
         self.animation2.setPropertyName(b'pos')
         self.animation2.setEasingCurve(QEasingCurve.InOutCubic)
-        self.animation2.setStartValue(QPoint(-450, 0))
+        self.animation2.setStartValue(QPoint(-455, 0))
         self.animation2.setEndValue(QPoint(0, 0))
         self.animation2.setDuration(1000)
 
@@ -647,7 +652,7 @@ class ventana_principal(QWidget):
         self.anim.setDuration(350)
 
         self.anim_2 = QPropertyAnimation(self.widget_der, b"size")
-        self.anim_2.setEndValue(QSize(int((self.width - 20)), int(self.height * 0.9)))
+        self.anim_2.setEndValue(QSize(int((self.width - 15)), int(self.height * 0.9)))
         self.anim_2.setDuration(350)
 
         self.anim3 = QPropertyAnimation(self.widget_izq, b"pos")
@@ -670,7 +675,7 @@ class ventana_principal(QWidget):
 
 
         self.anim_wid_toggle_buttons = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
-        self.anim_wid_toggle_buttons.setEndValue(QPoint(-20, 0))
+        self.anim_wid_toggle_buttons.setEndValue(QPoint(-25, 0))
         self.anim_wid_toggle_buttons.setDuration(200)
         self.anim_wid_toggle_buttons.finished.connect(self.maximizar_panel_2)
         self.anim_wid_toggle_buttons.start()
@@ -684,7 +689,7 @@ class ventana_principal(QWidget):
         self.anim_wid_der.setDuration(350)
 
         self.anim_2_wid_der = QPropertyAnimation(self.widget_der, b"size")
-        self.anim_2_wid_der.setEndValue(QSize(int((self.width - 280)), int(self.height * 0.9)))
+        self.anim_2_wid_der.setEndValue(QSize(int((self.width - 275)), int(self.height * 0.9)))
         self.anim_2_wid_der.setDuration(350)
 
         self.anim_wid_izq = QPropertyAnimation(self.widget_izq, b"pos")

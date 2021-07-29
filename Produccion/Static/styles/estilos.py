@@ -141,7 +141,7 @@ def estilos_widget_header_inicio():
 def estilos_widget_content():
     return """
         QWidget{
-            margin:2px;
+            margin:0px;
             padding:0px;
             background-color:#004A82;
             border:0px;
