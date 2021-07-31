@@ -29,10 +29,12 @@ class butterConfigClass(QtWidgets.QMainWindow):
         if index >= 0:
             self.findChild(QtWidgets.QComboBox, 'comboBoxAnalog').setCurrentIndex(index)
 
-        self.padre=padre
+        self.padre = padre
 
     def mostrar(self):
         self.show()
+
+
     #esto se llama cuando se le da click en aceptar
     def modificarFiltro(self):
         # variantes de filtro

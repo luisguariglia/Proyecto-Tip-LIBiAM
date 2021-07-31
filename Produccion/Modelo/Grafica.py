@@ -1,8 +1,11 @@
+from Modelo.Filtro import Filtro
+
 class Grafica:
     def __init__(self,nombre_columna_grafica, nombre_columna_tiempo,archivo):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
+        self.__filtro = Filtro()
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -21,3 +24,9 @@ class Grafica:
 
     def set_archivo(self,archivo):
         self.__archivo = archivo
+
+    def get_filtro(self):
+        return self.__filtro
+
+    def set_filtro(self, filtro):
+        self.__filtro = filtro

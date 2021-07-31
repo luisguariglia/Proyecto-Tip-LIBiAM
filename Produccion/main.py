@@ -2,25 +2,25 @@ from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import (QLabel,QGraphicsDropShadowEffect,QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
-from Modelo.Vista import Vista
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 import pandas
-from time import sleep
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import os
 import config
 import funciones
 import sys
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from ConfigVentanas.butterConfig import butterConfigClass
 from ConfigVentanas.ValoresEnGrafica import valoresEnGraficaClass
 from Helpers import filtersHelper
 from Static.Strings import strings
 from Static.styles import estilos
+from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
+from GUI.GUI import ventana_filtro
 
 
 
@@ -95,13 +95,51 @@ class ventana_principal(QWidget):
         ayudaMenu.addAction("Documentacion")
         ayudaMenu.addAction("Sobre nosotros")
 
-        # CARGO EL ARCHIVO UI
-        botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
-        self.layout().addWidget(botonesFiltrado, 1)
+        #TOOLBAR
+        self.widget_toolbar = QWidget()
+        self.widget_toolbar.setMaximumHeight(40)
+        self.widget_toolbar.setLayout(QHBoxLayout())
+        self.widget_toolbar.layout().setContentsMargins(0,0,0,0)
+
+        #WIDGET IZQUIERDA TOOLBAR
+        wid_izquierda_toolbar = QWidget()
+        wid_izquierda_toolbar.setLayout(QHBoxLayout())
+        wid_izquierda_toolbar.layout().setContentsMargins(0,0,0,0)
+        wid_izquierda_toolbar.layout().setAlignment(Qt.AlignLeft)
+        wid_izquierda_toolbar.setMaximumWidth(270)
 
         # RANCIADA
-        btn = botonesFiltrado.findChild(QPushButton, 'nuevaVista')
-        btn.pressed.connect(self.nueva_vista)
+        btn_nueva_vista = QPushButton("Nueva Vista")
+        btn_nueva_vista.clicked.connect(self.nueva_vista)
+        wid_izquierda_toolbar.layout().addWidget(btn_nueva_vista)
+
+        #WIDGET DERECHA TOOLBAR
+        wid_derecha_toolbar = QWidget()
+        wid_derecha_toolbar.setLayout(QHBoxLayout())
+        wid_derecha_toolbar.layout().setContentsMargins(0,0,0,0)
+        wid_derecha_toolbar.layout().setAlignment(Qt.AlignLeft)
+
+        #BOTONES WIDGET DERECHA TOOLBAR
+        btn_butter_filter = QPushButton("Butter Filter")
+        btn_butter_filter.clicked.connect(self.ventana_butter)
+
+        btn_valores_en_grafica = QPushButton("Valores en Gráfica")
+        btn_cortar = QPushButton("Cortar")
+        btn_rectificar = QPushButton("Rectificar")
+
+        wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
+        wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
+        wid_derecha_toolbar.layout().addWidget(btn_cortar)
+        wid_derecha_toolbar.layout().addWidget(btn_rectificar)
+
+        self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
+        self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
+
+        botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
+
+        self.layout().addWidget(self.widget_toolbar, 1)
+
+
 
         # CONTENEDOR DEL PANEL Y GRÁFICAS
         self.widget_content = QWidget()
@@ -217,7 +255,7 @@ class ventana_principal(QWidget):
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
 
-        # filtros
+        """# filtros
         self.ventanaConfig = butterConfigClass(self)
         self.button = self.findChild(QPushButton, 'butterBtn')
         self.button.clicked.connect(self.ventanaConfig.mostrar)
@@ -225,7 +263,7 @@ class ventana_principal(QWidget):
         # picos
         self.picosConfig = valoresEnGraficaClass(self)
         self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
-        self.buttonPícos.clicked.connect(self.picosConfig.mostrar)
+        self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
 
     def ventana_inicio(self):
 
@@ -467,7 +505,7 @@ class ventana_principal(QWidget):
                 widget_tab = self.widget_der.currentWidget()
                 vista : Vista = Vista.get_vista_by_widget(self.vistas,widget_tab)
                 vista.get_tree_widget_item().addChild(grafica_vista)
-                grafica = self.get_grafica(item.text(col))
+                grafica : Grafica = self.get_grafica(item.text(col))
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 if vista is not None:
@@ -481,7 +519,7 @@ class ventana_principal(QWidget):
                         fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
                         graficas = vista.get_graficas()
                         archivo = graficas[0].get_archivo()
-                        aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()],self.ventanaConfig.datos)
+                        aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()],graficas[0].get_filtro())
                         axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
                                   aux, linewidth=0.3)
                         plt.close(fig)
@@ -506,7 +544,7 @@ class ventana_principal(QWidget):
 
                         for x in range(cant_vistas):
                             archivo = graficas[x].get_archivo()
-                            aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],self.ventanaConfig.datos)
+                            aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],graficas[0].get_filtro())
                             axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
                                   aux, linewidth=0.3)
                         plt.close(fig)
@@ -530,6 +568,7 @@ class ventana_principal(QWidget):
                         widget_tab.layout().addWidget(scroll_area)
 
                     self.treeView2.expandItem(self.treeView2.topLevelItem(index))
+
 
     def setFiltros(self, datos, datosFiltrado):
         # self.leerDatos()  # esto hay que hacerlo mas eficiente
@@ -562,7 +601,7 @@ class ventana_principal(QWidget):
                     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
-                    aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], self.ventanaConfig.datos)
+                    aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
                     axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
                               aux, linewidth=0.3)
                     plt.close(fig)
@@ -586,7 +625,7 @@ class ventana_principal(QWidget):
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
-                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], self.ventanaConfig.datos)
+                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[0].get_filtro())
                         axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
                                      aux, linewidth=0.3)
                     plt.close(fig)
@@ -610,13 +649,12 @@ class ventana_principal(QWidget):
                     widget_tab.layout().addWidget(scroll_area)
 
 
-
     def get_grafica(self,nombre_columna):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
-        return Grafica(nombre_columna,nom_col,dt_archivo)
-
+        grafica = Grafica(nombre_columna,nom_col,dt_archivo)
+        return grafica
 
     def get_archivo_en_combobox(self):
         nombre_archivo_en_combobox = self.combo.currentText()
@@ -627,8 +665,21 @@ class ventana_principal(QWidget):
                 break
         return frame_archivo
 
-    def nueva_vista(self):
 
+    def ventana_butter(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_filtro(self, graficas).exec_()
+        else:
+            ventana_filtro(self).exec_()
+
+
+
+    def nueva_vista(self):
         # AGREGAR NUEVO TAB A QTabWidget
         self.contador_vistas += 1
         vista = "vista " + str(self.contador_vistas)
@@ -642,6 +693,7 @@ class ventana_principal(QWidget):
         self.vistas.append(Vista(item_vista, widget, self.contador_vistas))
         self.treeView2.addTopLevelItem(item_vista)
 
+
     def eliminar_csv(self):
         if self.combo.currentText() == "Agregue un archivo csv":
             print("mmm")
@@ -652,8 +704,8 @@ class ventana_principal(QWidget):
             if self.combo.count() == 0:
                 self.combo.addItem("Agregue un archivo csv")
 
-    def minimizar_panel(self):
 
+    def minimizar_panel(self):
         self.anim = QPropertyAnimation(self.widget_der, b"pos")
         self.anim.setEndValue(QPoint(20, 0))
         self.anim.setDuration(350)
@@ -678,16 +730,13 @@ class ventana_principal(QWidget):
         self.anim_2.start()
         self.anim_group.start()
 
+
     def maximizar_panel(self):
-
-
         self.anim_wid_toggle_buttons = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim_wid_toggle_buttons.setEndValue(QPoint(-25, 0))
         self.anim_wid_toggle_buttons.setDuration(200)
         self.anim_wid_toggle_buttons.finished.connect(self.maximizar_panel_2)
         self.anim_wid_toggle_buttons.start()
-
-
 
 
     def maximizar_panel_2(self):
@@ -707,8 +756,8 @@ class ventana_principal(QWidget):
         self.anim_2_wid_der.start()
         self.anim_wid_izq.start()
 
-    def eliminar_vista(self, tab_index):
 
+    def eliminar_vista(self, tab_index):
         widget = self.widget_der.widget(tab_index)
         cant_hijos = self.treeView2.topLevelItemCount()
         if widget.objectName() == "Inicio":
@@ -729,7 +778,6 @@ class ventana_principal(QWidget):
             if self.vistas[i].get_widget() == widget:
                 self.vistas.pop(i)
                 break
-
 
 
 def main():
