@@ -639,10 +639,7 @@ class ventana_principal(QWidget):
 
 
     def eliminar_csv(self):
-        if self.combo.currentText() == "Agregue un archivo csv":
-            print("mmm")
-        else:
-            print(self.combo.currentText())
+        if not self.combo.currentText() == "Agregue un archivo csv":
             self.archivos_csv.pop(self.combo.currentIndex())
             self.combo.removeItem(self.combo.currentIndex())
             if self.combo.count() == 0:
