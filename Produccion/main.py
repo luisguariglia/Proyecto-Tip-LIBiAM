@@ -510,7 +510,7 @@ class ventana_principal(QWidget):
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
 
-                self.treeView2.expandItem(self.treeView2.topLevelItem(index))
+                self.treeView2.expandItem(vista.get_tree_widget_item())
 
 
     def setFiltros(self, datos, datosFiltrado):
