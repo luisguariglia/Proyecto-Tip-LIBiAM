@@ -264,7 +264,7 @@ class ventana_filtro(QtWidgets.QDialog):
                             grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
 
             if hay_almenos_un_check:
-                self.parent.actualizarGrafico()
+                self.parent.listar_graficas(True)
 
 
 

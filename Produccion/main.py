@@ -508,66 +508,9 @@ class ventana_principal(QWidget):
                 grafica : Grafica = self.get_grafica(item.text(col))
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
-                if vista is not None:
+                self.listar_graficas(False)
 
-                    if cant_vistas == 1:
-                        widget_tab.setLayout(QVBoxLayout())
-                        widget_tab.layout().setContentsMargins(10, 10, 10, 35)
-                        widget_tab.layout().setSpacing(20)
-                        scroll_area = QScrollArea(widget_tab)
-
-                        fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
-                        graficas = vista.get_graficas()
-                        archivo = graficas[0].get_archivo()
-                        aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()],graficas[0].get_filtro())
-                        axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
-                                  aux, linewidth=0.3)
-                        plt.close(fig)
-                        fig.tight_layout()
-
-                        canvas = FigureCanvas(fig)
-                        scroll_area.setWidget(canvas)
-                        nav_toolbar = NavigationToolbar(canvas, widget_tab)
-
-                        vista.set_canvas(canvas)
-                        vista.set_scroll(scroll_area)
-                        vista.set_nav_toolbar(nav_toolbar)
-
-                        canvas.draw()
-                        widget_tab.layout().addWidget(nav_toolbar)
-                        widget_tab.layout().addWidget(scroll_area)
-
-                    elif cant_vistas > 1:
-                        fig, axes = plt.subplots(nrows=cant_vistas, ncols=1, figsize=(18,4* cant_vistas))
-                        graficas = vista.get_graficas()
-
-
-                        for x in range(cant_vistas):
-                            archivo = graficas[x].get_archivo()
-                            aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],graficas[0].get_filtro())
-                            axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
-                                  aux, linewidth=0.3)
-                        plt.close(fig)
-                        fig.tight_layout()
-
-                        widget_tab.layout().removeWidget(vista.get_canvas())
-                        widget_tab.layout().removeWidget(vista.get_nav_toolbar())
-                        widget_tab.layout().removeWidget(vista.get_scroll())
-
-                        canvas = FigureCanvas(fig)
-                        scroll_area = QScrollArea(widget_tab)
-                        scroll_area.setWidget(canvas)
-                        nav_toolbar = NavigationToolbar(canvas, widget_tab)
-
-                        vista.set_canvas(canvas)
-                        vista.set_scroll(scroll_area)
-                        vista.set_nav_toolbar(nav_toolbar)
-
-                        canvas.draw()
-                        widget_tab.layout().addWidget(nav_toolbar)
-                        widget_tab.layout().addWidget(scroll_area)
-
-                    self.treeView2.expandItem(self.treeView2.topLevelItem(index))
+                self.treeView2.expandItem(self.treeView2.topLevelItem(index))
 
 
     def setFiltros(self, datos, datosFiltrado):
@@ -578,7 +521,7 @@ class ventana_principal(QWidget):
         return filter_signal
 
 
-    def actualizarGrafico(self):
+    def listar_graficas(self, despues_de_filtro):
         current_widget = self.widget_der.currentWidget()
         object_name = current_widget.objectName()
         if not object_name == "Inicio":
@@ -589,9 +532,10 @@ class ventana_principal(QWidget):
 
                 if cant_graficas == 1:
 
-                    widget_tab.layout().removeWidget(vista.get_canvas())
-                    widget_tab.layout().removeWidget(vista.get_nav_toolbar())
-                    widget_tab.layout().removeWidget(vista.get_scroll())
+                    if despues_de_filtro:
+                        widget_tab.layout().removeWidget(vista.get_canvas())
+                        widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                        widget_tab.layout().removeWidget(vista.get_scroll())
 
                     widget_tab.setLayout(QVBoxLayout())
                     widget_tab.layout().setContentsMargins(10, 10, 10, 35)
@@ -625,7 +569,7 @@ class ventana_principal(QWidget):
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
-                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[0].get_filtro())
+                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
                         axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
                                      aux, linewidth=0.3)
                     plt.close(fig)
@@ -656,6 +600,7 @@ class ventana_principal(QWidget):
         grafica = Grafica(nombre_columna,nom_col,dt_archivo)
         return grafica
 
+
     def get_archivo_en_combobox(self):
         nombre_archivo_en_combobox = self.combo.currentText()
         frame_archivo = None
@@ -676,7 +621,6 @@ class ventana_principal(QWidget):
             ventana_filtro(self, graficas).exec_()
         else:
             ventana_filtro(self).exec_()
-
 
 
     def nueva_vista(self):
