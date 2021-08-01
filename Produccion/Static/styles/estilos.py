@@ -147,12 +147,31 @@ def estilos_widget_content():
             border:0px;
         }
     """
+def nuevaVista():
+    return """
+            QPushButton{
+                color:#FAFAFA;
+                font:bold 11px;
+                border:1px solid #5cb85c;
+                background-color:#5cb85c;
+                border-radius: 2px;
+                padding:6px;
+            }
 
+            QPushButton:hover{
+               color:#5cb85c;
+               background-color:#F5F5F5;
+            }
+
+            QPushButton:pressed{
+               background-color:#E0E0E0;
+            }
+        """
 def estilos_btn_aplicar_a_todas():
     return """
         QPushButton{
             color:#FAFAFA;
-            font:bold 9px;
+            font:bold 11px;
             border:1px solid #114980;
             background-color:#114980;
             border-radius: 2px;

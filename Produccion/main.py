@@ -76,24 +76,59 @@ class ventana_principal(QWidget):
         self.layout().addWidget(menubar, 0)
 
         actionFile = menubar.addMenu("Archivo")
-        actionFile.addAction("Abrir .csv")
-        actionFile.addAction("Nuevo")
-        actionFile.addAction("Abrir")
-        actionFile.addAction("Guardar")
+
+        abrirCSV= QAction("Abrir .CSV",self)
+        abrirCSV.triggered.connect(self.agregar_csv)
+        actionFile.addAction(abrirCSV)
+
+
+
+        Nuevo = QAction("Nuevo", self)
+        # Nuevo.triggered.connect(quit)
+        Nuevo.setEnabled(False)
+        actionFile.addAction(Nuevo)
+
+        Abrir = QAction("Abrir", self)
+        # Nuevo.triggered.connect(quit)
+        Abrir.setEnabled(False)
+        actionFile.addAction(Abrir)
+
+        Guardar = QAction("Guardar", self)
+        # Nuevo.triggered.connect(quit)
+        Guardar.setEnabled(False)
+        actionFile.addAction(Guardar)
+
+
         actionFile.addSeparator()
-        actionFile.addAction("Salir")
+        Salir = QAction("Salir", self)
+        Salir.triggered.connect(quit)
+        actionFile.addAction(Salir)
 
         editarMenu=menubar.addMenu("Editar")
-        editarMenu.addAction("")
+        # editarMenu.addAction("")
 
         filtradoMenu = menubar.addMenu("Filtrado")
-        filtradoMenu.addAction("Configuracion")
 
-        menubar.addMenu("Vista")
+        Config = QAction("Configuracion", self)
+        # Nuevo.triggered.connect(quit)
+        Config.setEnabled(False)
+        filtradoMenu.addAction(Config)
+
+        vista=menubar.addMenu("Vista")
+        nuevaV = QAction("Nueva Vista", self)
+        nuevaV.triggered.connect(self.nueva_vista)
+        vista.addAction(nuevaV)
 
         ayudaMenu=menubar.addMenu("Ayuda")
-        ayudaMenu.addAction("Documentacion")
-        ayudaMenu.addAction("Sobre nosotros")
+        Doc = QAction("Documentacion", self)
+        # Nuevo.triggered.connect(quit)
+        Doc.setEnabled(False)
+        ayudaMenu.addAction(Doc)
+
+        Sobre = QAction("Sobre Nosotros", self)
+        Sobre.triggered.connect(self.ventana_inicio)
+        Sobre.setEnabled(False)
+        ayudaMenu.addAction(Sobre)
 
         #TOOLBAR
         self.widget_toolbar = QWidget()
@@ -111,6 +146,7 @@ class ventana_principal(QWidget):
         # RANCIADA
         btn_nueva_vista = QPushButton("Nueva Vista")
         btn_nueva_vista.clicked.connect(self.nueva_vista)
+        btn_nueva_vista.setStyleSheet(estilos.nuevaVista())
         wid_izquierda_toolbar.layout().addWidget(btn_nueva_vista)
 
         #WIDGET DERECHA TOOLBAR
@@ -122,10 +158,15 @@ class ventana_principal(QWidget):
         #BOTONES WIDGET DERECHA TOOLBAR
         btn_butter_filter = QPushButton("Butter Filter")
         btn_butter_filter.clicked.connect(self.ventana_butter)
+        btn_butter_filter.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         btn_valores_en_grafica = QPushButton("Valores en Gráfica")
+        btn_valores_en_grafica.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_cortar = QPushButton("Cortar")
+        btn_cortar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_rectificar = QPushButton("Rectificar")
+        btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
 
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
@@ -442,8 +483,23 @@ class ventana_principal(QWidget):
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
 
     def print_shrek(self):
-        print("Shrek")
-
+        print("                           \n"
+        "⢀⡴⠑⡄⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠸⡇⠀⠿⡀⠀⠀⠀⣀⡴⢿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠑⢄⣠⠾⠁⣀⣄⡈⠙⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        " ⠀⠀⠀⠀⢀⡀⠁⠀⠀⠈⠙⠛⠂⠈⣿⣿⣿⣿⣿⠿⡿⢿⣆⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⢀⡾⣁⣀⠀⠴⠂⠙⣗⡀⠀⢻⣿⣿⠭⢤⣴⣦⣤⣹⠀⠀⠀⢀⢴⣶⣆\n"
+        "⠀⠀⢀⣾⣿⣿⣿⣷⣮⣽⣾⣿⣥⣴⣿⣿⡿⢂⠔⢚⡿⢿⣿⣦⣴⣾⠁⠸⣼⡿\n"
+        "⠀⢀⡞⠁⠙⠻⠿⠟⠉⠀⠛⢹⣿⣿⣿⣿⣿⣌⢤⣼⣿⣾⣿⡟⠉⠀⠀⠀⠀⠀\n"
+        "⠀⣾⣷⣶⠇⠀⠀⣤⣄⣀⡀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠉⠈⠉⠀⠀⢦⡈⢻⣿⣿⣿⣶⣶⣶⣶⣤⣽⡹⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠉⠲⣽⡻⢿⣿⣿⣿⣿⣿⣿⣷⣜⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⣶⣮⣭⣽⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⠿⠿⠛⠉"
+              )
     def print_burro(self):
         print("Burro")
 
