@@ -32,6 +32,19 @@ def load_fonts_from_dir(directory):
     return families
 
 
+class tree_widget_item_grafica(QTreeWidgetItem):
+    def __init__(self,text,id):
+        super(tree_widget_item_grafica, self).__init__()
+        self.setText(0,text)
+        self.id = id
+
+    def get_id(self):
+        return self.id
+
+    def set_id(self,id):
+        self.id = id
+
+
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
         super(tree_widget_item_vista, self).__init__()
@@ -59,6 +72,9 @@ class ventana_principal(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.archivos_csv = []
+
+        #IDENTIFICADORES PARA LAS GRÁFICAS
+        self.id_grafica = 0
 
         #CARGAR FUENTES AL PROYECTO
         load_fonts_from_dir(os.fspath(config.PATH_FONTS))
@@ -411,6 +427,11 @@ class ventana_principal(QWidget):
         timer.timeout.connect(self.animation)
         timer.start(4500)
 
+    def get_id_grafica(self):
+        id = self.id_grafica
+        self.id_grafica += 1
+        return id
+
 
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
@@ -500,8 +521,7 @@ class ventana_principal(QWidget):
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-
-                grafica_vista = QTreeWidgetItem([item.text(col)])
+                grafica_vista = tree_widget_item_grafica(item.text(col),self.get_id_grafica())
                 widget_tab = self.widget_der.currentWidget()
                 vista : Vista = Vista.get_vista_by_widget(self.vistas,widget_tab)
                 vista.get_tree_widget_item().addChild(grafica_vista)
@@ -509,7 +529,6 @@ class ventana_principal(QWidget):
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
-
                 self.treeView2.expandItem(vista.get_tree_widget_item())
 
 
