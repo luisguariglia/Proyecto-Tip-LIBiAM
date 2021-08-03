@@ -19,6 +19,25 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QPushButton" name="nuevaVista">
@@ -27,6 +46,25 @@
        <width>0</width>
        <height>30</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
      </property>
      <property name="text">
       <string>Nueva Vista</string>
@@ -88,6 +126,25 @@
        <height>30</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
+     </property>
      <property name="text">
       <string>Filtrado</string>
      </property>
@@ -100,6 +157,25 @@
        <width>0</width>
        <height>30</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
      </property>
      <property name="text">
       <string>Valores en Grafica</string>
@@ -114,6 +190,25 @@
        <height>30</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
+     </property>
      <property name="text">
       <string>Cortar</string>
      </property>
@@ -126,6 +221,25 @@
        <width>0</width>
        <height>30</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #114980;
+            background-color:#114980;
+            border-radius: 2px;
+            padding:6px;
+        }
+        
+        QPushButton:hover{
+           color:#114980;
+           background-color:#F5F5F5;
+        }
+        
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }</string>
      </property>
      <property name="text">
       <string>Rectificacion</string>
