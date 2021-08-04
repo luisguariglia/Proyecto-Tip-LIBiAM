@@ -705,9 +705,6 @@ class ventana_principal(QWidget):
 
 
     def nueva_vista(self):
-        # AGREGAR NUEVO TAB A QTabWidget
-        self.contador_vistas += 1
-
         if len(self.vistas) == 0:
             widget = QWidget()
             widget.setObjectName("vista 1")
