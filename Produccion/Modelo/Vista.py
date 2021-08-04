@@ -1,8 +1,9 @@
 class Vista:
-    def __init__(self,tree_widget_item,widget,index):
+    def __init__(self,tree_widget_item,widget,index,numero_vista):
         self.__tree_widget_item = tree_widget_item
         self.__widget = widget
         self.__index = index
+        self.__numero_vista = numero_vista
         self.__graficas = []
         self.__canvas = None
         self.__nav_toolbar = None
@@ -25,6 +26,12 @@ class Vista:
 
     def set_index(self,index):
         self.__index = index
+
+    def get_numero_vista(self):
+        return self.__numero_vista
+
+    def set_numero_vista(self,numero_vista):
+        self.__numero_vista = numero_vista
 
     def get_canvas(self):
         return self.__canvas

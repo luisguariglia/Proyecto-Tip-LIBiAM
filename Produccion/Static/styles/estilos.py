@@ -171,7 +171,7 @@ def estilos_btn_aplicar_a_todas():
     return """
         QPushButton{
             color:#FAFAFA;
-            font:bold 11px;
+            font:bold 9px;
             border:1px solid #114980;
             background-color:#114980;
             border-radius: 2px;

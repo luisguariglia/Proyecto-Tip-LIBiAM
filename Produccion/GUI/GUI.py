@@ -261,6 +261,7 @@ class ventana_filtro(QtWidgets.QDialog):
                 if isinstance(hijo, QtWidgets.QTreeWidgetItem):
                     if hijo.checkState(0):
                         hay_almenos_un_check = True
+
                         grafica : Grafica= self.get_grafica(hijo.text(0))
                         if grafica is not None:
                             grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))

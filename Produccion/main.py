@@ -23,7 +23,6 @@ from Modelo.Grafica import Grafica
 from GUI.GUI import ventana_filtro, ventana_comparar
 
 
-
 def load_fonts_from_dir(directory):
     families = set()
     for fi in QDir(directory).entryInfoList(["*.ttf"]):
@@ -32,24 +31,38 @@ def load_fonts_from_dir(directory):
     return families
 
 
+class tree_widget_item_grafica(QTreeWidgetItem):
+    def __init__(self,text,id):
+        super(tree_widget_item_grafica, self).__init__()
+        self.setText(0,text)
+        self.id = id
+
+    def get_id(self):
+        return self.id
+
+    def set_id(self,id):
+        self.id = id
+
+
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
         super(tree_widget_item_vista, self).__init__()
         self.setText(0,text)
         self.name = name
 
+    def get_name_object(self):
+        return self.name
 
     def set_name_object(self,name):
         self.name = name
 
-    def get_name_object(self):
-        return self.name
 
 class ventana_principal(QWidget):
 
     def __init__(self, parent=None, *args):
         super(ventana_principal,self).__init__(parent=parent)
         self.initUI()
+
 
     def initUI(self):
         self.setWindowState(QtCore.Qt.WindowMaximized)
@@ -59,6 +72,9 @@ class ventana_principal(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.archivos_csv = []
+
+        #IDENTIFICADORES PARA LAS GRÁFICAS
+        self.id_grafica = 0
 
         #CARGAR FUENTES AL PROYECTO
         load_fonts_from_dir(os.fspath(config.PATH_FONTS))
@@ -81,8 +97,6 @@ class ventana_principal(QWidget):
         abrirCSV.triggered.connect(self.agregar_csv)
         actionFile.addAction(abrirCSV)
 
-
-
         Nuevo = QAction("Nuevo", self)
         # Nuevo.triggered.connect(quit)
         Nuevo.setEnabled(False)
@@ -97,7 +111,6 @@ class ventana_principal(QWidget):
         # Nuevo.triggered.connect(quit)
         Guardar.setEnabled(False)
         actionFile.addAction(Guardar)
-
 
         actionFile.addSeparator()
         Salir = QAction("Salir", self)
@@ -309,6 +322,7 @@ class ventana_principal(QWidget):
         self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
         self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
 
+
     def ventana_inicio(self):
 
         #SOMBRAS PARA CUADRO DE TEXTO E IMAGENES
@@ -456,6 +470,12 @@ class ventana_principal(QWidget):
         timer.start(4500)
 
 
+    def get_id_grafica(self):
+        id = self.id_grafica
+        self.id_grafica += 1
+        return id
+
+
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
 
@@ -468,6 +488,7 @@ class ventana_principal(QWidget):
         self.animation2.start()
 
         self.contador += 1
+
 
     def handle_rightClicked(self, pos):
 
@@ -484,6 +505,7 @@ class ventana_principal(QWidget):
             print_burro.triggered.connect(lambda checked, item=item: self.print_burro())
             menu.addAction(print_burro)
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
+
 
     def print_shrek(self):
         print("                           \n"
@@ -503,8 +525,11 @@ class ventana_principal(QWidget):
         "⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
         "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⠿⠿⠛⠉"
               )
+
+
     def print_burro(self):
         print("Burro")
+
 
     def agregar_csv(self):
         """
@@ -533,8 +558,10 @@ class ventana_principal(QWidget):
         else:
             self.combo.addItem(nombre_archivo)
 
+
     def rectificarEMG(self):
         print("Texto de Ejemplo")
+
 
     def actualizar_tree(self):
         self.tree_widget.clear()
@@ -559,8 +586,7 @@ class ventana_principal(QWidget):
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-
-                grafica_vista = QTreeWidgetItem([item.text(col)])
+                grafica_vista = tree_widget_item_grafica(item.text(col),self.get_id_grafica())
                 widget_tab = self.widget_der.currentWidget()
                 vista : Vista = Vista.get_vista_by_widget(self.vistas,widget_tab)
                 vista.get_tree_widget_item().addChild(grafica_vista)
@@ -568,7 +594,6 @@ class ventana_principal(QWidget):
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
-
                 self.treeView2.expandItem(vista.get_tree_widget_item())
 
 
@@ -698,19 +723,59 @@ class ventana_principal(QWidget):
 
 
     def nueva_vista(self):
-        # AGREGAR NUEVO TAB A QTabWidget
-        self.contador_vistas += 1
-        vista = "vista " + str(self.contador_vistas)
-        widget = QWidget()
-        widget.setObjectName(vista)
-        self.widget_der.insertTab(self.contador_vistas, widget, vista)
-        self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
+        if len(self.vistas) == 0:
+            widget = QWidget()
+            widget.setObjectName("vista 1")
+            self.widget_der.insertTab(1, widget, "vista 1")
+            self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
 
-        # AGREGAR QTreeWidgetItem a Panel vista
-        item_vista = tree_widget_item_vista(name=vista, text=vista)
-        self.vistas.append(Vista(item_vista, widget, self.contador_vistas))
-        self.treeView2.addTopLevelItem(item_vista)
+            item_vista = tree_widget_item_vista(name="vista 1", text="vista 1")
+            self.vistas.append(Vista(item_vista, widget, 1,1))
+            self.treeView2.addTopLevelItem(item_vista)
+        else:
+            rango = len(self.vistas)
+            bandera = False
+            for i in range(rango):
+                for j in range(rango):
+                    if self.vistas[j].get_numero_vista() == i + 1:
+                        bandera = True
+                        break
+                if bandera and rango == i + 1:
+                    vista = "vista " + str(rango + 1)
+                    widget = QWidget()
+                    widget.setObjectName(vista)
+                    self.widget_der.insertTab(self.widget_der.count(), widget, vista)
+                    self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
 
+                    item_vista = tree_widget_item_vista(name=vista, text=vista)
+                    self.vistas.append(Vista(item_vista, widget, rango + 1, rango + 1))
+                    self.treeView2.addTopLevelItem(item_vista)
+                    break
+                elif not bandera and rango >= i + 1:
+                    vista = "vista " + str(i + 1)
+                    widget = QWidget()
+                    widget.setObjectName(vista)
+                    self.widget_der.insertTab(self.widget_der.count(), widget, vista)
+                    self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
+
+                    item_vista = tree_widget_item_vista(name=vista, text=vista)
+                    self.vistas.append(Vista(item_vista, widget, i + 1, i + 1))
+                    self.treeView2.addTopLevelItem(item_vista)
+                    break
+                bandera = False
+
+        self.vistas.sort(key=self.get_numero_vista)
+
+        #RANCIADA PARA ORDER EL ARBOL DE LAS VISTAS *unico comentario*
+        for v in self.vistas:
+            self.treeView2.invisibleRootItem().removeChild(v.get_tree_widget_item())
+
+        for v in self.vistas:
+            self.treeView2.addTopLevelItem(v.get_tree_widget_item())
+
+
+    def get_numero_vista(self,vista):
+        return vista.get_numero_vista()
 
     def eliminar_csv(self):
         if not self.combo.currentText() == "Agregue un archivo csv":
