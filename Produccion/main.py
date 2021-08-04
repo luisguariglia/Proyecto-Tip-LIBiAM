@@ -20,7 +20,7 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from GUI.GUI import ventana_filtro
+from GUI.GUI import ventana_filtro, ventana_comparar
 
 
 
@@ -166,12 +166,15 @@ class ventana_principal(QWidget):
         btn_cortar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_rectificar = QPushButton("Rectificar")
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
-
+        btn_comparar = QPushButton("Comparar gráficas")
+        btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_comparar.clicked.connect(self.ventana_comparar)
 
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
+        wid_derecha_toolbar.layout().addWidget(btn_comparar)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
         self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
@@ -603,7 +606,8 @@ class ventana_principal(QWidget):
                     archivo = graficas[0].get_archivo()
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
                     axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
-                              aux, linewidth=0.3)
+                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+                    axes.legend()
                     plt.close(fig)
                     fig.tight_layout()
 
@@ -627,7 +631,10 @@ class ventana_principal(QWidget):
                         archivo = graficas[x].get_archivo()
                         aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
                         axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
-                                     aux, linewidth=0.3)
+                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                        axes[x].set_xlabel("s")
+                        axes[x].set_ylabel("v")
+                        axes[x].legend()
                     plt.close(fig)
                     fig.tight_layout()
 
@@ -677,6 +684,17 @@ class ventana_principal(QWidget):
             ventana_filtro(self, graficas).exec_()
         else:
             ventana_filtro(self).exec_()
+
+    def ventana_comparar(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_comparar(self, graficas).exec_()
+        else:
+            ventana_comparar(self).exec_()
 
 
     def nueva_vista(self):

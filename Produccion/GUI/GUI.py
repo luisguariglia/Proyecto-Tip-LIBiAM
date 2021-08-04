@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
+from matplotlib import pyplot as plt
+
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
@@ -276,5 +278,125 @@ class ventana_filtro(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+
+class ventana_comparar(QtWidgets.QDialog):
+    def __init__(self, parent=None, graficas=None):
+        super(ventana_comparar, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Comparar gráficas")
+        self.setFixedSize(420, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(15)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_derecha = QtWidgets.QWidget()
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        # BOTÓN APLICAR FILTROS
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.mostrar_comparacion_graficas)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn.layout().addWidget(btn_aplicar)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0,Qt.Checked)
+
+
+    def mostrar_comparacion_graficas(self):
+        hay_almenos_un_check = False
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+                        grafica : Grafica= self.get_grafica(hijo.text(0))
+                        if grafica is not None:
+                            archivo = grafica.get_archivo()
+                            print(grafica.get_nombre_columna_tiempo(), grafica.get_nombre_columna_grafica())
+                            axes.plot(archivo[grafica.get_nombre_columna_tiempo()],
+                                      archivo[grafica.get_nombre_columna_grafica()],
+                                      linewidth=0.3, label=f"{grafica.get_nombre_columna_grafica()}")
+                            plt.legend()
+                            fig.tight_layout()
+                            fig.show()
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+                self.close()
+
+
+    def get_grafica(self,nombre_columna):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_nombre_columna_grafica() == nombre_columna:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux
+
+
 
 
