@@ -636,7 +636,7 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
-                    recorte = self.recortarGraficos(archivo[graficas[0].get_nombre_columna_grafica()],
+                    recorte = self.recortarGraficos(aux,
                                                 archivo[graficas[0].get_nombre_columna_tiempo()],
                                           graficas[0].get_recorte())
                     aux= recorte[0]
@@ -666,9 +666,9 @@ class ventana_principal(QWidget):
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
                         aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
-                        recorte = self.recortarGraficos(archivo[graficas[x].get_nombre_columna_grafica()],
+                        recorte = self.recortarGraficos(aux,
                                                         archivo[graficas[x].get_nombre_columna_tiempo()],
-                                                        graficas[0].get_recorte())
+                                                        graficas[x].get_recorte())
                         aux = recorte[0]
                         tiempoRecortado = recorte[1]
                         axes[x].plot(tiempoRecortado,
@@ -766,9 +766,9 @@ class ventana_principal(QWidget):
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
                                           archivo[graficas[x].get_nombre_columna_tiempo()],
                                           graficas[x].get_filtro())
-                    recorte = self.recortarGraficos(archivo[graficas[x].get_nombre_columna_grafica()],
+                    recorte = self.recortarGraficos(aux,
                                                     archivo[graficas[x].get_nombre_columna_tiempo()],
-                                                    graficas[0].get_recorte())
+                                                    graficas[x].get_recorte())
                     aux = recorte[0]
                     tiempoRecortado = recorte[1]
                     ax1.plot(tiempoRecortado,

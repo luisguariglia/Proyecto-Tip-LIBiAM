@@ -51,13 +51,16 @@ def recortarGrafico(signal,tiempo, datosRecorte):
     if datosRecorte[0]==0 and datosRecorte[1]==0:
         return [signal,tiempo]
     else:
+        print(signal)
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
-        df[signal.name] = signal
+        df["signal"] = signal
 
         df = df.loc[(df[tiempo.name] > datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
+        print("Texto de Ejemplo")
+        print(df["signal"].values)
+        return [df["signal"].values,df[tiempo.name]]
 
-        return [df[signal.name],df[tiempo.name]]
 
 
 
