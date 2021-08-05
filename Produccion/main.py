@@ -20,7 +20,7 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from GUI.GUI import ventana_filtro, ventana_comparar
+from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar
 
 
 def load_fonts_from_dir(directory):
@@ -175,8 +175,11 @@ class ventana_principal(QWidget):
 
         btn_valores_en_grafica = QPushButton("Valores en Gráfica")
         btn_valores_en_grafica.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
         btn_cortar = QPushButton("Cortar")
         btn_cortar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_cortar.clicked.connect(self.ventana_cortar)
+
         btn_rectificar = QPushButton("Rectificar")
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar = QPushButton("Comparar gráficas")
@@ -604,6 +607,9 @@ class ventana_principal(QWidget):
         filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
+    def recortarGraficos(self, datos,tiempo, datosRecorte):
+        return filtersHelper.recortarGrafico(datos,tiempo,datosRecorte)
+
 
     def listar_graficas(self, despues_de_filtro):
         current_widget = self.widget_der.currentWidget()
@@ -630,7 +636,12 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
-                    axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
+                    recorte = self.recortarGraficos(archivo[graficas[0].get_nombre_columna_grafica()],
+                                                archivo[graficas[0].get_nombre_columna_tiempo()],
+                                          graficas[0].get_recorte())
+                    aux= recorte[0]
+                    tiempoRecortado = recorte[1]
+                    axes.plot(tiempoRecortado,
                               aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
                     axes.legend()
                     plt.close(fig)
@@ -655,7 +666,12 @@ class ventana_principal(QWidget):
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
                         aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
-                        axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
+                        recorte = self.recortarGraficos(archivo[graficas[x].get_nombre_columna_grafica()],
+                                                        archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                        graficas[0].get_recorte())
+                        aux = recorte[0]
+                        tiempoRecortado = recorte[1]
+                        axes[x].plot(tiempoRecortado,
                                      aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                         axes[x].set_xlabel("s")
                         axes[x].set_ylabel("v")
@@ -721,6 +737,17 @@ class ventana_principal(QWidget):
         else:
             ventana_comparar(self).exec_()
 
+    def ventana_cortar(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_cortar(self, graficas).exec_()
+        else:
+            ventana_cortar(self).exec_()
+
     def comparar_graficas(self, graficas):
         current_widget = self.widget_der.currentWidget()
         object_name = current_widget.objectName()
@@ -737,8 +764,14 @@ class ventana_principal(QWidget):
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
+                                          archivo[graficas[x].get_nombre_columna_tiempo()],
                                           graficas[x].get_filtro())
-                    ax1.plot(archivo[graficas[x].get_nombre_columna_tiempo()],
+                    recorte = self.recortarGraficos(archivo[graficas[x].get_nombre_columna_grafica()],
+                                                    archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                    graficas[0].get_recorte())
+                    aux = recorte[0]
+                    tiempoRecortado = recorte[1]
+                    ax1.plot(tiempoRecortado,
                                  aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     ax1.set_xlabel("s")

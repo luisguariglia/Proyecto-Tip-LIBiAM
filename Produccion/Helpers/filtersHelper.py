@@ -2,7 +2,7 @@ from scipy.signal import filtfilt
 import scipy
 import numpy as np
 from Modelo.Filtro import Filtro
-
+import pandas as pd
 
 # ------->archivo para tod0 lo relacionado a los filtros
 def butterFilter(signal, datosFiltrado: Filtro):
@@ -45,3 +45,32 @@ class datosButter():
         print(self.Type)
         print(self.Analog)
         print("----------")
+
+def recortarGrafico(signal,tiempo, datosRecorte):
+
+    if datosRecorte[0]==0 and datosRecorte[1]==0:
+        return [signal,tiempo]
+    else:
+        df = pd.DataFrame()
+        df[tiempo.name] = tiempo
+        df[signal.name] = signal
+
+        df = df.loc[(df[tiempo.name] > datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
+
+        return [df[signal.name],df[tiempo.name]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
