@@ -764,7 +764,6 @@ class ventana_principal(QWidget):
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
-                                          archivo[graficas[x].get_nombre_columna_tiempo()],
                                           graficas[x].get_filtro())
                     recorte = self.recortarGraficos(aux,
                                                     archivo[graficas[x].get_nombre_columna_tiempo()],
