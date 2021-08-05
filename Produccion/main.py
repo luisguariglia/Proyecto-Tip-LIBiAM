@@ -732,17 +732,19 @@ class ventana_principal(QWidget):
                 widget_tab.layout().removeWidget(vista.get_canvas())
                 widget_tab.layout().removeWidget(vista.get_nav_toolbar())
                 widget_tab.layout().removeWidget(vista.get_scroll())
-                fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
+                fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
 
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
                                           graficas[x].get_filtro())
-                    axes.plot(archivo[graficas[x].get_nombre_columna_tiempo()],
+                    ax1.plot(archivo[graficas[x].get_nombre_columna_tiempo()],
                                  aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
-                    axes.set_xlabel("s")
-                    axes.set_ylabel("v")
-                    axes.legend()
+                    #ax1.ticklabel_format(useOffset=False, style='plain')
+                    ax1.set_xlabel("s")
+                    ax1.set_ylabel("v")
+                    ax1.legend()
+
                 plt.close(fig)
                 fig.tight_layout()
 
