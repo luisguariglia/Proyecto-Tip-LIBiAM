@@ -517,10 +517,16 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_hasta.layout().addWidget(wid_label_hasta, 5)
         wid_hasta.layout().addWidget(wid_combobox_hasta, 5)
 
+        #boton de reset
+        btn_resetear = QtWidgets.QPushButton("RESETEAR")
+        btn_resetear.clicked.connect(self.resetear_valores)
+        btn_resetear.setFixedWidth(80)
+        btn_resetear.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
-
+        wid_content_der.layout().addWidget(btn_resetear)
 
         # BOTÓN APLICAR RECORTE
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -540,6 +546,10 @@ class ventana_cortar(QtWidgets.QDialog):
 
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
+
+    def resetear_valores(self):
+        self.spin_box.setValue(0)
+        self.spin_box2.setValue(0)
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
