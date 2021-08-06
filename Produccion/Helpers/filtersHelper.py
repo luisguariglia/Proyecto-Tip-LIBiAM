@@ -12,8 +12,7 @@ def butterFilter(signal, datosFiltrado: Filtro):
     y = scipy.signal.filtfilt(a, b, signal, axis=0)
 
     # ret = abs(y)
-    # return y
-    return signal
+    return y
 def butterFilterDos(signal):
     # envelopamento (envolvente) pasa-bajo
     signal = np.nan_to_num(signal, copy=False)
@@ -72,7 +71,6 @@ def offsetGrafico(signal,tiempo, datosOffset):
         if mean_df < 0:
             mean_df = abs(mean_df)
 
-        print(mean_df)
         df["signal"] = df["signal"].apply(lambda x: x + mean_df)
 
         if datosOffset[2]:
