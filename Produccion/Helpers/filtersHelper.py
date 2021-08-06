@@ -11,16 +11,15 @@ def butterFilter(signal, datosFiltrado: Filtro):
            datosFiltrado.get_array_B()], datosFiltrado.get_type(),analog=datosFiltrado.get_analog())
     y = scipy.signal.filtfilt(a, b, signal, axis=0)
 
-    ret = abs(y)
-    return ret
-
+    # ret = abs(y)
+    return y
 def butterFilterDos(signal):
     # envelopamento (envolvente) pasa-bajo
     signal = np.nan_to_num(signal, copy=False)
     b, a = scipy.signal.butter(4, [0.1, 0.11], 'bandpass', analog=True)
     y = scipy.signal.filtfilt(a, b, signal)
-    ret = abs(y)
-    return ret
+    # ret = abs(y)
+    return y
 
 
 def RMS(y):
@@ -47,26 +46,37 @@ class datosButter():
         print("----------")
 
 def recortarGrafico(signal,tiempo, datosRecorte):
-
     if datosRecorte[0]==0 and datosRecorte[1]==0:
         return [signal,tiempo]
     else:
-        print(signal)
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
         df["signal"] = signal
 
         df = df.loc[(df[tiempo.name] > datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
-        print("Texto de Ejemplo")
-        print(df["signal"].values)
         return [df["signal"].values,df[tiempo.name]]
 
 
+def offsetGrafico(signal,tiempo, datosOffset):
+    if datosOffset[0]==0 and datosOffset[1]==0:
+        return signal
+    else:
+        df = pd.DataFrame()
+        df[tiempo.name] = tiempo
+        df["signal"] = signal
 
+        df.loc[(df[tiempo.name] > datosOffset[0]) & (df[tiempo.name] < datosOffset[1])]
+        mean_df = df["signal"].mean()
 
+        if mean_df < 0:
+            mean_df = abs(mean_df)
 
+        df["signal"] = df["signal"].apply(lambda x: x + mean_df)
 
+        if datosOffset[2]:
+            df = abs(df)
 
+        return df["signal"].values
 
 
 

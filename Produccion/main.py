@@ -20,7 +20,7 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 
 
 
@@ -184,6 +184,9 @@ class ventana_principal(QWidget):
 
         btn_rectificar = QPushButton("Rectificar")
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_rectificar.clicked.connect(self.ventana_rectificar)
+
+
         btn_comparar = QPushButton("Comparar gráficas")
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
@@ -612,6 +615,8 @@ class ventana_principal(QWidget):
     def recortarGraficos(self, datos,tiempo, datosRecorte):
         return filtersHelper.recortarGrafico(datos,tiempo,datosRecorte)
 
+    def aplicarOffset(self, datos,tiempo, datosOffset):
+        return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
 
     def listar_graficas(self, despues_de_filtro):
         current_widget = self.widget_der.currentWidget()
@@ -637,14 +642,21 @@ class ventana_principal(QWidget):
                     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
+
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
+
                     recorte = self.recortarGraficos(aux,
                                                 archivo[graficas[0].get_nombre_columna_tiempo()],
                                           graficas[0].get_recorte())
                     aux= recorte[0]
                     tiempoRecortado = recorte[1]
+
+                    conOffset= self.aplicarOffset(aux,tiempoRecortado,graficas[0].get_offset())
+
+
+
                     axes.plot(tiempoRecortado,
-                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+                              conOffset, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
                     axes.legend()
                     plt.close(fig)
                     fig.tight_layout()
@@ -673,8 +685,13 @@ class ventana_principal(QWidget):
                                                         graficas[x].get_recorte())
                         aux = recorte[0]
                         tiempoRecortado = recorte[1]
+
+                        conOffset = self.aplicarOffset(aux, tiempoRecortado, graficas[x].get_offset())
+
+
+
                         axes[x].plot(tiempoRecortado,
-                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                                     conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                         axes[x].set_xlabel("s")
                         axes[x].set_ylabel("v")
                         axes[x].legend()
@@ -751,6 +768,16 @@ class ventana_principal(QWidget):
         else:
             ventana_comparar(self).exec_()
 
+    def ventana_rectificar(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_rectificar(self, graficas).exec_()
+        else:
+            ventana_rectificar(self).exec_()
     def ventana_cortar(self):
         widget_tab = self.widget_der.currentWidget()
         object_name = widget_tab.objectName()
@@ -784,8 +811,12 @@ class ventana_principal(QWidget):
                                                     graficas[x].get_recorte())
                     aux = recorte[0]
                     tiempoRecortado = recorte[1]
+
+                    conOffset = self.aplicarOffset(aux, tiempoRecortado, graficas[x].get_offset())
+
+
                     ax1.plot(tiempoRecortado,
-                                 aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                                 conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     ax1.set_xlabel("s")
                     ax1.set_ylabel("v")

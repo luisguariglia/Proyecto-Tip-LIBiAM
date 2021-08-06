@@ -10,7 +10,7 @@ def leerCSV():
     return [tiempo,emg]
 
 def rectificarGrafico(ARCHIVO_CSV):
-    aux = ARCHIVO_CSV.loc[(ARCHIVO_CSV['X [s]'] > 0.25) & (ARCHIVO_CSV['X [s]'] < 2)]
+    ARCHIVO_CSV.loc[(ARCHIVO_CSV['X [s]'] > 0.25) & (ARCHIVO_CSV['X [s]'] < 2)]
     mean_df = ARCHIVO_CSV['GLd: EMG 1 (IM) [V]'].mean()
 
     if(mean_df<0):

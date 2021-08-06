@@ -7,6 +7,7 @@ class Grafica:
         self.__archivo = archivo
         self.__filtro = Filtro()
         self.__recorte = [0,0]
+        self.__offset= [0.25,2,True]
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -37,3 +38,9 @@ class Grafica:
 
     def set_recorte(self, recorte):
         self.__recorte = recorte
+
+    def get_offset(self):
+        return self.__offset
+
+    def set_offset(self, off):
+        self.__offset = off
