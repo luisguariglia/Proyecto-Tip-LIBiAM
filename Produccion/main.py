@@ -20,8 +20,8 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from GUI.GUI import ventana_filtro
-from GUI.GUI import ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_valores_en_graficas
+
 
 
 def load_fonts_from_dir(directory):
@@ -177,16 +177,22 @@ class ventana_principal(QWidget):
         btn_valores_en_grafica = QPushButton("Valores en Gráfica")
         btn_valores_en_grafica.clicked.connect(self.ventana_valores_en_grafica)
         btn_valores_en_grafica.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
         btn_cortar = QPushButton("Cortar")
         btn_cortar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_cortar.clicked.connect(self.ventana_cortar)
+
         btn_rectificar = QPushButton("Rectificar")
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
-
+        btn_comparar = QPushButton("Comparar gráficas")
+        btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_comparar.clicked.connect(self.ventana_comparar)
 
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
+        wid_derecha_toolbar.layout().addWidget(btn_comparar)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
         self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
@@ -603,6 +609,9 @@ class ventana_principal(QWidget):
         filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
+    def recortarGraficos(self, datos,tiempo, datosRecorte):
+        return filtersHelper.recortarGrafico(datos,tiempo,datosRecorte)
+
 
     def listar_graficas(self, despues_de_filtro):
         current_widget = self.widget_der.currentWidget()
@@ -629,8 +638,14 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
-                    axes.plot(archivo[graficas[0].get_nombre_columna_tiempo()],
-                              aux, linewidth=0.3)
+                    recorte = self.recortarGraficos(aux,
+                                                archivo[graficas[0].get_nombre_columna_tiempo()],
+                                          graficas[0].get_recorte())
+                    aux= recorte[0]
+                    tiempoRecortado = recorte[1]
+                    axes.plot(tiempoRecortado,
+                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+                    axes.legend()
                     plt.close(fig)
                     fig.tight_layout()
 
@@ -653,8 +668,16 @@ class ventana_principal(QWidget):
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
                         aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
-                        axes[x].plot(archivo[graficas[x].get_nombre_columna_tiempo()],
-                                     aux, linewidth=0.3)
+                        recorte = self.recortarGraficos(aux,
+                                                        archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                        graficas[x].get_recorte())
+                        aux = recorte[0]
+                        tiempoRecortado = recorte[1]
+                        axes[x].plot(tiempoRecortado,
+                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                        axes[x].set_xlabel("s")
+                        axes[x].set_ylabel("v")
+                        axes[x].legend()
                     plt.close(fig)
                     fig.tight_layout()
 
@@ -717,6 +740,76 @@ class ventana_principal(QWidget):
         else:
             ventana_valores_en_graficas(self, v="Inicio").exec_()
 
+    def ventana_comparar(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_comparar(self, graficas).exec_()
+        else:
+            ventana_comparar(self).exec_()
+
+    def ventana_cortar(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_cortar(self, graficas).exec_()
+        else:
+            ventana_cortar(self).exec_()
+
+    def comparar_graficas(self, graficas):
+        current_widget = self.widget_der.currentWidget()
+        object_name = current_widget.objectName()
+        if not object_name == "Inicio":
+            widget_tab = self.widget_der.currentWidget()
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = len(graficas)
+            if vista is not None:
+                widget_tab.layout().removeWidget(vista.get_canvas())
+                widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                widget_tab.layout().removeWidget(vista.get_scroll())
+                fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
+
+                for x in range(cant_graficas):
+                    archivo = graficas[x].get_archivo()
+                    aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
+                                          graficas[x].get_filtro())
+                    recorte = self.recortarGraficos(aux,
+                                                    archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                    graficas[x].get_recorte())
+                    aux = recorte[0]
+                    tiempoRecortado = recorte[1]
+                    ax1.plot(tiempoRecortado,
+                                 aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                    #ax1.ticklabel_format(useOffset=False, style='plain')
+                    ax1.set_xlabel("s")
+                    ax1.set_ylabel("v")
+                    ax1.legend()
+
+                plt.close(fig)
+                fig.tight_layout()
+
+                widget_tab.layout().removeWidget(vista.get_canvas())
+                widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                widget_tab.layout().removeWidget(vista.get_scroll())
+
+                canvas = FigureCanvas(fig)
+                scroll_area = QScrollArea(widget_tab)
+                scroll_area.setWidget(canvas)
+                nav_toolbar = NavigationToolbar(canvas, widget_tab)
+
+                vista.set_canvas(canvas)
+                vista.set_scroll(scroll_area)
+                vista.set_nav_toolbar(nav_toolbar)
+
+                canvas.draw()
+                widget_tab.layout().addWidget(nav_toolbar)
+                widget_tab.layout().addWidget(scroll_area)
 
     def nueva_vista(self):
         if len(self.vistas) == 0:

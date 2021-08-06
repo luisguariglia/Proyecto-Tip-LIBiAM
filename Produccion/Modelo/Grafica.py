@@ -6,6 +6,7 @@ class Grafica:
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
         self.__filtro = Filtro()
+        self.__recorte = [0,0]
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -30,3 +31,9 @@ class Grafica:
 
     def set_filtro(self, filtro):
         self.__filtro = filtro
+
+    def get_recorte(self):
+        return self.__recorte
+
+    def set_recorte(self, recorte):
+        self.__recorte = recorte
