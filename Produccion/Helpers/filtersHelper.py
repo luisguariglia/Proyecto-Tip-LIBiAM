@@ -62,7 +62,15 @@ def recortarGrafico(signal,tiempo, datosRecorte):
         return [df["signal"].values,df[tiempo.name]]
 
 
+def rectificarGrafico(ARCHIVO_CSV):
+    aux = ARCHIVO_CSV.loc[(ARCHIVO_CSV['X [s]'] > 0.25) & (ARCHIVO_CSV['X [s]'] < 2)]
+    mean_df = ARCHIVO_CSV['GLd: EMG 1 (IM) [V]'].mean()
 
+    if(mean_df<0):
+        mean_df= abs(mean_df)
+    ARCHIVO_CSV['GLd: EMG 1 (IM) [V]'] = ARCHIVO_CSV['GLd: EMG 1 (IM) [V]'].apply(lambda x: x + mean_df)
+
+    return ARCHIVO_CSV
 
 
 

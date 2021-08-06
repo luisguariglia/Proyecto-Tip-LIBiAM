@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QCheckBox
 from matplotlib import pyplot as plt
 
 from Static.styles import estilos
@@ -560,6 +561,236 @@ class ventana_cortar(QtWidgets.QDialog):
                     hijo.setCheckState(0, Qt.Checked)
 
     def aplicar_recorte(self):
+        hay_almenos_un_check = False
+        desde = self.spin_box.value()
+        hasta = self.spin_box2.value()
+
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+
+                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        if grafica is not None:
+                            grafica.set_recorte([desde,hasta])
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+
+    def get_grafica(self, nombre_columna):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_nombre_columna_grafica() == nombre_columna:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux
+
+class ventana_rectificar(QtWidgets.QDialog):
+    def __init__(self, parent=None, graficas=None):
+        super(ventana_rectificar, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Rectificar Graficas - Vista 1")
+        self.setFixedSize(770, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(15)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_derecha = QtWidgets.QWidget()
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        wid_izquierda.setGraphicsEffect(shadow)
+        wid_derecha.setGraphicsEffect(shadow2)
+
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        label_2 = QtWidgets.QLabel("CONFIGURAR")
+        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+        wid_derecha.layout().addWidget(label_2, 1)
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QVBoxLayout())
+        wid_btn.layout().setAlignment(Qt.AlignLeft)
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        # GROUP BOX VALORES FILTRO
+        wid_content_der = QtWidgets.QWidget()
+        wid_content_der.setLayout(QtWidgets.QVBoxLayout())
+        wid_content_der.layout().setAlignment(Qt.AlignTop)
+        wid_content_der.layout().setContentsMargins(10, 0, 0, 0)
+        wid_content_der.layout().setSpacing(15)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+
+        # INICIO
+        wid_label_desde = QtWidgets.QWidget()
+        wid_label_desde.setLayout(QtWidgets.QHBoxLayout())
+
+        wid_spiner_desde = QtWidgets.QWidget()
+        wid_spiner_desde.setLayout(QtWidgets.QHBoxLayout())
+        wid_spiner_desde.layout().setContentsMargins(0, 0, 0, 0)
+        wid_spiner_desde.layout().setAlignment(Qt.AlignRight)
+
+        label_desde = QtWidgets.QLabel("Inicio")
+        label_desde.setFont(font)
+        wid_label_desde.layout().addWidget(label_desde)
+
+        self.spin_box = QtWidgets.QDoubleSpinBox()
+        self.spin_box.setSingleStep(0.25)
+        self.spin_box.setFixedWidth(60)
+        self.spin_box.setValue(0)
+        self.spin_box.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_label_desde.layout().addWidget(label_desde)
+        wid_spiner_desde.layout().addWidget(self.spin_box)
+
+        wid_desde = QtWidgets.QWidget()
+        wid_desde.setLayout(QtWidgets.QHBoxLayout())
+        wid_desde.layout().setContentsMargins(0, 0, 0, 0)
+        wid_desde.layout().addWidget(wid_label_desde, 5)
+        wid_desde.layout().addWidget(wid_spiner_desde, 5)
+
+        # HASTA
+        label_hasta = QtWidgets.QLabel("Fin")
+        label_hasta.setFont(font)
+
+        wid_label_hasta = QtWidgets.QWidget()
+        wid_label_hasta.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_hasta.layout().addWidget(label_hasta)
+
+        self.spin_box2 = QtWidgets.QDoubleSpinBox()
+        self.spin_box2.setSingleStep(0.25)
+        self.spin_box2.setFixedWidth(60)
+        self.spin_box2.setValue(0)
+        self.spin_box2.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_combobox_hasta = QtWidgets.QWidget()
+        wid_combobox_hasta.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_hasta.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_hasta.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_hasta.layout().addWidget(self.spin_box2)
+
+        wid_hasta = QtWidgets.QWidget()
+        wid_hasta.setLayout(QtWidgets.QHBoxLayout())
+        wid_hasta.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_hasta.layout().addWidget(wid_label_hasta, 5)
+        wid_hasta.layout().addWidget(wid_combobox_hasta, 5)
+
+
+        # valores absolutos
+        label_hastaS = QtWidgets.QLabel("Valores absolutos")
+        label_hastaS.setFont(font)
+
+        wid_label_hastaS = QtWidgets.QWidget()
+        wid_label_hastaS.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_hastaS.layout().addWidget(label_hastaS)
+
+        self.qCheckBox = QtWidgets.QCheckBox()
+        # self.spin_box2S.setSingleStep(0.25)
+        # self.spin_box2S.setFixedWidth(60)
+        # self.spin_box2S.setValue(0)
+        # self.spin_box2S.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_combobox_hastaS = QtWidgets.QWidget()
+        wid_combobox_hastaS.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_hastaS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_hastaS.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_hastaS.layout().addWidget(self.qCheckBox)
+
+        wid_hastaS = QtWidgets.QWidget()
+        wid_hastaS.setLayout(QtWidgets.QHBoxLayout())
+        wid_hastaS.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_hastaS.layout().addWidget(wid_label_hastaS, 5)
+        wid_hastaS.layout().addWidget(wid_combobox_hastaS, 5)
+
+        #   infooo
+        label_info = QtWidgets.QLabel("Se toman los valores de voltaje desde inicio\nhasta fin y se hace un promedio para poner\nla grafica lo mas cerca del 0 posible")
+        label_info.setFont(font)
+
+        # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
+        wid_content_der.layout().addWidget(wid_desde)
+        wid_content_der.layout().addWidget(wid_hasta)
+        wid_content_der.layout().addWidget(wid_hastaS)
+        wid_content_der.layout().addWidget(label_info)
+
+        # BOTÓN APLICAR
+        wid_btn_aplicar = QtWidgets.QWidget()
+        wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
+        wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
+
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.aplicar_cambios)
+        btn_aplicar.setFixedWidth(80)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn_aplicar.layout().addWidget(btn_aplicar)
+
+        wid_derecha.layout().addWidget(wid_content_der, 8)
+        wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def aplicar_cambios(self):
         hay_almenos_un_check = False
         desde = self.spin_box.value()
         hasta = self.spin_box2.value()
