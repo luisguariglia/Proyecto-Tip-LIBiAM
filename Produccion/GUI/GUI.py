@@ -841,7 +841,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         self.spin_box = QtWidgets.QDoubleSpinBox()
         self.spin_box.setSingleStep(0.25)
         self.spin_box.setFixedWidth(60)
-        self.spin_box.setValue(0)
+        self.spin_box.setValue(0.25)
         self.spin_box.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_label_desde.layout().addWidget(label_desde)
@@ -864,7 +864,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         self.spin_box2 = QtWidgets.QDoubleSpinBox()
         self.spin_box2.setSingleStep(0.25)
         self.spin_box2.setFixedWidth(60)
-        self.spin_box2.setValue(0)
+        self.spin_box2.setValue(2)
         self.spin_box2.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_combobox_hasta = QtWidgets.QWidget()
@@ -890,11 +890,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_label_hastaS.layout().addWidget(label_hastaS)
 
         self.qCheckBox = QtWidgets.QCheckBox()
-        # self.spin_box2S.setSingleStep(0.25)
-        # self.spin_box2S.setFixedWidth(60)
-        # self.spin_box2S.setValue(0)
-        # self.spin_box2S.setStyleSheet(estilos.estilos_double_spinbox_filtros())
-
+        self.qCheckBox.setChecked(True)
         wid_combobox_hastaS = QtWidgets.QWidget()
         wid_combobox_hastaS.setLayout(QtWidgets.QHBoxLayout())
         wid_combobox_hastaS.layout().setContentsMargins(0, 0, 0, 0)
@@ -949,6 +945,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         hay_almenos_un_check = False
         desde = self.spin_box.value()
         hasta = self.spin_box2.value()
+        abs = self.qCheckBox.isChecked()
 
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -960,7 +957,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 
                         grafica: Grafica = self.get_grafica(hijo.text(0))
                         if grafica is not None:
-                            grafica.set_recorte([desde,hasta])
+                            grafica.set_offset([desde,hasta,abs])
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
