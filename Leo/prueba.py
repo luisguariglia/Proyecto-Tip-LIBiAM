@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import sys
-from ttf_opensans import opensans
 import config
 import funciones
 from Static.Strings import strings
@@ -16,17 +15,6 @@ from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Vista import Vista
 
-class mainwindow(QWidget):
-    def __init__(self,parent=None):
-        super(mainwindow, self).__init__(parent=parent)
-
-    def enterEvent(self, event):
-        print ("Mouse Entered")
-        return super(mainwindow, self).enterEvent(event)
-
-    def leaveEvent(self, event):
-        print ("Mouse Left")
-        return super(mainwindow, self).enterEvent(event)
 
 class tree_widget_item_vista(QTreeWidgetItem):
     def __init__(self,text,name):
@@ -76,11 +64,25 @@ class ventana_principal(QWidget):
 
         # CONTENEDOR DE TREE GRÁFICAS
         self.widget_izq = QWidget()
-#        self.widget_izq.setMaximumHeight()
-        self.widget_izq.setLayout(QVBoxLayout())
-        self.widget_izq.layout().setContentsMargins(2, 0, 10, 20)
+        self.widget_izq.setLayout(QHBoxLayout())
+        self.widget_izq.setStyleSheet("background-color:white;margin:0px;padding:0px;")
+        self.widget_izq.layout().setContentsMargins(0, 0, 0, 0)
         self.widget_izq.layout().setSpacing(0)
         self.widget_content.layout().addWidget(self.widget_izq, 2)
+
+        self.widget_buttons_toggle = QWidget()
+        self.widget_buttons_toggle.setStyleSheet("border:1px solid gray;")
+        self.widget_buttons_toggle.setMaximumWidth(20)
+        self.widget_buttons_toggle.setLayout(QVBoxLayout())
+
+        self.widget_paneles = QWidget()
+        self.widget_paneles.setLayout(QVBoxLayout())
+        self.widget_paneles.layout().setContentsMargins(2, 0, 0, 20)
+        self.widget_paneles.layout().setSpacing(0)
+
+        self.widget_izq.layout().addWidget(self.widget_buttons_toggle,1)
+        self.widget_izq.layout().addWidget(self.widget_paneles,9)
+
 
         # CONTENEDOR DE LAS VISTAS
         self.widget_der = QTabWidget()
@@ -102,7 +104,7 @@ class ventana_principal(QWidget):
         widget_archivos_csv.layout().setSpacing(0)
         widget_archivos_csv.setStyleSheet("background-color:white;border:1px solid gray;border-bottom:0px;")
         widget_archivos_csv.setFixedHeight(24)
-        self.widget_izq.layout().addWidget(widget_archivos_csv)
+        self.widget_paneles.layout().addWidget(widget_archivos_csv)
 
         #CONTENEDOR DE LOS ARCHIVOS CSV
         widget_lista_archivos = QWidget()
@@ -136,7 +138,7 @@ class ventana_principal(QWidget):
         self.tree_widget.setStyleSheet(estilos.estilos_tree_widget_graficas())
         self.tree_widget.setHeaderHidden(True)
         self.tree_widget.itemDoubleClicked.connect(self.agregar_grafica_a_vista)
-        self.widget_izq.layout().addWidget(self.tree_widget, 5)
+        self.widget_paneles.layout().addWidget(self.tree_widget, 5)
 
         # ÁRBOL DE VISTAS
         self.treeView2 = QTreeWidget()
@@ -144,7 +146,7 @@ class ventana_principal(QWidget):
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
-        self.widget_izq.layout().addWidget(self.treeView2, 4)
+        self.widget_paneles.layout().addWidget(self.treeView2, 4)
 
     def handle_rightClicked(self, pos):
 
@@ -321,7 +323,7 @@ class ventana_principal(QWidget):
         print("xd")
 
     def ventana_inicio(self):
-        shadow = QGraphicsDropShadowEffect(blurRadius=15, xOffset=6, yOffset=6)
+        shadow = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
         shadow2 = QGraphicsDropShadowEffect(blurRadius=20, xOffset=6, yOffset=6)
 
         widget_inicio = QWidget()
@@ -380,7 +382,6 @@ class ventana_principal(QWidget):
         label2.setMinimumHeight(230)
         label2.setAlignment(Qt.AlignTop)
 
-
         widget_izquierda_section = QWidget()
         widget_izquierda_section.setLayout(QVBoxLayout())
         widget_izquierda_section.layout().setContentsMargins(8,10,10,20)
@@ -393,7 +394,7 @@ class ventana_principal(QWidget):
         widget_labels.layout().setSpacing(16)
         widget_labels.layout().setContentsMargins(14,10,10,30)
 
-        QFontDatabase.addApplicationFont("Roboto-Light.ttf")
+        QFontDatabase.addApplicationFont("Static/fonts/Roboto-Light.ttf")
         label2.setFont(QFont('Roboto',12))
 
         widget_labels.layout().addWidget(label1)
@@ -409,14 +410,14 @@ class ventana_principal(QWidget):
         widget_contenedor_imagenes = QWidget()
         widget_contenedor_imagenes.setLayout(QVBoxLayout())
         widget_contenedor_imagenes.layout().setAlignment(Qt.AlignCenter)
-        widget_contenedor_imagenes.layout().setContentsMargins(0,2,0,4)
-        widget_contenedor_imagenes.setStyleSheet("background-color:#FAFAFA;padding:0x;margin:0px;")
+        widget_contenedor_imagenes.layout().setContentsMargins(0,0,0,0)
+        #widget_contenedor_imagenes.setStyleSheet("background-color:#FAFAFA;padding:0x;margin:0px;")
 
         widget_contenedor_imagenes.setGraphicsEffect(shadow)
         widget_derecha_section.layout().addWidget(widget_contenedor_imagenes)
 
         widget_imagenes = QWidget(widget_contenedor_imagenes)
-        widget_imagenes.setFixedWidth(450)
+        widget_imagenes.setFixedWidth(452)
         widget_imagenes.setFixedHeight(270)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
@@ -445,33 +446,36 @@ class ventana_principal(QWidget):
 
         self.widget_der.insertTab(0, widget_inicio, "Inicio")
 
+        self.animation1 = QPropertyAnimation(self)
+        self.animation1.setPropertyName(b'pos')
+        self.animation1.setEasingCurve(QEasingCurve.InOutCubic)
+        self.animation1.setStartValue(QPoint(0, 0))
+        self.animation1.setEndValue(QPoint(450, 0))
+        self.animation1.setDuration(1000)
+
+        self.animation2 = QPropertyAnimation(self)
+        self.animation2.setPropertyName(b'pos')
+        self.animation2.setEasingCurve(QEasingCurve.InOutCubic)
+        self.animation2.setStartValue(QPoint(-450, 0))
+        self.animation2.setEndValue(QPoint(0, 0))
+        self.animation2.setDuration(1000)
+
         timer = QTimer(widget_imagenes)
         timer.timeout.connect(self.animation)
         timer.start(4500)
 
 
     def animation(self):
-        animation1 = QPropertyAnimation(self)
-        animation1.setTargetObject(self.lista_labels[self.contador])
-        animation1.setPropertyName(b'pos')
-        animation1.setEasingCurve(QEasingCurve.InOutCubic)
-        animation1.setStartValue(QPoint(0, 0))
-        animation1.setEndValue(QPoint(450, 0))
-        animation1.setDuration(1000)
+        self.animation1.setTargetObject(self.lista_labels[self.contador])
+
 
         if self.contador == len(self.lista_labels) - 1:
             self.contador = -1
 
-        animation2 = QPropertyAnimation(self)
-        animation2.setTargetObject(self.lista_labels[self.contador + 1])
-        animation2.setPropertyName(b'pos')
-        animation2.setEasingCurve(QEasingCurve.InOutCubic)
-        animation2.setStartValue(QPoint(-450, 0))
-        animation2.setEndValue(QPoint(0, 0))
-        animation2.setDuration(1000)
+        self.animation2.setTargetObject(self.lista_labels[self.contador + 1])
 
-        animation1.start()
-        animation2.start()
+        self.animation1.start()
+        self.animation2.start()
 
         self.contador += 1
 

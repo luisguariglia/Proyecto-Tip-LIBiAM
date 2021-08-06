@@ -2,6 +2,8 @@ def estilos_tree_widget_graficas():
     return """
     QTreeWidget{
         margin-bottom:6px;
+        background-color:white;
+        
     }
     
     QTreeWidget::branch:has-siblings:!adjoins-item {
@@ -50,7 +52,7 @@ def estilos_toolbar_archvos_csv():
     }
     
     QToolButton{
-        margin-left:7px;
+        margin-left:6px;
         border-radius:2px;
         border:9px;
     }

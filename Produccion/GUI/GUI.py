@@ -287,7 +287,7 @@ class ventana_comparar(QtWidgets.QDialog):
         self.setFixedSize(420, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
-        self.layout().setSpacing(15)
+        self.layout().setSpacing(10)
 
         # PARAMETROS
         self.parent = parent
@@ -432,11 +432,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_izquierda.layout().addWidget(label_1, 1)
 
         wid_content_derecha = QtWidgets.QWidget()
-        wid_content_derecha.setFixedWidth(225)
+        #wid_content_derecha.setFixedWidth(225)
+        wid_content_derecha.setStyleSheet("margin-left:10px;")
         wid_content_derecha.setLayout(QtWidgets.QVBoxLayout())
-        wid_content_derecha.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
-        #wid_content_derecha.layout().addWidget(QtWidgets.QLabel("asds"))
-        wid_derecha.layout().addWidget(wid_content_derecha, 9)
+        wid_content_derecha.layout().setAlignment(Qt.AlignTop)
+        wid_content_derecha.layout().setSpacing(10)
+
+        wid_derecha.layout().addWidget(wid_content_derecha, 8)
 
         wid_min_height = QtWidgets.QWidget()
         wid_min_height.setLayout(QtWidgets.QHBoxLayout())
@@ -448,11 +450,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         spinbox_min_height = QtWidgets.QDoubleSpinBox()
         spinbox_min_height.setValue(2.0)
-        spinbox_min_height.setFixedWidth(70)
+        spinbox_min_height.setMaximumWidth(90)
         spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_min_height.layout().addWidget(label_min_height, 5)
-        wid_min_height.layout().addWidget(spinbox_min_height, 5)
+        wid_min_height.layout().addWidget(spinbox_min_height, 2)
         wid_content_derecha.layout().addWidget(wid_min_height)
 
         wid_threshold = QtWidgets.QWidget()
@@ -465,11 +467,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         spinbox_threshold = QtWidgets.QDoubleSpinBox()
         spinbox_threshold.setValue(1.0)
-        spinbox_threshold.setFixedWidth(70)
+        spinbox_threshold.setMaximumWidth(90)
         spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
-        wid_threshold.layout().addWidget(label_threshold)
-        wid_threshold.layout().addWidget(spinbox_threshold)
+        wid_threshold.layout().addWidget(label_threshold, 5)
+        wid_threshold.layout().addWidget(spinbox_threshold, 2)
         wid_content_derecha.layout().addWidget(wid_threshold)
 
         wid_distance = QtWidgets.QWidget()
@@ -484,26 +486,45 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         spinbox_distance.setMaximum(1000)
         spinbox_distance.setMinimum(0)
         spinbox_distance.setValue(400)
-        spinbox_distance.setFixedWidth(70)
+        spinbox_distance.setMaximumWidth(90)
         spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
-        wid_distance.layout().addWidget(label_distance)
-        wid_distance.layout().addWidget(spinbox_distance)
+        wid_distance.layout().addWidget(label_distance, 5)
+        wid_distance.layout().addWidget(spinbox_distance, 2)
         wid_content_derecha.layout().addWidget(wid_distance)
 
         wid_checkbox = QtWidgets.QWidget()
         wid_checkbox.setLayout(QtWidgets.QHBoxLayout())
-        wid_checkbox.layout().setContentsMargins(0, 10, 0, 0)
-        wid_checkbox.layout().setAlignment(Qt.AlignRight)
+        wid_checkbox.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox.layout().setSpacing(0)
 
         label_checkbox = QtWidgets.QLabel("Mostrar Picos")
         label_checkbox.setFont(font)
+        label_checkbox.setStyleSheet("margin:0px;")
 
-        wid_checkbox.layout().addWidget(QtWidgets.QCheckBox())
+
+        checkbox_mostrar_picos = QtWidgets.QCheckBox()
+        checkbox_mostrar_picos.setStyleSheet("margin-left:14px;")
+
+        wid_checkbox.layout().addWidget(checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
         wid_content_derecha.layout().addWidget(wid_checkbox)
 
+        wid_btn_aplicar = QtWidgets.QWidget()
+
+        wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
+        wid_btn_aplicar.layout().setSpacing(0)
+        wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
+
+
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        # btn_aplicar.clicked.connect(self.mostrar_comparacion_graficas)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn_aplicar.layout().addWidget(btn_aplicar)
+        wid_derecha.layout().addWidget(wid_btn_aplicar ,1)
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
