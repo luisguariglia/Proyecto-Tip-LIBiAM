@@ -10,11 +10,12 @@ from Modelo.Filtro import Filtro
 
 
 class ventana_filtro(QtWidgets.QDialog):
-    def __init__(self, parent=None, graficas=None):
+    def __init__(self,parent=None,graficas=None,v=""):
+
         super(ventana_filtro, self).__init__()
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Butter Filter - Vista 1")
+        self.setWindowTitle("Butter Filter - " + v )
         self.setFixedSize(770, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -88,7 +89,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_content_der.layout().setSpacing(15)
 
         db = QtGui.QFontDatabase()
-        font = db.font("Open Sans", "Regular", 10)
+        font = db.font("Open Sans", "Regular", 8)
 
         # ORDER
         wid_label_order = QtWidgets.QWidget()
@@ -266,6 +267,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.close()
 
     def get_grafica(self, nombre_columna):
         grafica_aux = None
@@ -381,6 +383,159 @@ class ventana_comparar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+
+class ventana_valores_en_graficas(QtWidgets.QDialog):
+    def __init__(self, parent=None,graficas=None,v=""):
+        super(ventana_valores_en_graficas, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Valores en grafica - " + v)
+        self.setFixedSize(770, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10,0,10,10)
+        self.layout().setSpacing(15)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+
+        # ESTILOS
+        wid_izquierda = QtWidgets.QWidget()
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+        wid_izquierda.setGraphicsEffect(shadow)
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        wid_derecha = QtWidgets.QWidget()
+        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_derecha.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        wid_derecha.setGraphicsEffect(shadow2)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 8)
+
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+
+        label_2 = QtWidgets.QLabel("CONFIGURACIONES")
+        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_derecha.layout().addWidget(label_2,1)
+        wid_izquierda.layout().addWidget(label_1, 1)
+
+        wid_content_derecha = QtWidgets.QWidget()
+        wid_content_derecha.setFixedWidth(225)
+        wid_content_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_content_derecha.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        #wid_content_derecha.layout().addWidget(QtWidgets.QLabel("asds"))
+        wid_derecha.layout().addWidget(wid_content_derecha, 9)
+
+        wid_min_height = QtWidgets.QWidget()
+        wid_min_height.setLayout(QtWidgets.QHBoxLayout())
+        wid_min_height.layout().setContentsMargins(0, 0, 0, 0)
+        wid_min_height.layout().setSpacing(0)
+
+        label_min_height = QtWidgets.QLabel("MIN HEIGHT (^15)")
+        label_min_height.setFont(font)
+
+        spinbox_min_height = QtWidgets.QDoubleSpinBox()
+        spinbox_min_height.setValue(2.0)
+        spinbox_min_height.setFixedWidth(70)
+        spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_min_height.layout().addWidget(label_min_height, 5)
+        wid_min_height.layout().addWidget(spinbox_min_height, 5)
+        wid_content_derecha.layout().addWidget(wid_min_height)
+
+        wid_threshold = QtWidgets.QWidget()
+        wid_threshold.setLayout(QtWidgets.QHBoxLayout())
+        wid_threshold.layout().setContentsMargins(0, 0, 0, 0)
+        wid_threshold.layout().setSpacing(0)
+
+        label_threshold = QtWidgets.QLabel("THRESHOLD")
+        label_threshold.setFont(font)
+
+        spinbox_threshold = QtWidgets.QDoubleSpinBox()
+        spinbox_threshold.setValue(1.0)
+        spinbox_threshold.setFixedWidth(70)
+        spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_threshold.layout().addWidget(label_threshold)
+        wid_threshold.layout().addWidget(spinbox_threshold)
+        wid_content_derecha.layout().addWidget(wid_threshold)
+
+        wid_distance = QtWidgets.QWidget()
+        wid_distance.setLayout(QtWidgets.QHBoxLayout())
+        wid_distance.layout().setContentsMargins(0, 0, 0, 0)
+        wid_distance.layout().setSpacing(0)
+
+        label_distance = QtWidgets.QLabel("DISTANCE")
+        label_distance.setFont(font)
+
+        spinbox_distance = QtWidgets.QDoubleSpinBox()
+        spinbox_distance.setMaximum(1000)
+        spinbox_distance.setMinimum(0)
+        spinbox_distance.setValue(400)
+        spinbox_distance.setFixedWidth(70)
+        spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_distance.layout().addWidget(label_distance)
+        wid_distance.layout().addWidget(spinbox_distance)
+        wid_content_derecha.layout().addWidget(wid_distance)
+
+        wid_checkbox = QtWidgets.QWidget()
+        wid_checkbox.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox.layout().setContentsMargins(0, 10, 0, 0)
+        wid_checkbox.layout().setAlignment(Qt.AlignRight)
+        wid_checkbox.layout().setSpacing(0)
+
+        label_checkbox = QtWidgets.QLabel("Mostrar Picos")
+        label_checkbox.setFont(font)
+
+        wid_checkbox.layout().addWidget(QtWidgets.QCheckBox())
+        wid_checkbox.layout().addWidget(label_checkbox)
+        wid_content_derecha.layout().addWidget(wid_checkbox)
+
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QVBoxLayout())
+        wid_btn.layout().setAlignment(Qt.AlignLeft)
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
 
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):

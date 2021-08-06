@@ -20,7 +20,8 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
-from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar
+from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+
 
 
 def load_fonts_from_dir(directory):
@@ -174,6 +175,7 @@ class ventana_principal(QWidget):
         btn_butter_filter.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         btn_valores_en_grafica = QPushButton("Valores en Gráfica")
+        btn_valores_en_grafica.clicked.connect(self.ventana_valores_en_grafica)
         btn_valores_en_grafica.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         btn_cortar = QPushButton("Cortar")
@@ -225,7 +227,7 @@ class ventana_principal(QWidget):
         self.widget_buttons_toggle = QWidget(self.widget_content)
         self.widget_buttons_toggle.setGeometry(0,0,20,int(self.height * 0.9))
         self.widget_buttons_toggle.move(-20,0)
-        self.widget_buttons_toggle.setStyleSheet("QWidget{border:0px solid black;}")
+        self.widget_buttons_toggle.setStyleSheet("QWidget{border:0px solid black;background-color:white;}")
         self.widget_buttons_toggle.setLayout(QHBoxLayout())
         self.widget_buttons_toggle.layout().setContentsMargins(0,2,0,0)
         self.widget_buttons_toggle.layout().setSpacing(0)
@@ -725,9 +727,21 @@ class ventana_principal(QWidget):
         if not object_name == "Inicio":
             vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
             graficas = vista.get_graficas()
-            ventana_filtro(self, graficas).exec_()
+            ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
         else:
-            ventana_filtro(self).exec_()
+            ventana_filtro(self, v="Inicio").exec_()
+
+
+    def ventana_valores_en_grafica(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
+        else:
+            ventana_valores_en_graficas(self, v="Inicio").exec_()
 
     def ventana_comparar(self):
         widget_tab = self.widget_der.currentWidget()
@@ -864,6 +878,7 @@ class ventana_principal(QWidget):
 
     def get_numero_vista(self,vista):
         return vista.get_numero_vista()
+
 
     def eliminar_csv(self):
         if not self.combo.currentText() == "Agregue un archivo csv":
