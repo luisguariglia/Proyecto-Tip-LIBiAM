@@ -85,6 +85,7 @@ class MatplotlibWidget(QWidget):
         filter_signal = filtersHelper.RMS(filter_signal)
         self.datos[1]=filter_signal
 
+
     def updateGraph(self,datosPicos=None):
         self.ax.clear()
 
@@ -126,8 +127,8 @@ class MatplotlibWidget(QWidget):
             tiempo.append(pos)
 
         for i in range(0, height.size):
-            numeroAMostrar = str( "{:.2f}".format(height[i]/(pow(10,15))) )
-            self.ax.annotate( numeroAMostrar +"x10e15",xy=(tiempo[i+1], height[i]))
+            numeroAMostrar = str("{:.2f}".format(height[i]/(pow(10,15))))
+            self.ax.annotate(numeroAMostrar +"x10e15",xy=(tiempo[i+1], height[i]))
 
 
         self.ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')

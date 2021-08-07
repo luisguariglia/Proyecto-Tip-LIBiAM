@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
+from Modelo.Pico import Pico
 
 
 class ventana_filtro(QtWidgets.QDialog):
@@ -449,13 +450,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_min_height = QtWidgets.QLabel("MIN HEIGHT (^15)")
         label_min_height.setFont(font)
 
-        spinbox_min_height = QtWidgets.QDoubleSpinBox()
-        spinbox_min_height.setValue(2.0)
-        spinbox_min_height.setMaximumWidth(90)
-        spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        self.spinbox_min_height = QtWidgets.QDoubleSpinBox()
+        self.spinbox_min_height.setValue(2.0)
+        self.spinbox_min_height.setMaximumWidth(90)
+        self.spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_min_height.layout().addWidget(label_min_height, 5)
-        wid_min_height.layout().addWidget(spinbox_min_height, 2)
+        wid_min_height.layout().addWidget(self.spinbox_min_height, 2)
         wid_content_derecha.layout().addWidget(wid_min_height)
 
         wid_threshold = QtWidgets.QWidget()
@@ -466,13 +467,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_threshold = QtWidgets.QLabel("THRESHOLD")
         label_threshold.setFont(font)
 
-        spinbox_threshold = QtWidgets.QDoubleSpinBox()
-        spinbox_threshold.setValue(1.0)
-        spinbox_threshold.setMaximumWidth(90)
-        spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        self.spinbox_threshold = QtWidgets.QDoubleSpinBox()
+        self.spinbox_threshold.setValue(1.0)
+        self.spinbox_threshold.setMaximumWidth(90)
+        self.spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_threshold.layout().addWidget(label_threshold, 5)
-        wid_threshold.layout().addWidget(spinbox_threshold, 2)
+        wid_threshold.layout().addWidget(self.spinbox_threshold, 2)
         wid_content_derecha.layout().addWidget(wid_threshold)
 
         wid_distance = QtWidgets.QWidget()
@@ -483,15 +484,15 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_distance = QtWidgets.QLabel("DISTANCE")
         label_distance.setFont(font)
 
-        spinbox_distance = QtWidgets.QDoubleSpinBox()
-        spinbox_distance.setMaximum(1000)
-        spinbox_distance.setMinimum(0)
-        spinbox_distance.setValue(400)
-        spinbox_distance.setMaximumWidth(90)
-        spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        self.spinbox_distance = QtWidgets.QDoubleSpinBox()
+        self.spinbox_distance.setMaximum(1000)
+        self.spinbox_distance.setMinimum(0)
+        self.spinbox_distance.setValue(400)
+        self.spinbox_distance.setMaximumWidth(90)
+        self.spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_distance.layout().addWidget(label_distance, 5)
-        wid_distance.layout().addWidget(spinbox_distance, 2)
+        wid_distance.layout().addWidget(self.spinbox_distance, 2)
         wid_content_derecha.layout().addWidget(wid_distance)
 
         wid_checkbox = QtWidgets.QWidget()
@@ -504,13 +505,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_checkbox.setFont(font)
         label_checkbox.setStyleSheet("margin:0px;")
 
+        self.checkbox_mostrar_picos = QtWidgets.QCheckBox()
+        self.checkbox_mostrar_picos.setStyleSheet("margin-left:14px;")
 
-        checkbox_mostrar_picos = QtWidgets.QCheckBox()
-        checkbox_mostrar_picos.setStyleSheet("margin-left:14px;")
-
-        wid_checkbox.layout().addWidget(checkbox_mostrar_picos)
+        wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
-        wid_content_derecha.layout().addWidget(wid_checkbox)
+        #wid_content_derecha.layout().addWidget(wid_checkbox)
 
         wid_btn_aplicar = QtWidgets.QWidget()
 
@@ -521,7 +521,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
 
         btn_aplicar = QtWidgets.QPushButton("APLICAR")
-        # btn_aplicar.clicked.connect(self.mostrar_comparacion_graficas)
+        btn_aplicar.clicked.connect(self.aplicar_valores_picos)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
@@ -540,6 +540,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                 self.tree_graficas.addTopLevelItem(item)
 
         btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
         btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
@@ -557,7 +558,45 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+    def aplicar_valores_picos(self):
+        hay_almenos_un_check = False
 
+        min_height = self.spinbox_min_height.value()
+        treshold = self.spinbox_threshold.value()
+        distance = self.spinbox_distance.value()
+
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+
+                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        if grafica is not None:
+                            grafica.set_valores_picos(Pico(min_height, treshold, distance))
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(valores_pico=True)
+                self.close()
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def get_grafica(self, nombre_columna):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_nombre_columna_grafica() == nombre_columna:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()

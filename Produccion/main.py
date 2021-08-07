@@ -12,6 +12,8 @@ import sys
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.ticker import MultipleLocator
+from scipy.signal import find_peaks
 from ConfigVentanas.butterConfig import butterConfigClass
 from ConfigVentanas.ValoresEnGrafica import valoresEnGraficaClass
 from Helpers import filtersHelper
@@ -20,6 +22,7 @@ from Static.styles import estilos
 from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
+from Modelo.Pico import Pico
 from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 
 
@@ -514,27 +517,6 @@ class ventana_principal(QWidget):
             menu.addAction(print_burro)
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
 
-
-    def print_shrek(self):
-        print("                           \n"
-        "⢀⡴⠑⡄⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠸⡇⠀⠿⡀⠀⠀⠀⣀⡴⢿⣿⣿⣿⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠑⢄⣠⠾⠁⣀⣄⡈⠙⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀\n"
-        " ⠀⠀⠀⠀⢀⡀⠁⠀⠀⠈⠙⠛⠂⠈⣿⣿⣿⣿⣿⠿⡿⢿⣆⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⢀⡾⣁⣀⠀⠴⠂⠙⣗⡀⠀⢻⣿⣿⠭⢤⣴⣦⣤⣹⠀⠀⠀⢀⢴⣶⣆\n"
-        "⠀⠀⢀⣾⣿⣿⣿⣷⣮⣽⣾⣿⣥⣴⣿⣿⡿⢂⠔⢚⡿⢿⣿⣦⣴⣾⠁⠸⣼⡿\n"
-        "⠀⢀⡞⠁⠙⠻⠿⠟⠉⠀⠛⢹⣿⣿⣿⣿⣿⣌⢤⣼⣿⣾⣿⡟⠉⠀⠀⠀⠀⠀\n"
-        "⠀⣾⣷⣶⠇⠀⠀⣤⣄⣀⡀⠈⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠉⠈⠉⠀⠀⢦⡈⢻⣿⣿⣿⣶⣶⣶⣶⣤⣽⡹⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⠀⠉⠲⣽⡻⢿⣿⣿⣿⣿⣿⣿⣷⣜⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⣶⣮⣭⣽⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⣀⣀⣈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-        "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⠿⠿⠛⠉"
-              )
-
-
     def print_burro(self):
         print("Burro")
 
@@ -618,7 +600,23 @@ class ventana_principal(QWidget):
     def aplicarOffset(self, datos,tiempo, datosOffset):
         return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
 
-    def listar_graficas(self, despues_de_filtro):
+    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico):
+        peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, 15)), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+        height = peaks[1]['peak_heights']  # list of the heights of the peaks
+        peak_pos = _tiempo[peaks[0]]  # list of the peaks positions
+
+        tiempo = [0]
+        for pos in peak_pos:
+            tiempo.append(pos)
+
+        for i in range(0, height.size):
+            numeroAMostrar = str("{:.2f}".format(height[i] / (pow(10, 15))))
+            ax.annotate(numeroAMostrar + "x10e15", xy=(tiempo[i + 1], height[i]))
+
+        ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
+        ax.legend()
+
+    def listar_graficas(self, despues_de_filtro=False, valores_pico=False):
         current_widget = self.widget_der.currentWidget()
         object_name = current_widget.objectName()
         if not object_name == "Inicio":
@@ -629,7 +627,7 @@ class ventana_principal(QWidget):
 
                 if cant_graficas == 1:
 
-                    if despues_de_filtro:
+                    if despues_de_filtro or valores_pico:
                         widget_tab.layout().removeWidget(vista.get_canvas())
                         widget_tab.layout().removeWidget(vista.get_nav_toolbar())
                         widget_tab.layout().removeWidget(vista.get_scroll())
@@ -653,10 +651,23 @@ class ventana_principal(QWidget):
 
                     conOffset= self.aplicarOffset(aux,tiempoRecortado,graficas[0].get_offset())
 
+                    #UTILIZAR conOffset y tiempoRecortado
+                    axes.yaxis.set_ticks_position('left')
+                    axes.xaxis.set_ticks_position('bottom')
 
+
+                    if graficas[0].get_valores_picos() is not None:
+                        self.mostrar_valores_picos(axes, tiempoRecortado, conOffset, graficas[0].get_valores_picos())
+                        axes.xaxis.set_minor_locator(MultipleLocator(0.5))
+                        axes.xaxis.set_major_locator(MultipleLocator(1))
+                        axes.tick_params(which='minor', length=5, width=2, color='r')
+                        axes.set_xmargin(0)
 
                     axes.plot(tiempoRecortado,
                               conOffset, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+
+
+
                     axes.legend()
                     plt.close(fig)
                     fig.tight_layout()
@@ -688,10 +699,18 @@ class ventana_principal(QWidget):
 
                         conOffset = self.aplicarOffset(aux, tiempoRecortado, graficas[x].get_offset())
 
-
-
                         axes[x].plot(tiempoRecortado,
                                      conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+
+                        #VALORES PICOS DE LA GRÁFICA
+                        if graficas[x].get_valores_picos() is not None:
+                            self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos())
+                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
+                            axes[x].xaxis.set_major_locator(MultipleLocator(1))
+                            axes[x].tick_params(which='minor', length=5, width=2, color='r')
+                            axes[x].set_xmargin(0)
+
+
                         axes[x].set_xlabel("s")
                         axes[x].set_ylabel("v")
                         axes[x].legend()
@@ -778,6 +797,7 @@ class ventana_principal(QWidget):
             ventana_rectificar(self, graficas).exec_()
         else:
             ventana_rectificar(self).exec_()
+
     def ventana_cortar(self):
         widget_tab = self.widget_der.currentWidget()
         object_name = widget_tab.objectName()

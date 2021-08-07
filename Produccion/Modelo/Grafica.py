@@ -8,6 +8,7 @@ class Grafica:
         self.__filtro = Filtro()
         self.__recorte = [0,0]
         self.__offset= [0.25,2,True]
+        self.__valores_pico = None
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -44,3 +45,9 @@ class Grafica:
 
     def set_offset(self, off):
         self.__offset = off
+
+    def get_valores_picos(self):
+        return self.__valores_pico
+
+    def set_valores_picos(self, valores_picos):
+        self.__valores_pico = valores_picos
