@@ -1,10 +1,12 @@
 from Modelo.Filtro import Filtro
 
 class Grafica:
-    def __init__(self,nombre_columna_grafica, nombre_columna_tiempo,archivo):
+    def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
+        self.__tree_item = tree_item
+        self.__id = id
         self.__filtro = Filtro()
         self.__recorte = [0,0]
         self.__offset= [0.25,2,True]
@@ -27,6 +29,18 @@ class Grafica:
 
     def set_archivo(self,archivo):
         self.__archivo = archivo
+
+    def get_tree_item(self):
+        return self.__tree_item
+
+    def set_tree_item(self, tree_item):
+        self.__tree_item = tree_item
+
+    def get_id(self):
+        return self.__id
+
+    def set_id(self, id ):
+        self.__id = id
 
     def get_filtro(self):
         return self.__filtro

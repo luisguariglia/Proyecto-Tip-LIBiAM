@@ -508,14 +508,43 @@ class ventana_principal(QWidget):
             return
         menu = QtWidgets.QMenu()
         if item.parent() is not None:
-            print_shrek = QAction("Print Shrek")
-            print_shrek.triggered.connect(lambda checked, item=item: self.print_shrek())
-            menu.addAction(print_shrek)
+            remover_grafiaca = QAction("Remover gráfica")
+            remover_grafiaca.triggered.connect(lambda checked, item=item: self.remover_grafica(item))
+
+            remover_filtro = QAction("Remover filtros")
+            #remover_filtro.triggered.connect(lambda checked, item=item: self.remover_filtros())
+
+            aplicar_filtro = QAction("Aplicar filtro")
+            #aplicar_filtro.triggered.connect(lambda checked, item=item: self.aplicar_filtro())
+
+            aplicar_valor_picos = QAction("Mostrar picos")
+            #aplicar_valor_picos.triggered.connect(lambda checked, item=item: self.aplicar_valores_picos())
+
+            menu.addAction(remover_grafiaca)
+            menu.addAction(remover_filtro)
+            menu.addAction(aplicar_filtro)
+            menu.addAction(aplicar_valor_picos)
         elif item.parent() is None:
             print_burro = QAction("Print Burro")
             print_burro.triggered.connect(lambda checked, item=item: self.print_burro())
             menu.addAction(print_burro)
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
+
+    def remover_grafica(self, item : tree_widget_item_vista):
+        if item is None:
+            return
+
+        for vista in self.vistas:
+            graficas = vista.get_graficas()
+            cantidad_graficas = len(graficas)
+            for i in range(cantidad_graficas):
+                if graficas[i].get_tree_item() == item:
+                    item_v : QTreeWidgetItem= vista.get_tree_widget_item()
+                    item_v.removeChild(graficas[i].get_tree_item())
+                    vista.get_graficas().pop(i)
+                    self.listar_graficas(True,widget_tab=vista.get_widget())
+                    return
+
 
     def print_burro(self):
         print("Burro")
@@ -576,11 +605,11 @@ class ventana_principal(QWidget):
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-                grafica_vista = tree_widget_item_grafica(item.text(col),self.get_id_grafica())
+                grafica_vista = QTreeWidgetItem([item.text(col) + " - A1"])
                 widget_tab = self.widget_der.currentWidget()
-                vista : Vista = Vista.get_vista_by_widget(self.vistas,widget_tab)
+                vista : Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
                 vista.get_tree_widget_item().addChild(grafica_vista)
-                grafica : Grafica = self.get_grafica(item.text(col))
+                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista)
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
@@ -616,26 +645,24 @@ class ventana_principal(QWidget):
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
 
-    def listar_graficas(self, despues_de_filtro=False, valores_pico=False):
-        current_widget = self.widget_der.currentWidget()
-        object_name = current_widget.objectName()
-        if not object_name == "Inicio":
+    def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
+
+        if widget_tab is None:
             widget_tab = self.widget_der.currentWidget()
+
+        object_name = widget_tab.objectName()
+        if not object_name == "Inicio":
+
             vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
             cant_graficas = vista.get_tree_widget_item().childCount()
             if vista is not None:
 
                 if cant_graficas == 1:
 
-                    if despues_de_filtro or valores_pico:
-                        widget_tab.layout().removeWidget(vista.get_canvas())
+                    widget_tab.layout().removeWidget(vista.get_canvas())
+                    if vista.get_nav_toolbar() is not None:
                         widget_tab.layout().removeWidget(vista.get_nav_toolbar())
-                        widget_tab.layout().removeWidget(vista.get_scroll())
-
-                    widget_tab.setLayout(QVBoxLayout())
-                    widget_tab.layout().setContentsMargins(10, 10, 10, 35)
-                    widget_tab.layout().setSpacing(20)
-                    scroll_area = QScrollArea(widget_tab)
+                    widget_tab.layout().removeWidget(vista.get_scroll())
 
                     fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
                     graficas = vista.get_graficas()
@@ -655,7 +682,6 @@ class ventana_principal(QWidget):
                     axes.yaxis.set_ticks_position('left')
                     axes.xaxis.set_ticks_position('bottom')
 
-
                     if graficas[0].get_valores_picos() is not None:
                         self.mostrar_valores_picos(axes, tiempoRecortado, conOffset, graficas[0].get_valores_picos())
                         axes.xaxis.set_minor_locator(MultipleLocator(0.5))
@@ -666,13 +692,12 @@ class ventana_principal(QWidget):
                     axes.plot(tiempoRecortado,
                               conOffset, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
 
-
-
                     axes.legend()
                     plt.close(fig)
                     fig.tight_layout()
 
                     canvas = FigureCanvas(fig)
+                    scroll_area = QScrollArea(widget_tab)
                     scroll_area.setWidget(canvas)
                     nav_toolbar = NavigationToolbar(canvas, widget_tab)
 
@@ -681,6 +706,7 @@ class ventana_principal(QWidget):
                     vista.set_nav_toolbar(nav_toolbar)
 
                     canvas.draw()
+
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
 
@@ -733,15 +759,24 @@ class ventana_principal(QWidget):
                     canvas.draw()
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
+                else:
+                    widget_tab.layout().removeWidget(vista.get_canvas())
+                    widget_tab.layout().removeWidget(vista.get_nav_toolbar())
+                    widget_tab.layout().removeWidget(vista.get_scroll())
+                    canvas = FigureCanvas()
+                    scroll_area = QScrollArea()
+                    scroll_area.setWidget(canvas)
+                    vista.set_canvas(canvas)
+                    vista.set_scroll(scroll_area)
+                    canvas.draw()
+                    widget_tab.layout().addWidget(scroll_area)
 
-
-    def get_grafica(self,nombre_columna):
+    def get_grafica(self, nombre_columna, tree_item_vista):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
-        grafica = Grafica(nombre_columna,nom_col,dt_archivo)
+        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica())
         return grafica
-
 
     def get_archivo_en_combobox(self):
         nombre_archivo_en_combobox = self.combo.currentText()
@@ -751,7 +786,6 @@ class ventana_principal(QWidget):
                 frame_archivo = archivo.get_archivo()
                 break
         return frame_archivo
-
 
     def ventana_butter(self):
         widget_tab = self.widget_der.currentWidget()
@@ -763,7 +797,6 @@ class ventana_principal(QWidget):
             ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
         else:
             ventana_filtro(self, v="Inicio").exec_()
-
 
     def ventana_valores_en_grafica(self):
         widget_tab = self.widget_der.currentWidget()
@@ -863,14 +896,26 @@ class ventana_principal(QWidget):
                 widget_tab.layout().addWidget(scroll_area)
 
     def nueva_vista(self):
+        vista = None
+        widget = QWidget()
+        widget.setStyleSheet("background-color:white;")
+        widget.setLayout(QVBoxLayout())
+        widget.layout().setContentsMargins(5, 5, 5, 20)
+        widget.layout().setSpacing(20)
+        canvas = FigureCanvas()
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(canvas)
+        canvas.draw()
+        widget.layout().addWidget(scroll_area)
+
         if len(self.vistas) == 0:
-            widget = QWidget()
+
             widget.setObjectName("vista 1")
             self.widget_der.insertTab(1, widget, "vista 1")
             self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-
             item_vista = tree_widget_item_vista(name="vista 1", text="vista 1")
-            self.vistas.append(Vista(item_vista, widget, 1,1))
+            vista = Vista(item_vista, widget, 1, 1)
+            self.vistas.append(vista)
             self.treeView2.addTopLevelItem(item_vista)
         else:
             rango = len(self.vistas)
@@ -882,28 +927,27 @@ class ventana_principal(QWidget):
                         break
                 if bandera and rango == i + 1:
                     vista = "vista " + str(rango + 1)
-                    widget = QWidget()
                     widget.setObjectName(vista)
                     self.widget_der.insertTab(self.widget_der.count(), widget, vista)
                     self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-
                     item_vista = tree_widget_item_vista(name=vista, text=vista)
-                    self.vistas.append(Vista(item_vista, widget, rango + 1, rango + 1))
+                    vista = Vista(item_vista, widget, rango + 1, rango + 1)
+                    self.vistas.append(vista)
                     self.treeView2.addTopLevelItem(item_vista)
                     break
                 elif not bandera and rango >= i + 1:
                     vista = "vista " + str(i + 1)
-                    widget = QWidget()
                     widget.setObjectName(vista)
                     self.widget_der.insertTab(self.widget_der.count(), widget, vista)
                     self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-
                     item_vista = tree_widget_item_vista(name=vista, text=vista)
-                    self.vistas.append(Vista(item_vista, widget, i + 1, i + 1))
+                    vista = Vista(item_vista, widget, i + 1, i + 1)
+                    self.vistas.append(vista)
                     self.treeView2.addTopLevelItem(item_vista)
                     break
                 bandera = False
-
+        vista.set_canvas(canvas)
+        vista.set_scroll(scroll_area)
         self.vistas.sort(key=self.get_numero_vista)
 
         #RANCIADA PARA ORDER EL ARBOL DE LAS VISTAS *unico comentario*
