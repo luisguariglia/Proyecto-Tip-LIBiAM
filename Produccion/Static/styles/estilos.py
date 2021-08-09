@@ -1,3 +1,5 @@
+
+
 def estilos_tree_widget_graficas():
     return """
     QTreeWidget{
@@ -122,6 +124,7 @@ def estilos_widget_inicio():
 
 
     """
+
 
 
 def estilos_widget_header_inicio():
@@ -387,3 +390,4 @@ def estilos_combobox_filtro():
 
     """
 
+fuenteParametros = ("Open Sans", "Regular", 10)

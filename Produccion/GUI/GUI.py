@@ -102,7 +102,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_content_der.layout().setSpacing(15)
 
         db = QtGui.QFontDatabase()
-        font = db.font("Open Sans", "Regular", 8)
+        font = db.font("Open Sans", "Regular", 10)
 
         # ORDER
         wid_label_order = QtWidgets.QWidget()
@@ -433,7 +433,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_derecha.setGraphicsEffect(shadow2)
 
         db = QtGui.QFontDatabase()
-        font = db.font("Open Sans", "Regular", 8)
+        font = db.font("Open Sans", "Regular", 10)
 
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
@@ -459,7 +459,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_min_height.layout().setContentsMargins(0, 0, 0, 0)
         wid_min_height.layout().setSpacing(0)
 
-        label_min_height = QtWidgets.QLabel("MIN HEIGHT (^15)")
+        label_min_height = QtWidgets.QLabel("Altura Minima (^15)")
         label_min_height.setFont(font)
 
         self.spinbox_min_height = QtWidgets.QDoubleSpinBox()
@@ -476,7 +476,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_threshold.layout().setContentsMargins(0, 0, 0, 0)
         wid_threshold.layout().setSpacing(0)
 
-        label_threshold = QtWidgets.QLabel("THRESHOLD")
+        label_threshold = QtWidgets.QLabel("Umbral")
         label_threshold.setFont(font)
 
         self.spinbox_threshold = QtWidgets.QDoubleSpinBox()
@@ -493,7 +493,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_distance.layout().setContentsMargins(0, 0, 0, 0)
         wid_distance.layout().setSpacing(0)
 
-        label_distance = QtWidgets.QLabel("DISTANCE")
+        label_distance = QtWidgets.QLabel("Distancia")
         label_distance.setFont(font)
 
         self.spinbox_distance = QtWidgets.QDoubleSpinBox()
@@ -520,8 +520,19 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.checkbox_mostrar_picos = QtWidgets.QCheckBox()
         self.checkbox_mostrar_picos.setStyleSheet("margin-left:14px;")
 
+        #   infooo
+        label_info = QtWidgets.QLabel("<br>"
+            "<span style='font-weight: bold'>Altura Minima:</span> altura minima requerida"
+            "<br><span style='font-weight: bold'>Umbral:</span> Umbral minimo requerido, distancia vertical a sus muestras vecinas. "
+            "<br><span style='font-weight: bold'>Distancia:</span>Distancia horizontal mínima requerida (>=1) en muestras entre picos vecinos. "
+            "Los picos más pequeños se eliminan primero hasta que se cumpla la condición para todos los picos restantes."
+            "<br>"
+            )
+        label_info.setFont(font)
+        label_info.setWordWrap(True);
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
+        wid_content_derecha.layout().addWidget(label_info)
         #wid_content_derecha.layout().addWidget(wid_checkbox)
 
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -701,7 +712,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_spiner_desde.layout().setContentsMargins(0, 0, 0, 0)
         wid_spiner_desde.layout().setAlignment(Qt.AlignRight)
 
-        label_desde = QtWidgets.QLabel("DESDE")
+        label_desde = QtWidgets.QLabel("Desde")
         label_desde.setFont(font)
         wid_label_desde.layout().addWidget(label_desde)
 
@@ -721,7 +732,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_desde.layout().addWidget(wid_spiner_desde, 5)
 
         # HASTA
-        label_hasta = QtWidgets.QLabel("HASTA")
+        label_hasta = QtWidgets.QLabel("Hasta")
         label_hasta.setFont(font)
 
         wid_label_hasta = QtWidgets.QWidget()
@@ -748,15 +759,24 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_hasta.layout().addWidget(wid_combobox_hasta, 5)
 
         #boton de reset
-        btn_resetear = QtWidgets.QPushButton("RESETEAR")
+        btn_resetear = QtWidgets.QPushButton("Resetear")
         btn_resetear.clicked.connect(self.resetear_valores)
         btn_resetear.setFixedWidth(80)
         btn_resetear.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
+        #   infooo
+        label_info = QtWidgets.QLabel("<br>"
+                                      "Se cortan las graficas desde un determinado valor de tiempo en segundos hasta otro valor"
+                                      "<br>"
+                                      "Para dejar la grafica original se deben de poner los valores de desde y hasta en 0"
+                                      "<br>")
+        label_info.setFont(font)
+        label_info.setWordWrap(True);
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(btn_resetear)
+        wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR RECORTE
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -979,16 +999,21 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_hastaS.layout().addWidget(wid_combobox_hastaS, 5)
 
         #   infooo
-        label_info = QtWidgets.QLabel("Se toman los valores de voltaje desde inicio\nhasta fin y se hace un promedio para poner\nla grafica lo mas cerca del 0 posible\n"
-                                      "-----\n"
-                                      "Para dejar la grafica original se deben de poner\nlos valores de inicio y fin en 0")
+        label_info = QtWidgets.QLabel("<br>"
+                                      "Se toman los valores de voltaje desde inicio hasta fin y se hace un promedio para poner la grafica lo mas cerca del 0 posible"
+                                      "<br>"
+                                      "Para dejar la grafica original se deben de poner los valores de inicio y fin en 0"
+                                      "<br>")
         label_info.setFont(font)
+        label_info.setWordWrap(True);
+
 
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(wid_hastaS)
         wid_content_der.layout().addWidget(label_info)
+
 
         # BOTÓN APLICAR
         wid_btn_aplicar = QtWidgets.QWidget()
