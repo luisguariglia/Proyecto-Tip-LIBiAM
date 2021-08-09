@@ -77,6 +77,9 @@ class ventana_principal(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.archivos_csv = []
 
+        #IDENTIFICADOR ARCHIVOS
+        self.id_archivo = 1
+
         #IDENTIFICADORES PARA LAS GRÁFICAS
         self.id_grafica = 0
 
@@ -564,6 +567,7 @@ class ventana_principal(QWidget):
             return
 
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
+        nombre_archivo += " - A" + str(self.id_archivo)
         frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
         archivo = Archivo(nombre_archivo,frame_archivo)
         archivo.agregar_electromiografias(frame_archivo)
@@ -574,13 +578,10 @@ class ventana_principal(QWidget):
         if text_current_index == "Agregue un archivo csv":
             self.combo.addItem(nombre_archivo)
             self.combo.removeItem(self.combo.currentIndex())
+            self.combo.setItemData(self.combo.currentIndex(), self.id_archivo)
         else:
-            self.combo.addItem(nombre_archivo)
-
-
-    def rectificarEMG(self):
-        print("Texto de Ejemplo")
-
+            self.combo.addItem(nombre_archivo, self.id_archivo)
+        self.id_archivo += 1
 
     def actualizar_tree(self):
         self.tree_widget.clear()
@@ -597,7 +598,6 @@ class ventana_principal(QWidget):
 
                     self.tree_widget.addTopLevelItem(EMG)
 
-
     def agregar_grafica_a_vista(self, item, col):
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
@@ -605,19 +605,19 @@ class ventana_principal(QWidget):
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-                grafica_vista = QTreeWidgetItem([item.text(col) + " - A1"])
+                nombre_item = item.text(col) + " - A" + str(self.combo.currentData())
+                grafica_vista = QTreeWidgetItem([nombre_item])
+                grafica_vista.setToolTip(0, nombre_item )
                 widget_tab = self.widget_der.currentWidget()
                 vista : Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
                 vista.get_tree_widget_item().addChild(grafica_vista)
-                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista)
+                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item)
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
                 self.treeView2.expandItem(vista.get_tree_widget_item())
 
-
     def setFiltros(self, datos, datosFiltrado):
-        # self.leerDatos()  # esto hay que hacerlo mas eficiente
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
         filter_signal = filtersHelper.butterFilterDos(filter_signal)
         filter_signal = filtersHelper.RMS(filter_signal)
@@ -671,8 +671,8 @@ class ventana_principal(QWidget):
                     aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
 
                     recorte = self.recortarGraficos(aux,
-                                                archivo[graficas[0].get_nombre_columna_tiempo()],
-                                          graficas[0].get_recorte())
+                                            archivo[graficas[0].get_nombre_columna_tiempo()],
+                                            graficas[0].get_recorte())
                     aux= recorte[0]
                     tiempoRecortado = recorte[1]
 
@@ -771,11 +771,11 @@ class ventana_principal(QWidget):
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
 
-    def get_grafica(self, nombre_columna, tree_item_vista):
+    def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
-        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica())
+        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista)
         return grafica
 
     def get_archivo_en_combobox(self):

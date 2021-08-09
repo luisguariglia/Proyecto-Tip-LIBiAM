@@ -71,7 +71,7 @@ def estilos_combobox_archivos_csv():
             color:#757575;
             border-radius: 3px;
             background-color: white;
-            padding: 1px 18px 1px 6px;
+            padding: 1px 4px 1px 4px;
             min-width: 6em;
     }
 
@@ -95,7 +95,7 @@ def estilos_combobox_archivos_csv():
     QComboBox::drop-down {
         subcontrol-origin: padding;
         subcontrol-position: top right;
-        width: 15px;
+        width: 12px;
         background-color:white;
         border-left-width: 0px;
         border-left-style: solid;

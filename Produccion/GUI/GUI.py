@@ -10,6 +10,18 @@ from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 
 
+class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
+    def __init__(self, text, id):
+        super(tree_widget_item_grafica, self).__init__()
+        self.setText(0,text)
+        self.id = id
+
+    def get_id(self):
+        return self.id
+
+    def set_id(self,id):
+        self.id = id
+
 class ventana_filtro(QtWidgets.QDialog):
     def __init__(self,parent=None,graficas=None,v=""):
 
@@ -62,7 +74,7 @@ class ventana_filtro(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -238,7 +250,7 @@ class ventana_filtro(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
             hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+            if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
@@ -258,11 +270,11 @@ class ventana_filtro(QtWidgets.QDialog):
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
                         hay_almenos_un_check = True
 
-                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
 
@@ -270,10 +282,10 @@ class ventana_filtro(QtWidgets.QDialog):
                 self.parent.listar_graficas(True)
                 self.close()
 
-    def get_grafica(self, nombre_columna):
+    def get_grafica(self, id_grafica):
         grafica_aux = None
         for grafica in self.graficas:
-            if grafica.get_nombre_columna_grafica() == nombre_columna:
+            if grafica.get_id() == id_grafica:
                 grafica_aux = grafica
                 break
 
@@ -323,7 +335,7 @@ class ventana_comparar(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item = tree_widget_item_grafica(nom_col, grafica.get_id)
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -356,7 +368,7 @@ class ventana_comparar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
             hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+            if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
@@ -366,9 +378,9 @@ class ventana_comparar(QtWidgets.QDialog):
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
-                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             graficas.append(grafica)
 
@@ -376,10 +388,10 @@ class ventana_comparar(QtWidgets.QDialog):
                 self.parent.comparar_graficas(graficas)
                 self.close()
 
-    def get_grafica(self, nombre_columna):
+    def get_grafica(self, id_grafica):
         grafica_aux = None
         for grafica in self.graficas:
-            if grafica.get_nombre_columna_grafica() == nombre_columna:
+            if grafica.get_id() == id_grafica:
                 grafica_aux = grafica
                 break
 
@@ -535,7 +547,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item = tree_widget_item_grafica(nom_col)
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -569,11 +581,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
                         hay_almenos_un_check = True
 
-                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_valores_picos(Pico(min_height, treshold, distance))
 
@@ -585,18 +597,20 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
             hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+            if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
-    def get_grafica(self, nombre_columna):
+    def get_grafica(self, id_grafica):
         grafica_aux = None
         for grafica in self.graficas:
-            if grafica.get_nombre_columna_grafica() == nombre_columna:
+            if grafica.get_id() == id_grafica:
                 grafica_aux = grafica
                 break
 
         return grafica_aux
+
+
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()
@@ -648,7 +662,7 @@ class ventana_cortar(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -771,7 +785,7 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
             hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+            if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
@@ -784,21 +798,21 @@ class ventana_cortar(QtWidgets.QDialog):
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
                         hay_almenos_un_check = True
 
-                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_recorte([desde,hasta])
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
 
-    def get_grafica(self, nombre_columna):
+    def get_grafica(self, id_grafica):
         grafica_aux = None
         for grafica in self.graficas:
-            if grafica.get_nombre_columna_grafica() == nombre_columna:
+            if grafica.get_id() == id_grafica:
                 grafica_aux = grafica
                 break
 
@@ -855,7 +869,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = QtWidgets.QTreeWidgetItem([nom_col])
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -997,7 +1011,7 @@ class ventana_rectificar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
             hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+            if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
@@ -1011,21 +1025,21 @@ class ventana_rectificar(QtWidgets.QDialog):
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
                         hay_almenos_un_check = True
 
-                        grafica: Grafica = self.get_grafica(hijo.text(0))
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_offset([desde,hasta,abs])
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
 
-    def get_grafica(self, nombre_columna):
+    def get_grafica(self, id_grafica):
         grafica_aux = None
         for grafica in self.graficas:
-            if grafica.get_nombre_columna_grafica() == nombre_columna:
+            if grafica.get_id() == id_grafica:
                 grafica_aux = grafica
                 break
 

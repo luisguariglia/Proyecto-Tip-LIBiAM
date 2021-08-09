@@ -49,7 +49,7 @@ def listar_emg(archivo_csv):
 def get_nombre_csv(path):
     indice = path.rfind("/") + 1
     nombre: str = ""
-    for i in range(len(path) - indice):
+    for i in range((len(path) - indice) - 4):
         nombre += path[indice]
         indice += 1
     return nombre
