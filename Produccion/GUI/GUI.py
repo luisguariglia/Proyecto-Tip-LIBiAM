@@ -547,7 +547,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = tree_widget_item_grafica(nom_col)
+                item = tree_widget_item_grafica(nom_col,grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -979,7 +979,9 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_hastaS.layout().addWidget(wid_combobox_hastaS, 5)
 
         #   infooo
-        label_info = QtWidgets.QLabel("Se toman los valores de voltaje desde inicio\nhasta fin y se hace un promedio para poner\nla grafica lo mas cerca del 0 posible")
+        label_info = QtWidgets.QLabel("Se toman los valores de voltaje desde inicio\nhasta fin y se hace un promedio para poner\nla grafica lo mas cerca del 0 posible\n"
+                                      "-----\n"
+                                      "Para dejar la grafica original se deben de poner\nlos valores de inicio y fin en 0")
         label_info.setFont(font)
 
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA

@@ -59,14 +59,20 @@ def recortarGrafico(signal,tiempo, datosRecorte):
 
 def offsetGrafico(signal,tiempo, datosOffset):
     if datosOffset[0]==0 and datosOffset[1]==0:
-        return signal
+        df = pd.DataFrame()
+        df[tiempo.name] = tiempo
+        df["signal"] = signal
+        if datosOffset[2]:
+            df = abs(df)
+        return df["signal"].values
     else:
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
         df["signal"] = signal
 
-        df.loc[(df[tiempo.name] > datosOffset[0]) & (df[tiempo.name] < datosOffset[1])]
-        mean_df = df["signal"].mean()
+
+        cortada = df.loc[(df[tiempo.name] > datosOffset[0]) & (df[tiempo.name] < datosOffset[1])]
+        mean_df = cortada["signal"].mean()
 
         if mean_df < 0:
             mean_df = abs(mean_df)
