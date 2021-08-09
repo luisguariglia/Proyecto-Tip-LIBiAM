@@ -684,15 +684,20 @@ class ventana_principal(QWidget):
 
                     if graficas[0].get_valores_picos() is not None:
                         self.mostrar_valores_picos(axes, tiempoRecortado, conOffset, graficas[0].get_valores_picos())
-                        axes.xaxis.set_minor_locator(MultipleLocator(0.5))
-                        axes.xaxis.set_major_locator(MultipleLocator(1))
-                        axes.tick_params(which='minor', length=5, width=2, color='r')
-                        axes.set_xmargin(0)
 
                     axes.plot(tiempoRecortado,
                               conOffset, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
 
                     axes.legend()
+
+                    # ------------------------------------- Aspecto
+                    axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                    axes.xaxis.set_minor_locator(MultipleLocator(0.5))
+                    axes.xaxis.set_major_locator(MultipleLocator(1))
+                    axes.tick_params(which='minor', length=5, width=1.5, color='r')
+                    axes.set_xmargin(0)
+                    axes.grid()
+                    # -------------------------------------
                     plt.close(fig)
                     fig.tight_layout()
 
@@ -727,7 +732,14 @@ class ventana_principal(QWidget):
 
                         axes[x].plot(tiempoRecortado,
                                      conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
-
+                        # ------------------------------------- Aspecto
+                        axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                        axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
+                        axes[x].xaxis.set_major_locator(MultipleLocator(1))
+                        axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
+                        axes[x].set_xmargin(0)
+                        axes[x].grid()
+                        # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos())
@@ -737,8 +749,8 @@ class ventana_principal(QWidget):
                             axes[x].set_xmargin(0)
 
 
-                        axes[x].set_xlabel("s")
-                        axes[x].set_ylabel("v")
+                        # axes[x].set_xlabel("s")
+                        # axes[x].set_ylabel("v")
                         axes[x].legend()
                     plt.close(fig)
                     fig.tight_layout()
@@ -871,8 +883,16 @@ class ventana_principal(QWidget):
                     ax1.plot(tiempoRecortado,
                                  conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                     #ax1.ticklabel_format(useOffset=False, style='plain')
-                    ax1.set_xlabel("s")
-                    ax1.set_ylabel("v")
+                    # ------------------------------------- Aspecto
+                    ax1.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                    ax1.xaxis.set_minor_locator(MultipleLocator(0.5))
+                    ax1.xaxis.set_major_locator(MultipleLocator(1))
+                    ax1.tick_params(which='minor', length=5, width=1.5, color='r')
+                    ax1.set_xmargin(0)
+                    ax1.grid()
+                    # -------------------------------------
+                    # ax1.set_xlabel("s")
+                    # ax1.set_ylabel("v")
                     ax1.legend()
 
                 plt.close(fig)

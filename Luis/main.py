@@ -101,18 +101,17 @@ class MatplotlibWidget(QWidget):
             print("")
             self.mostrarPicos(datosPicos)
 
-        #-------------------------------------
-
+        #------------------------------------- Aspecto
         self.ax.xaxis.set_minor_locator(MultipleLocator(0.5))
         self.ax.xaxis.set_major_locator(MultipleLocator(1))
-
-        self.ax.tick_params(which='minor', length=5, width=2, color='r')
-
-        # -------------------------------------
+        self.ax.tick_params(which='minor', length=5, width=1.5, color='r')
         self.ax.set_xmargin(0)
+        self.ax.grid()
+        # -------------------------------------
+
         #self.ax.autoscale_view()
         # self.mostrarIntegral()
-        self.ax.grid()
+
         self.canvas.draw()
         self.figure.tight_layout()
         self.canvas.flush_events()
