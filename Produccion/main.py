@@ -668,26 +668,29 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
 
-                    aux = self.setFiltros(archivo[graficas[0].get_nombre_columna_grafica()], graficas[0].get_filtro())
+                    #/########################        Aplicando valores de todas las ventanas        ########################/#
 
-                    recorte = self.recortarGraficos(aux,
+                    #aplico offset
+                    conOffset= self.aplicarOffset(archivo[graficas[0].get_nombre_columna_grafica()],archivo[graficas[0].get_nombre_columna_tiempo()],graficas[0].get_offset())
+
+                    #aplico butter
+                    filtrado = self.setFiltros(conOffset, graficas[0].get_filtro())
+
+                    recorte = self.recortarGraficos(filtrado,
                                             archivo[graficas[0].get_nombre_columna_tiempo()],
                                             graficas[0].get_recorte())
+                    #aplico recorte
                     aux= recorte[0]
                     tiempoRecortado = recorte[1]
 
-                    conOffset= self.aplicarOffset(aux,tiempoRecortado,graficas[0].get_offset())
-
-                    #UTILIZAR conOffset y tiempoRecortado
-                    axes.yaxis.set_ticks_position('left')
-                    axes.xaxis.set_ticks_position('bottom')
-
+                    # calculo y muestro valores picos
                     if graficas[0].get_valores_picos() is not None:
-                        self.mostrar_valores_picos(axes, tiempoRecortado, conOffset, graficas[0].get_valores_picos())
+                        self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos())
+
+                    # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                     axes.plot(tiempoRecortado,
-                              conOffset, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
-
+                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
                     axes.legend()
 
                     # ------------------------------------- Aspecto
@@ -721,17 +724,33 @@ class ventana_principal(QWidget):
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
-                        aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()], graficas[x].get_filtro())
-                        recorte = self.recortarGraficos(aux,
+
+                        # /########################        Aplicando valores de todas las ventanas        ########################/#
+
+                        # aplico offset
+                        conOffset = self.aplicarOffset(archivo[graficas[x].get_nombre_columna_grafica()],
+                                                       archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                       graficas[x].get_offset())
+
+                        # aplico butter
+                        filtrado = self.setFiltros(conOffset, graficas[x].get_filtro())
+
+                        recorte = self.recortarGraficos(filtrado,
                                                         archivo[graficas[x].get_nombre_columna_tiempo()],
                                                         graficas[x].get_recorte())
+                        # aplico recorte
                         aux = recorte[0]
                         tiempoRecortado = recorte[1]
 
-                        conOffset = self.aplicarOffset(aux, tiempoRecortado, graficas[x].get_offset())
+                        # calculo y muestro valores picos
+                        if graficas[x].get_valores_picos() is not None:
+                            self.mostrar_valores_picos(axes[x], tiempoRecortado.values, aux,
+                                                       graficas[x].get_valores_picos())
+
+                        # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
-                                     conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                         # ------------------------------------- Aspecto
                         axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
                         axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
@@ -743,14 +762,7 @@ class ventana_principal(QWidget):
                         #VALORES PICOS DE LA GRÁFICA
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos())
-                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
-                            axes[x].xaxis.set_major_locator(MultipleLocator(1))
-                            axes[x].tick_params(which='minor', length=5, width=2, color='r')
-                            axes[x].set_xmargin(0)
 
-
-                        # axes[x].set_xlabel("s")
-                        # axes[x].set_ylabel("v")
                         axes[x].legend()
                     plt.close(fig)
                     fig.tight_layout()
