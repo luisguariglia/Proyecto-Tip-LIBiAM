@@ -144,15 +144,19 @@ class ventana_filtro(QtWidgets.QDialog):
         label_array_like = QtWidgets.QLabel("ARRAY LIKE")
         label_array_like.setFont(font)
 
-        self.spiner_array_a = QtWidgets.QDoubleSpinBox()
+        self.spiner_array_a = QtWidgets.QSpinBox()
         self.spiner_array_a.setFixedWidth(60)
-        self.spiner_array_a.setValue(0.02)
-        self.spiner_array_a.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        self.spiner_array_a.setMaximum(1000)
+        self.spiner_array_a.setMinimum(0)
+        self.spiner_array_a.setValue(20)
+        self.spiner_array_a.setStyleSheet(estilos.estilos_spinbox_filtros())
 
-        self.spiner_array_b = QtWidgets.QDoubleSpinBox()
+        self.spiner_array_b = QtWidgets.QSpinBox()
         self.spiner_array_b.setFixedWidth(60)
-        self.spiner_array_b.setValue(0.4)
-        self.spiner_array_b.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        self.spiner_array_b.setMaximum(1000)
+        self.spiner_array_b.setMinimum(0)
+        self.spiner_array_b.setValue(400)
+        self.spiner_array_b.setStyleSheet(estilos.estilos_spinbox_filtros())
 
         wid_spiner_array_like.layout().addWidget(self.spiner_array_a)
         wid_spiner_array_like.layout().addWidget(self.spiner_array_b)
@@ -257,8 +261,8 @@ class ventana_filtro(QtWidgets.QDialog):
     def aplicar_valores_filtro(self):
         hay_almenos_un_check = False
         order = self.spin_box.value()
-        array_a = self.spiner_array_a.value()
-        array_b = self.spiner_array_b.value()
+        array_a = int(self.spiner_array_a.value()) * 0.001
+        array_b = int(self.spiner_array_b.value()) * 0.001
         btype = self.combobox_btype.currentText()
         analog = None
         if self.combobox_analog.currentText() == "True":
