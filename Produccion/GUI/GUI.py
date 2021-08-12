@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
 from matplotlib import pyplot as plt
 
 from Static.styles import estilos
@@ -40,19 +40,22 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_izquierda = QtWidgets.QWidget()
         wid_derecha = QtWidgets.QWidget()
+        wid_filtro2 = QtWidgets.QWidget()
 
         # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         wid_izquierda.setGraphicsEffect(shadow)
         wid_derecha.setGraphicsEffect(shadow2)
-
+        wid_filtro2.setGraphicsEffect(shadow2)
         # ESTILOS
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
         wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_filtro2.setStyleSheet("background-color:white; border-radius:4px;")
 
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
         wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_filtro2.setLayout(QtWidgets.QVBoxLayout())
 
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
@@ -60,12 +63,15 @@ class ventana_filtro(QtWidgets.QDialog):
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-        label_2 = QtWidgets.QLabel("CONFIGURAR FILTRO")
+        label_2 = QtWidgets.QLabel("CONFIGURAR FILTRO 1")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
+        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
         wid_izquierda.layout().addWidget(label_1, 1)
         wid_derecha.layout().addWidget(label_2, 1)
-
+        wid_filtro2.layout().addWidget(label_3, 1)
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
         self.tree_graficas.setFixedWidth(300)
@@ -94,6 +100,8 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
+        # YO
+
         # GROUP BOX VALORES FILTRO
         wid_content_der = QtWidgets.QWidget()
         wid_content_der.setLayout(QtWidgets.QVBoxLayout())
@@ -103,6 +111,8 @@ class ventana_filtro(QtWidgets.QDialog):
 
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
+
+
 
         # ORDER
         wid_label_order = QtWidgets.QWidget()
