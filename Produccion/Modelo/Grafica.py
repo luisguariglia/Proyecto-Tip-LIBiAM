@@ -12,6 +12,7 @@ class Grafica:
         self.__recorte = [0,0]
         self.__offset= [0.25,2,True]
         self.__valores_pico = None
+        self.__integral = [0, 0,False]
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -72,3 +73,9 @@ class Grafica:
 
     def set_valores_picos(self, valores_picos):
         self.__valores_pico = valores_picos
+
+    def get_integral(self):
+        return self.__integral
+
+    def set_integral(self, num):
+        self.__integral = num

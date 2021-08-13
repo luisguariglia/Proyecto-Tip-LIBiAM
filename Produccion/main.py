@@ -24,7 +24,7 @@ from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
 from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
-
+from matplotlib.patches import Polygon
 
 
 def load_fonts_from_dir(directory):
@@ -644,6 +644,27 @@ class ventana_principal(QWidget):
 
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
+    def mostrar_integral(self, ax, _tiempo, datos,valores_integral):
+
+        a, b = valores_integral[0], valores_integral[1]  # integral limits
+        aux = _tiempo
+
+        iy = []
+        ix = []
+        for i in range(0, aux.size):
+            if (aux[i] > a and aux[i] < b):
+                iy.append(datos[i])
+                ix.append(aux[i])
+
+        verts = [(a, 0), *zip(ix, iy), (b, 0)]
+        poly = Polygon(verts, facecolor='limegreen', edgecolor='darkgreen')
+        ax.add_patch(poly)
+
+        ax.set_xticks((a, b))
+        ax.set_xticklabels(('$inicio$', '$fin$'))
+        ax.set_yticks([])
+
+        ax.annotate('Integral F(x)=algo', xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
@@ -686,6 +707,11 @@ class ventana_principal(QWidget):
                     # calculo y muestro valores picos
                     if graficas[0].get_valores_picos() is not None:
                         self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos())
+
+                    # calculo y muestro integral
+                    if graficas[0].get_integral()[2]:
+                        self.mostrar_integral(axes, tiempoRecortado.values, aux,
+                                                       graficas[0].get_integral())
 
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 

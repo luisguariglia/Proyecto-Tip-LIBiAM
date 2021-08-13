@@ -418,7 +418,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(770, 470)
+        self.setFixedSize(770, 470*1.5)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10,0,10,10)
         self.layout().setSpacing(15)
@@ -453,8 +453,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
 
-        label_2 = QtWidgets.QLabel("CONFIGURACIONES")
+        label_2 = QtWidgets.QLabel("Valores Picos")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+
 
         wid_derecha.layout().addWidget(label_2,1)
         wid_izquierda.layout().addWidget(label_1, 1)
@@ -546,9 +548,68 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_info.setWordWrap(True);
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
+        wid_content_derecha.layout().addWidget(wid_checkbox)
         wid_content_derecha.layout().addWidget(label_info)
-        #wid_content_derecha.layout().addWidget(wid_checkbox)
 
+        # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+
+        label_3 = QtWidgets.QLabel("Integral")
+        label_3.setStyleSheet("font:14px bold; margin:5px;")
+        wid_content_derecha.layout().addWidget(label_3)
+
+        wid_inicio = QtWidgets.QWidget()
+        wid_inicio.setLayout(QtWidgets.QHBoxLayout())
+        wid_inicio.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicio.layout().setSpacing(0)
+
+        label_inicio = QtWidgets.QLabel("Valor inicial")
+        label_inicio.setFont(font)
+
+        self.spinbox_inicio = QtWidgets.QDoubleSpinBox()
+        self.spinbox_inicio.setValue(0.0)
+        self.spinbox_inicio.setMaximumWidth(90)
+        self.spinbox_inicio.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_inicio.layout().addWidget(label_inicio, 5)
+        wid_inicio.layout().addWidget(self.spinbox_inicio, 2)
+        wid_content_derecha.layout().addWidget(wid_inicio)
+
+        # segundo parametro
+        wid_fin = QtWidgets.QWidget()
+        wid_fin.setLayout(QtWidgets.QHBoxLayout())
+        wid_fin.layout().setContentsMargins(0, 0, 0, 0)
+        wid_fin.layout().setSpacing(0)
+
+        label_fin = QtWidgets.QLabel("Valor final")
+        label_fin.setFont(font)
+
+        self.spinbox_fin = QtWidgets.QDoubleSpinBox()
+        self.spinbox_fin.setValue(0.0)
+        self.spinbox_fin.setMaximumWidth(90)
+        self.spinbox_fin.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_fin.layout().addWidget(label_fin, 5)
+        wid_fin.layout().addWidget(self.spinbox_fin, 2)
+        wid_content_derecha.layout().addWidget(wid_fin)
+
+        # checkbox
+        wid_checkbox_integral = QtWidgets.QWidget()
+        wid_checkbox_integral.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_integral.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_integral.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_integral.layout().setSpacing(0)
+
+        label_checkbox_integral = QtWidgets.QLabel("Mostrar Integral")
+        label_checkbox_integral.setFont(font)
+        label_checkbox_integral.setStyleSheet("margin:0px;")
+
+        self.checkbox_mostrar_integral = QtWidgets.QCheckBox()
+        self.checkbox_mostrar_integral.setStyleSheet("margin-left:14px;")
+
+        wid_checkbox_integral.layout().addWidget(self.checkbox_mostrar_integral)
+        wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
+        wid_content_derecha.layout().addWidget(wid_checkbox_integral)
+        # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
 
         wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
@@ -558,7 +619,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
 
         btn_aplicar = QtWidgets.QPushButton("APLICAR")
-        btn_aplicar.clicked.connect(self.aplicar_valores_picos)
+        btn_aplicar.clicked.connect(self.aplicar_valores)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
@@ -595,12 +656,18 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
-    def aplicar_valores_picos(self):
+    def aplicar_valores(self):
         hay_almenos_un_check = False
 
         min_height = self.spinbox_min_height.value()
         treshold = self.spinbox_threshold.value()
         distance = self.spinbox_distance.value()
+        mostrarPicos = self.checkbox_mostrar_picos.isChecked()
+
+
+        inicio = self.spinbox_inicio.value()
+        fin = self.spinbox_fin.value()
+        mostrarIntegral = self.checkbox_mostrar_integral.isChecked()
 
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -612,7 +679,9 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
-                            grafica.set_valores_picos(Pico(min_height, treshold, distance))
+                            if mostrarPicos:
+                                grafica.set_valores_picos(Pico(min_height, treshold, distance))
+                            grafica.set_integral(([inicio,fin,mostrarIntegral]))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)

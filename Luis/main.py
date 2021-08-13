@@ -110,7 +110,7 @@ class MatplotlibWidget(QWidget):
         # -------------------------------------
 
         #self.ax.autoscale_view()
-        # self.mostrarIntegral()
+        self.mostrarIntegral()
 
         self.canvas.draw()
         self.figure.tight_layout()
@@ -137,6 +137,7 @@ class MatplotlibWidget(QWidget):
         a, b = 5.5, 5.7  # integral limits
         aux=self.datos[0].values
 
+        # [0] tiempo [1]emg
         iy = []
         ix = []
         for i in range(0, aux.size):
@@ -149,9 +150,11 @@ class MatplotlibWidget(QWidget):
         poly = Polygon(verts, facecolor='0.9', edgecolor='0.5')
         self.ax.add_patch(poly)
 
-        # self.ax.set_xticks((a, b))
-        # self.ax.set_xticklabels(('$a$', '$b$'))
-        # self.ax.set_yticks([])
+        self.ax.set_xticks((a, b))
+        self.ax.set_xticklabels(('$a$', '$b$'))
+        self.ax.set_yticks([])
+
+        self.ax.annotate('local max', xy=((a+b)/2, 0), xytext=((a+b)/2, 0))
 
 
 app = QtWidgets.QApplication(sys.argv)
