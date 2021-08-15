@@ -661,8 +661,8 @@ class ventana_principal(QWidget):
         ax.add_patch(poly)
 
         ax.set_xticks((a, b))
-        ax.set_xticklabels(('$inicio$', '$fin$'))
-        ax.set_yticks([])
+        ax.set_xticklabels((a, b))
+        # ax.set_yticks([])
 
         ax.annotate('Integral F(x)=algo', xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
@@ -720,12 +720,22 @@ class ventana_principal(QWidget):
                     axes.legend()
 
                     # ------------------------------------- Aspecto
-                    axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
-                    axes.xaxis.set_minor_locator(MultipleLocator(0.5))
-                    axes.xaxis.set_major_locator(MultipleLocator(1))
-                    axes.tick_params(which='minor', length=5, width=1.5, color='r')
-                    axes.set_xmargin(0)
-                    axes.grid()
+                    # si no esta recortado
+                    if graficas[0].get_recorte()[0] == 0 and graficas[0].get_recorte()[1] == 0:
+
+                        axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                        axes.xaxis.set_minor_locator(MultipleLocator(0.5))
+                        axes.xaxis.set_major_locator(MultipleLocator(1))
+                        axes.tick_params(which='minor', length=5, width=1.5, color='r')
+                        axes.set_xmargin(0)
+                        axes.grid()
+                    else:
+                        axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                        axes.xaxis.set_minor_locator(MultipleLocator(0.125))
+                        axes.xaxis.set_major_locator(MultipleLocator(0.25))
+                        axes.tick_params(which='minor', length=5, width=1.5, color='r')
+                        axes.set_xmargin(0)
+                        axes.grid()
                     # -------------------------------------
                     plt.close(fig)
                     fig.tight_layout()
@@ -772,18 +782,30 @@ class ventana_principal(QWidget):
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado.values, aux,
                                                        graficas[x].get_valores_picos())
-
+                        # calculo y muestro integral
+                        if graficas[x].get_integral()[2]:
+                            self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
+                                                      graficas[x].get_integral())
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
                                      aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                         # ------------------------------------- Aspecto
-                        axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
-                        axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
-                        axes[x].xaxis.set_major_locator(MultipleLocator(1))
-                        axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
-                        axes[x].set_xmargin(0)
-                        axes[x].grid()
+                        # si no esta recortado
+                        if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
+                            axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
+                            axes[x].xaxis.set_major_locator(MultipleLocator(1))
+                            axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
+                            axes[x].set_xmargin(0)
+                            axes[x].grid()
+                        else:
+                            axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.125))
+                            axes[x].xaxis.set_major_locator(MultipleLocator(0.25))
+                            axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
+                            axes[x].set_xmargin(0)
+                            axes[x].grid()
                         # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
                         if graficas[x].get_valores_picos() is not None:
