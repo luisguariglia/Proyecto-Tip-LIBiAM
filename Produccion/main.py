@@ -716,7 +716,7 @@ class ventana_principal(QWidget):
                     return ret
             return ret
 
-        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=500)
+        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=600)
         numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
@@ -1120,7 +1120,7 @@ class ventana_principal(QWidget):
 
         self.anim4 = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim4.setEndValue(QPoint(0, 0))
-        self.anim4.setDuration(450)
+        self.anim4.setDuration(200)
 
         self.anim_group = QSequentialAnimationGroup()
         self.anim_group.addAnimation(self.anim3)
