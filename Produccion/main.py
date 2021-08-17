@@ -25,7 +25,7 @@ from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
 from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 from matplotlib.patches import Polygon
-
+import scipy
 
 def load_fonts_from_dir(directory):
     families = set()
@@ -657,14 +657,28 @@ class ventana_principal(QWidget):
                 ix.append(aux[i])
 
         verts = [(a, 0), *zip(ix, iy), (b, 0)]
-        poly = Polygon(verts, facecolor='limegreen', edgecolor='darkgreen')
+        poly = Polygon(verts, facecolor='limegreen', edgecolor='darkgreen',alpha = 0.5)
         ax.add_patch(poly)
 
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
         # ax.set_yticks([])
 
-        ax.annotate('Integral F(x)=algo', xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+
+
+        # calculo la integral
+        def getVoltajeAPartirDeUnTiempo(x):
+            ret=0
+            for i in range(0, aux.size):
+                if (aux[i] > x):
+                    ret = datos[i]
+                    return ret
+            return ret
+
+        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=500)
+        numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
+        ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
