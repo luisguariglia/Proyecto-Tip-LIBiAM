@@ -197,10 +197,10 @@ class ventana_principal(QWidget):
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
 
-        wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
-        wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
-        wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
+        wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
+        wid_derecha_toolbar.layout().addWidget(btn_cortar)
+        wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_comparar)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
@@ -598,6 +598,41 @@ class ventana_principal(QWidget):
 
                     self.tree_widget.addTopLevelItem(EMG)
 
+    def get_numero_grafica(self, vista : Vista, nombre_grafica, numero_archivo):
+        numero_grafica = None
+        existe = False
+        existe_numero = False
+        graficas = vista.get_graficas()
+        graficas_aux = []
+
+        for grafica in graficas:
+            if nombre_grafica == grafica.get_nombre_columna_grafica() and grafica.get_numero_archivo() == numero_archivo:
+                existe = True
+                graficas_aux.append(grafica)
+
+        # CÓDIGO DE LA NASA PURO PAAA
+        if not existe:
+            return 1
+        else:
+            for i in range(len(graficas_aux)):
+                existe_numero = False
+                numero_grafica = i + 1
+
+                for grafica in graficas_aux:
+                    if numero_grafica == grafica.get_numero_grafica():
+                        existe_numero = True
+                        break
+
+                if not existe_numero:
+                    break
+
+
+        if existe_numero:
+            return numero_grafica + 1
+
+        return numero_grafica
+
+
     def agregar_grafica_a_vista(self, item, col):
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
@@ -605,13 +640,19 @@ class ventana_principal(QWidget):
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-                nombre_item = item.text(col) + " - A" + str(self.combo.currentData())
+                widget_tab = self.widget_der.currentWidget()
+                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+
+                numero_archivo = self.combo.currentData()
+                numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
+
+
+                nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
                 grafica_vista = QTreeWidgetItem([nombre_item])
                 grafica_vista.setToolTip(0, nombre_item )
-                widget_tab = self.widget_der.currentWidget()
-                vista : Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+
                 vista.get_tree_widget_item().addChild(grafica_vista)
-                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item)
+                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item, numero_grafica, int(numero_archivo))
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
@@ -716,7 +757,7 @@ class ventana_principal(QWidget):
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                     axes.plot(tiempoRecortado,
-                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
                     axes.legend()
 
                     # ------------------------------------- Aspecto
@@ -789,7 +830,7 @@ class ventana_principal(QWidget):
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
-                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
                         # ------------------------------------- Aspecto
                         # si no esta recortado
                         if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
@@ -843,11 +884,11 @@ class ventana_principal(QWidget):
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
 
-    def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista):
+    def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista, numero_grafica, numero_archivo):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
-        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista)
+        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista, numero_grafica=numero_grafica, numero_archivo=numero_archivo)
         return grafica
 
     def get_archivo_en_combobox(self):
