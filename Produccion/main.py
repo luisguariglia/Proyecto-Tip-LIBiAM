@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, uic
-from PyQt5.QtWidgets import (QLabel,QGraphicsDropShadowEffect,QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
-from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap
+from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
@@ -149,6 +149,13 @@ class ventana_principal(QWidget):
         Sobre.triggered.connect(self.ventana_inicio)
         Sobre.setEnabled(False)
         ayudaMenu.addAction(Sobre)
+
+        confMenu = menubar.addMenu("Configuracion")
+        confArchivos = QAction("Archivos", self)
+        confAvistas = QAction("Limite vistas", self)
+        confMenu.addAction(confArchivos)
+        confMenu.addAction(confAvistas)
+
 
         #TOOLBAR
         self.widget_toolbar = QWidget()
@@ -634,6 +641,9 @@ class ventana_principal(QWidget):
 
 
     def agregar_grafica_a_vista(self, item, col):
+
+
+
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
 
@@ -642,6 +652,9 @@ class ventana_principal(QWidget):
             if not object_name == "Inicio":
                 widget_tab = self.widget_der.currentWidget()
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+
+                if len(vista.get_graficas()) == config.LIMITE_GRAFICAS_POR_VISTA:
+                    return
 
                 numero_archivo = self.combo.currentData()
                 numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
