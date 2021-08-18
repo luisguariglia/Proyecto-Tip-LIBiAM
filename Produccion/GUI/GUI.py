@@ -4,10 +4,13 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
 from matplotlib import pyplot as plt
 
+import config
+from BD.Queries import Conexion
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
+
 
 
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
@@ -1169,3 +1172,47 @@ class ventana_rectificar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+class ventana_conf_vistas(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_conf_vistas, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Configurar limite de vistas")
+        self.setFixedSize(280, 150)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setSpacing(10)
+
+        # PARAMETROS
+        self.parent = parent
+
+        wid_limite_vistas = QtWidgets.QWidget()
+        wid_limite_vistas.setLayout(QtWidgets.QHBoxLayout())
+        wid_limite_vistas.layout().setContentsMargins(0, 0, 0, 0)
+        wid_limite_vistas.layout().setAlignment(Qt.AlignRight)
+
+        label_limite_vistas = QtWidgets.QLabel("Gráficas por vista:")
+
+        self.spinbox_limite_vistas = QtWidgets.QSpinBox()
+        self.spinbox_limite_vistas.setValue(config.LIMITE_GRAFICAS_POR_VISTA)
+        self.spinbox_limite_vistas.setStyleSheet(estilos.estilos_spinbox_filtros())
+
+        wid_limite_vistas.layout().addWidget(label_limite_vistas)
+        wid_limite_vistas.layout().addWidget(self.spinbox_limite_vistas)
+
+        self.layout().addWidget(wid_limite_vistas)
+
+        btn_aceptar = QtWidgets.QPushButton("Aplicar")
+        btn_aceptar.clicked.connect(self.guardar_conf)
+        btn_aceptar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        self.layout().addWidget(btn_aceptar)
+
+    def guardar_conf(self):
+        dato = self.spinbox_limite_vistas.value()
+        dato_int = int(dato)
+
+        config.LIMITE_GRAFICAS_POR_VISTA = dato_int
+        Conexion.set_limite_graficas(dato_int)
+        self.close()

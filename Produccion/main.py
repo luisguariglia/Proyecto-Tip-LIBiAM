@@ -23,7 +23,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 from matplotlib.patches import Polygon
 import scipy
 
@@ -152,9 +152,10 @@ class ventana_principal(QWidget):
 
         confMenu = menubar.addMenu("Configuracion")
         confArchivos = QAction("Archivos", self)
-        confAvistas = QAction("Limite vistas", self)
+        confVistas = QAction("Limite vistas", self)
+        confVistas.triggered.connect(self.ventana_conf_vistas)
         confMenu.addAction(confArchivos)
-        confMenu.addAction(confAvistas)
+        confMenu.addAction(confVistas)
 
 
         #TOOLBAR
@@ -343,6 +344,8 @@ class ventana_principal(QWidget):
         self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
         self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
 
+    def ventana_conf_vistas(self):
+        ventana_conf_vistas(self).exec_()
 
     def ventana_inicio(self):
 
@@ -653,7 +656,10 @@ class ventana_principal(QWidget):
                 widget_tab = self.widget_der.currentWidget()
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
 
-                if len(vista.get_graficas()) == config.LIMITE_GRAFICAS_POR_VISTA:
+                limite_graficas = config.LIMITE_GRAFICAS_POR_VISTA
+
+                if len(vista.get_graficas()) == limite_graficas:
+                    QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite vistas")
                     return
 
                 numero_archivo = self.combo.currentData()
@@ -698,6 +704,7 @@ class ventana_principal(QWidget):
 
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
+
     def mostrar_integral(self, ax, _tiempo, datos,valores_integral):
 
         a, b = valores_integral[0], valores_integral[1]  # integral limits
@@ -716,9 +723,6 @@ class ventana_principal(QWidget):
 
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
-        # ax.set_yticks([])
-
-
 
         # calculo la integral
         def getVoltajeAPartirDeUnTiempo(x):
@@ -732,7 +736,6 @@ class ventana_principal(QWidget):
         i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=600)
         numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
-
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
