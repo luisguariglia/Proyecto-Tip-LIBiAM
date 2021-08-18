@@ -29,7 +29,7 @@ class ventana_filtro(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Butter Filter - " + v )
-        self.setFixedSize(770, 470)
+        self.setFixedSize(770, 500)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
@@ -123,7 +123,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_spiner_order.layout().setContentsMargins(0, 0, 0, 0)
         wid_spiner_order.layout().setAlignment(Qt.AlignRight)
 
-        label_order = QtWidgets.QLabel("ORDER OF THE FILTER")
+        label_order = QtWidgets.QLabel("Orden del filtro")
         label_order.setFont(font)
         wid_label_order.layout().addWidget(label_order)
 
@@ -151,7 +151,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_spiner_array_like.layout().setSpacing(8)
         wid_spiner_array_like.layout().setAlignment(Qt.AlignRight)
 
-        label_array_like = QtWidgets.QLabel("ARRAY LIKE")
+        label_array_like = QtWidgets.QLabel("Frecuencias críticas")
         label_array_like.setFont(font)
 
         self.spiner_array_a = QtWidgets.QSpinBox()
@@ -179,7 +179,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_array_like.layout().addWidget(wid_spiner_array_like, 5)
 
         # BTYPE
-        label_btype = QtWidgets.QLabel("BTYPE")
+        label_btype = QtWidgets.QLabel("Tipo de filtro")
         label_btype.setFont(font)
         wid_label_btype = QtWidgets.QWidget()
         wid_label_btype.setLayout(QtWidgets.QHBoxLayout())
@@ -208,7 +208,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_btype.layout().addWidget(wid_combobox_btype, 5)
 
         # ANALOG
-        label_analog = QtWidgets.QLabel("ANALOG")
+        label_analog = QtWidgets.QLabel("Analógico")
         label_analog.setFont(font)
 
         wid_label_analog = QtWidgets.QWidget()
@@ -235,11 +235,26 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_analog.layout().addWidget(wid_label_analog, 5)
         wid_analog.layout().addWidget(wid_combobox_analog, 5)
 
+        # "lowpass")
+        # self.combobox_btype.addItem("highpass")
+        # self.combobox_btype.addItem("bandpass")
+        # self.combobox_btype.addItem("bandstop")
+        #   infooo
+        label_info = QtWidgets.QLabel("<br>"
+                                      "<span style='font-weight: bold'>Frecuencias críticas: </span> La frecuencia o frecuencias críticas. Indicadas en Hz"
+                                      "<br><span style='font-weight: bold'>Tipo de Filtro: </span> el tipo de filtro. El valor predeterminado es 'Butterworth'."
+                                      "<br><span style='font-weight: bold'>Analogico: </span>Cuando es Verdadero, devuelve un filtro analógico; de lo contrario, se devuelve un filtro digital."
+                                      "<br>"
+                                      )
+        # order- arraylike - btype - analog
+        label_info.setFont(font)
+        label_info.setWordWrap(True);
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_order)
         wid_content_der.layout().addWidget(wid_array_like)
         wid_content_der.layout().addWidget(wid_btype)
         wid_content_der.layout().addWidget(wid_analog)
+        wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR FILTROS
         wid_btn_aplicar = QtWidgets.QWidget()
