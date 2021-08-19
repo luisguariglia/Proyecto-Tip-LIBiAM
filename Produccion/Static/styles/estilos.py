@@ -9,25 +9,25 @@ def estilos_tree_widget_graficas():
     }
 
     QTreeWidget::branch:has-siblings:!adjoins-item {
-        border-image: url(Static/img/vline.png) 0;    
+        border-image: url(:/Static/img/vline.png) 0;    
     }
 
     QTreeWidget::branch:has-siblings:adjoins-item {
-        border-image: url(Static/img/branch-more.png) 0;
+        border-image: url(:/Static/img/branch-more.png) 0;
     }
 
     QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(Static/img/branch-end.png) 0;
+        border-image: url(:/Static/img/branch-end.png) 0;
     }
 
     QTreeWidget::branch:has-children:!has-siblings:closed,
     QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(Static/img/branch-closed.png);
+        border-image: none;image: url(:/Static/img/branch-closed.png);
     }
 
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(Static/img/branch-open.png);
+        border-image: none;image: url(:/Static/img/branch-open.png);
     }
     """
 
@@ -36,12 +36,12 @@ def estilos_tree_widget_vistas():
     return """
     QTreeWidget::branch:has-children:!has-siblings:closed,
     QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(Static/img/branch-closed.png);
+        border-image: none;image: url(:/Static/img/branch-closed.png);
     }
 
     QTreeWidget::branch:open:has-children:!has-siblings,
     QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(Static/img/branch-open.png);
+        border-image: none;image: url(:/Static/img/branch-open.png);
     }
     """
 
@@ -106,7 +106,7 @@ def estilos_combobox_archivos_csv():
     }
 
     QComboBox::down-arrow {
-        image: url(Static/img/branch-open.png);
+        image: url(:/Static/img/branch-open.png);
     }
 
     QComboBox::down-arrow:on {
@@ -209,13 +209,13 @@ def estilos_spinbox_filtros():
          }
         
          QSpinBox::down-arrow {
-            image: url(Static/img/unnamed.png);
+            image: url(:/Static/img/unnamed.png);
             width: 7px;
             height: 7px;
         }
         
         QSpinBox::up-arrow {
-            image: url(Static/img/up-arrow.png);
+            image: url(:/Static/img/up-arrow.png);
             width: 7px;
             height: 7px;
         }
@@ -232,7 +232,7 @@ def estilos_spinbox_filtros():
         
         QSpinBox::up-arrow:hover {
         
-           image: url(Static/img/up-arrow-hover.png);
+           image: url(:/Static/img/up-arrow-hover.png);
         }
         
         QSpinBox::up-button:hover {
@@ -241,7 +241,7 @@ def estilos_spinbox_filtros():
         
         QSpinBox::down-arrow:hover {
         
-           image: url(Static/img/down-arrow-hover.png);
+           image: url(:/Static/img/down-arrow-hover.png);
         }
         
         QSpinBox::down-button:hover {
@@ -250,7 +250,7 @@ def estilos_spinbox_filtros():
         
         QSpinBox::up-arrow:pressed {
         
-           image: url(Static/img/up-arrow-pressed.png);
+           image: url(:/Static/img/up-arrow-pressed.png);
         }
         
         QSpinBox::up-button:pressed {
@@ -259,7 +259,7 @@ def estilos_spinbox_filtros():
         
         QSpinBox::down-arrow:pressed {
         
-           image: url(Static/img/down-arrow-pressed.png);
+           image: url(:/Static/img/down-arrow-pressed.png);
         }
         
         QSpinBox::down-button:pressed {
@@ -286,13 +286,13 @@ def estilos_double_spinbox_filtros():
          }
 
          QDoubleSpinBox::down-arrow {
-            image: url(Static/img/unnamed.png);
+            image: url(:/Static/img/unnamed.png);
             width: 7px;
             height: 7px;
         }
 
         QDoubleSpinBox::up-arrow {
-            image: url(Static/img/up-arrow.png);
+            image: url(:/Static/img/up-arrow.png);
             width: 7px;
             height: 7px;
         }
@@ -310,7 +310,7 @@ def estilos_double_spinbox_filtros():
 
         QDoubleSpinBox::up-arrow:hover {
 
-           image: url(Static/img/up-arrow-hover.png);
+           image: url(:/Static/img/up-arrow-hover.png);
         }
 
         QDoubleSpinBox::up-button:hover {
@@ -319,7 +319,7 @@ def estilos_double_spinbox_filtros():
 
         QDoubleSpinBox::down-arrow:hover {
 
-           image: url(Static/img/down-arrow-hover.png);
+           image: url(:/Static/img/down-arrow-hover.png);
         }
 
         QDoubleSpinBox::down-button:hover {
@@ -328,7 +328,7 @@ def estilos_double_spinbox_filtros():
 
         QDoubleSpinBox::up-arrow:pressed {
 
-           image: url(Static/img/up-arrow-pressed.png);
+           image: url(:/Static/img/up-arrow-pressed.png);
         }
 
         QDoubleSpinBox::up-button:pressed {
@@ -337,7 +337,7 @@ def estilos_double_spinbox_filtros():
 
         QDoubleSpinBox::down-arrow:pressed {
 
-           image: url(Static/img/down-arrow-pressed.png);
+           image: url(:/Static/img/down-arrow-pressed.png);
         }
 
         QDoubleSpinBox::down-button:pressed {
@@ -377,15 +377,15 @@ def estilos_combobox_filtro():
     }
     
     QComboBox::down-arrow {
-        image: url(Static/img/down-arrow-combo-filtro.png);
+        image: url(:/Static/img/down-arrow-combo-filtro.png);
     }
     
     QComboBox::down-arrow::hover {
-        image: url(Static/img/down-arrow-combo-filtro-hover.png);
+        image: url(:/Static/img/down-arrow-combo-filtro-hover.png);
     }
     
     QComboBox::down-arrow::pressed {
-        image: url(Static/img/down-arrow-combo-filtro-pressed.png);
+        image: url(:/Static/img/down-arrow-combo-filtro-pressed.png);
     }
 
     """

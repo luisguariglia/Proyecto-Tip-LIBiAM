@@ -1,0 +1,35 @@
+<RCC>
+  <qresource prefix="/" >
+    <file>Static/img/add.svg</file>
+    <file>Static/img/branch-closed.png</file>
+    <file>Static/img/branch-end.png</file>
+    <file>Static/img/branch-more.png</file>
+    <file>Static/img/branch-open.png</file>
+    <file>Static/img/down-arrow.png</file>
+    <file>Static/img/down-arrow-combo-filtro.png</file>
+    <file>Static/img/down-arrow-combo-filtro-hover.png</file>
+    <file>Static/img/down-arrow-combo-filtro-pressed.png</file>
+    <file>Static/img/down-arrow-hover.png</file>
+    <file>Static/img/down-arrow-pressed.png</file>
+    <file>Static/img/eliminar.svg</file>
+    <file>Static/img/hide.svg</file>
+    <file>Static/img/img_content.jpg</file>
+    <file>Static/img/img_content1.jpg</file>
+    <file>Static/img/img_content2.jpg</file>
+    <file>Static/img/img_content3.jpg</file>
+    <file>Static/img/img_content3_2.jpg</file>
+    <file>Static/img/LIBiAM.jpg</file>
+    <file>Static/img/LIBiAM2.jpg</file>
+    <file>Static/img/udelar.png</file>
+    <file>Static/img/udelar2.png</file>
+    <file>Static/img/unnamed.png</file>
+    <file>Static/img/up-arrow.png</file>
+    <file>Static/img/up-arrow-hover.png</file>
+    <file>Static/img/up-arrow-pressed.png</file>
+    <file>Static/img/utec.png</file>
+    <file>Static/img/utu.png</file>
+    <file>Static/img/vline.png</file>
+    <file>Static/img/LIBiAM.ico</file>
+    <file>Static/fonts/Roboto-Light.ttf</file>
+  </qresource>
+</RCC>

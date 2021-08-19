@@ -25,7 +25,7 @@ from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
 from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 
-
+import img
 
 def load_fonts_from_dir(directory):
     families = set()
@@ -71,7 +71,7 @@ class ventana_principal(QWidget):
     def initUI(self):
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.setWindowTitle("LIBiAM")
-        self.setWindowIcon(QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QIcon(":/Static/img/LIBiAM.jpg"))
         self.resize(700, 500)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -121,7 +121,7 @@ class ventana_principal(QWidget):
 
         actionFile.addSeparator()
         Salir = QAction("Salir", self)
-        Salir.triggered.connect(quit)
+        Salir.triggered.connect(self.cerrar)
         actionFile.addAction(Salir)
 
         editarMenu=menubar.addMenu("Editar")
@@ -206,7 +206,7 @@ class ventana_principal(QWidget):
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
         self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
 
-        botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
+        #botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
 
         self.layout().addWidget(self.widget_toolbar, 1)
 
@@ -301,9 +301,9 @@ class ventana_principal(QWidget):
         widget_botones_csv = QToolBar()
         widget_botones_csv.setIconSize(QSize(14,14))
         widget_botones_csv.setStyleSheet(estilos.estilos_toolbar_archvos_csv())
-        icono_hide = QIcon("Static/img/hide.svg")
-        icono_remove = QIcon("Static/img/eliminar.svg")
-        icono_agregar = QIcon("Static/img/add.svg")
+        icono_hide = QIcon(":/Static/img/hide.svg")
+        icono_remove = QIcon(":/Static/img/eliminar.svg")
+        icono_agregar = QIcon(":/Static/img/add.svg")
         widget_botones_csv.addAction(icono_remove, 'eliminar', self.eliminar_csv)
         widget_botones_csv.addAction(icono_agregar, 'agregar', self.agregar_csv)
         widget_botones_csv.addAction(icono_hide,'ocultar',self.minimizar_panel)
@@ -336,6 +336,8 @@ class ventana_principal(QWidget):
         self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
         self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
 
+    def cerrar(self):
+        sys.exit()
 
     def ventana_inicio(self):
 
@@ -360,22 +362,22 @@ class ventana_principal(QWidget):
         widget_contenido.layout().setContentsMargins(6,10,0,0)
         widget_contenido.layout().setSpacing(0)
 
-        img_ANEP_UTU = QPixmap('Static/img/utu.png')
+        img_ANEP_UTU = QPixmap(':/Static/img/utu.png')
         lab_ANEP_UTU = QLabel()
         lab_ANEP_UTU.setFixedWidth(img_ANEP_UTU.width())
         lab_ANEP_UTU.setPixmap(img_ANEP_UTU)
 
-        img_LIBiAM = QPixmap('Static/img/LIBiAM2.jpg')
+        img_LIBiAM = QPixmap(':/Static/img/LIBiAM2.jpg')
         lab_LIBiAM = QLabel()
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
 
-        img_UDELAR = QPixmap('Static/img/udelar2.png')
+        img_UDELAR = QPixmap(':/Static/img/udelar2.png')
         lab_UDELAR = QLabel()
         lab_UDELAR.setFixedWidth(img_UDELAR.width())
         lab_UDELAR.setPixmap(img_UDELAR)
 
-        img_UTEC = QPixmap('Static/img/utec.png')
+        img_UTEC = QPixmap(':/Static/img/utec.png')
         lab_UTEC = QLabel()
         lab_UTEC.setFixedWidth(img_UTEC.width())
         lab_UTEC.setPixmap(img_UTEC)
@@ -440,9 +442,9 @@ class ventana_principal(QWidget):
         widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
-        img1 = QPixmap('Static/img/img_content3.jpg')
-        img2 = QPixmap('Static/img/img_content2.jpg')
-        img3 = QPixmap('Static/img/img_content.jpg')
+        img1 = QPixmap(':/Static/img/img_content3.jpg')
+        img2 = QPixmap(':/Static/img/img_content2.jpg')
+        img3 = QPixmap(':/Static/img/img_content.jpg')
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
@@ -629,7 +631,7 @@ class ventana_principal(QWidget):
     def aplicarOffset(self, datos,tiempo, datosOffset):
         return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
 
-    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico):
+    def mostrar_valores_picos(self, ax, _tiempo, datosOffset, valores_picos : Pico):
         peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, 15)), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
         peak_pos = _tiempo[peaks[0]]  # list of the peaks positions
@@ -893,7 +895,7 @@ class ventana_principal(QWidget):
 
 
                     ax1.plot(tiempoRecortado,
-                                 conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                             conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     # ------------------------------------- Aspecto
                     ax1.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
@@ -1078,6 +1080,7 @@ class ventana_principal(QWidget):
 
 
 def main():
+
     app = QApplication(sys.argv)
     ex = ventana_principal()
     ex.show()

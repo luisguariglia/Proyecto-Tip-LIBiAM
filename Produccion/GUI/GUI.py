@@ -9,6 +9,8 @@ from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 
+import img
+
 
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id):
@@ -26,7 +28,7 @@ class ventana_filtro(QtWidgets.QDialog):
     def __init__(self,parent=None,graficas=None,v=""):
 
         super(ventana_filtro, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Butter Filter - " + v )
         self.setFixedSize(770, 470)
@@ -299,7 +301,7 @@ class ventana_filtro(QtWidgets.QDialog):
 class ventana_comparar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_comparar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Comparar gráficas")
         self.setFixedSize(420, 470)
@@ -339,7 +341,7 @@ class ventana_comparar(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = tree_widget_item_grafica(nom_col, grafica.get_id)
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -405,7 +407,7 @@ class ventana_comparar(QtWidgets.QDialog):
 class ventana_valores_en_graficas(QtWidgets.QDialog):
     def __init__(self, parent=None,graficas=None,v=""):
         super(ventana_valores_en_graficas, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
         self.setFixedSize(770, 470)
@@ -629,7 +631,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Cortar Graficas - Vista 1")
         self.setFixedSize(770, 470)
@@ -845,7 +847,7 @@ class ventana_cortar(QtWidgets.QDialog):
 class ventana_rectificar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_rectificar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Rectificar Graficas - Vista 1")
         self.setFixedSize(770, 470)
