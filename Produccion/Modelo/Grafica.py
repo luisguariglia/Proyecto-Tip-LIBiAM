@@ -1,7 +1,7 @@
 from Modelo.Filtro import Filtro
 
 class Grafica:
-    def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None, nombre_columna_grafica_vista=None):
+    def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None, nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
@@ -12,6 +12,9 @@ class Grafica:
         self.__recorte = [0,0]
         self.__offset= [0.25,2,True]
         self.__valores_pico = None
+        self.__integral = [0, 0,False]
+        self.__numero_grafica = numero_grafica
+        self.__numero_archivo = numero_archivo
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -72,3 +75,21 @@ class Grafica:
 
     def set_valores_picos(self, valores_picos):
         self.__valores_pico = valores_picos
+
+    def get_integral(self):
+        return self.__integral
+
+    def set_integral(self, num):
+        self.__integral = num
+
+    def get_numero_grafica(self):
+        return self.__numero_grafica
+
+    def set_numero_grafica(self, numero_grafica):
+        self.__numero_grafica = numero_grafica
+
+    def get_numero_archivo(self):
+        return self.__numero_archivo
+
+    def set_numero_archivo(self, numero_archivo):
+        self.__numero_archivo = numero_archivo

@@ -1,15 +1,18 @@
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
 from matplotlib import pyplot as plt
 
+import config
+from BD.Queries import Conexion
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 
 import img
+
 
 
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
@@ -31,7 +34,7 @@ class ventana_filtro(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Butter Filter - " + v )
-        self.setFixedSize(770, 470)
+        self.setFixedSize(770, 500)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
@@ -42,19 +45,22 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_izquierda = QtWidgets.QWidget()
         wid_derecha = QtWidgets.QWidget()
+        wid_filtro2 = QtWidgets.QWidget()
 
         # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         wid_izquierda.setGraphicsEffect(shadow)
         wid_derecha.setGraphicsEffect(shadow2)
-
+        wid_filtro2.setGraphicsEffect(shadow2)
         # ESTILOS
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
         wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_filtro2.setStyleSheet("background-color:white; border-radius:4px;")
 
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
         wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_filtro2.setLayout(QtWidgets.QVBoxLayout())
 
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
@@ -62,12 +68,15 @@ class ventana_filtro(QtWidgets.QDialog):
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-        label_2 = QtWidgets.QLabel("CONFIGURAR FILTRO")
+        label_2 = QtWidgets.QLabel("CONFIGURAR FILTRO 1")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
+        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
         wid_izquierda.layout().addWidget(label_1, 1)
         wid_derecha.layout().addWidget(label_2, 1)
-
+        wid_filtro2.layout().addWidget(label_3, 1)
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
         self.tree_graficas.setFixedWidth(300)
@@ -96,6 +105,8 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
+        # YO
+
         # GROUP BOX VALORES FILTRO
         wid_content_der = QtWidgets.QWidget()
         wid_content_der.setLayout(QtWidgets.QVBoxLayout())
@@ -106,6 +117,8 @@ class ventana_filtro(QtWidgets.QDialog):
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
 
+
+
         # ORDER
         wid_label_order = QtWidgets.QWidget()
         wid_label_order.setLayout(QtWidgets.QHBoxLayout())
@@ -115,7 +128,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_spiner_order.layout().setContentsMargins(0, 0, 0, 0)
         wid_spiner_order.layout().setAlignment(Qt.AlignRight)
 
-        label_order = QtWidgets.QLabel("ORDER OF THE FILTER")
+        label_order = QtWidgets.QLabel("Orden del filtro")
         label_order.setFont(font)
         wid_label_order.layout().addWidget(label_order)
 
@@ -143,7 +156,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_spiner_array_like.layout().setSpacing(8)
         wid_spiner_array_like.layout().setAlignment(Qt.AlignRight)
 
-        label_array_like = QtWidgets.QLabel("ARRAY LIKE")
+        label_array_like = QtWidgets.QLabel("Frecuencias críticas")
         label_array_like.setFont(font)
 
         self.spiner_array_a = QtWidgets.QSpinBox()
@@ -171,7 +184,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_array_like.layout().addWidget(wid_spiner_array_like, 5)
 
         # BTYPE
-        label_btype = QtWidgets.QLabel("BTYPE")
+        label_btype = QtWidgets.QLabel("Tipo de filtro")
         label_btype.setFont(font)
         wid_label_btype = QtWidgets.QWidget()
         wid_label_btype.setLayout(QtWidgets.QHBoxLayout())
@@ -200,7 +213,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_btype.layout().addWidget(wid_combobox_btype, 5)
 
         # ANALOG
-        label_analog = QtWidgets.QLabel("ANALOG")
+        label_analog = QtWidgets.QLabel("Analógico")
         label_analog.setFont(font)
 
         wid_label_analog = QtWidgets.QWidget()
@@ -227,11 +240,26 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_analog.layout().addWidget(wid_label_analog, 5)
         wid_analog.layout().addWidget(wid_combobox_analog, 5)
 
+        # "lowpass")
+        # self.combobox_btype.addItem("highpass")
+        # self.combobox_btype.addItem("bandpass")
+        # self.combobox_btype.addItem("bandstop")
+        #   infooo
+        label_info = QtWidgets.QLabel("<br>"
+                                      "<span style='font-weight: bold'>Frecuencias críticas: </span> La frecuencia o frecuencias críticas. Indicadas en Hz"
+                                      "<br><span style='font-weight: bold'>Tipo de Filtro: </span> el tipo de filtro. El valor predeterminado es 'Butterworth'."
+                                      "<br><span style='font-weight: bold'>Analogico: </span>Cuando es Verdadero, devuelve un filtro analógico; de lo contrario, se devuelve un filtro digital."
+                                      "<br>"
+                                      )
+        # order- arraylike - btype - analog
+        label_info.setFont(font)
+        label_info.setWordWrap(True);
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_order)
         wid_content_der.layout().addWidget(wid_array_like)
         wid_content_der.layout().addWidget(wid_btype)
         wid_content_der.layout().addWidget(wid_analog)
+        wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR FILTROS
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -410,7 +438,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(770, 470)
+        self.setFixedSize(770, 470*1.5)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10,0,10,10)
         self.layout().setSpacing(15)
@@ -445,8 +473,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
 
-        label_2 = QtWidgets.QLabel("CONFIGURACIONES")
+        label_2 = QtWidgets.QLabel("Valores Picos")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+
 
         wid_derecha.layout().addWidget(label_2,1)
         wid_izquierda.layout().addWidget(label_1, 1)
@@ -538,9 +568,68 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_info.setWordWrap(True);
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
+        wid_content_derecha.layout().addWidget(wid_checkbox)
         wid_content_derecha.layout().addWidget(label_info)
-        #wid_content_derecha.layout().addWidget(wid_checkbox)
 
+        # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+
+        label_3 = QtWidgets.QLabel("Integral")
+        label_3.setStyleSheet("font:14px bold; margin:5px;")
+        wid_content_derecha.layout().addWidget(label_3)
+
+        wid_inicio = QtWidgets.QWidget()
+        wid_inicio.setLayout(QtWidgets.QHBoxLayout())
+        wid_inicio.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicio.layout().setSpacing(0)
+
+        label_inicio = QtWidgets.QLabel("Valor inicial")
+        label_inicio.setFont(font)
+
+        self.spinbox_inicio = QtWidgets.QDoubleSpinBox()
+        self.spinbox_inicio.setValue(0.0)
+        self.spinbox_inicio.setMaximumWidth(90)
+        self.spinbox_inicio.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_inicio.layout().addWidget(label_inicio, 5)
+        wid_inicio.layout().addWidget(self.spinbox_inicio, 2)
+        wid_content_derecha.layout().addWidget(wid_inicio)
+
+        # segundo parametro
+        wid_fin = QtWidgets.QWidget()
+        wid_fin.setLayout(QtWidgets.QHBoxLayout())
+        wid_fin.layout().setContentsMargins(0, 0, 0, 0)
+        wid_fin.layout().setSpacing(0)
+
+        label_fin = QtWidgets.QLabel("Valor final")
+        label_fin.setFont(font)
+
+        self.spinbox_fin = QtWidgets.QDoubleSpinBox()
+        self.spinbox_fin.setValue(0.0)
+        self.spinbox_fin.setMaximumWidth(90)
+        self.spinbox_fin.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_fin.layout().addWidget(label_fin, 5)
+        wid_fin.layout().addWidget(self.spinbox_fin, 2)
+        wid_content_derecha.layout().addWidget(wid_fin)
+
+        # checkbox
+        wid_checkbox_integral = QtWidgets.QWidget()
+        wid_checkbox_integral.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_integral.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_integral.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_integral.layout().setSpacing(0)
+
+        label_checkbox_integral = QtWidgets.QLabel("Mostrar Integral")
+        label_checkbox_integral.setFont(font)
+        label_checkbox_integral.setStyleSheet("margin:0px;")
+
+        self.checkbox_mostrar_integral = QtWidgets.QCheckBox()
+        self.checkbox_mostrar_integral.setStyleSheet("margin-left:14px;")
+
+        wid_checkbox_integral.layout().addWidget(self.checkbox_mostrar_integral)
+        wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
+        wid_content_derecha.layout().addWidget(wid_checkbox_integral)
+        # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
 
         wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
@@ -550,7 +639,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
 
         btn_aplicar = QtWidgets.QPushButton("APLICAR")
-        btn_aplicar.clicked.connect(self.aplicar_valores_picos)
+        btn_aplicar.clicked.connect(self.aplicar_valores)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
@@ -587,12 +676,18 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
-    def aplicar_valores_picos(self):
+    def aplicar_valores(self):
         hay_almenos_un_check = False
 
         min_height = self.spinbox_min_height.value()
         treshold = self.spinbox_threshold.value()
         distance = self.spinbox_distance.value()
+        mostrarPicos = self.checkbox_mostrar_picos.isChecked()
+
+
+        inicio = self.spinbox_inicio.value()
+        fin = self.spinbox_fin.value()
+        mostrarIntegral = self.checkbox_mostrar_integral.isChecked()
 
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -604,7 +699,9 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
-                            grafica.set_valores_picos(Pico(min_height, treshold, distance))
+                            if mostrarPicos:
+                                grafica.set_valores_picos(Pico(min_height, treshold, distance))
+                            grafica.set_integral(([inicio,fin,mostrarIntegral]))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
@@ -1077,3 +1174,52 @@ class ventana_rectificar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+class ventana_conf_vistas(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_conf_vistas, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Configurar limite de vistas")
+        self.setFixedSize(260, 150)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setSpacing(10)
+
+        # PARAMETROS
+        self.parent = parent
+
+        wid_limite_vistas = QtWidgets.QWidget()
+        wid_limite_vistas.setLayout(QtWidgets.QHBoxLayout())
+        wid_limite_vistas.layout().setContentsMargins(0, 0, 0, 0)
+        wid_limite_vistas.layout().setAlignment(Qt.AlignHCenter)
+        wid_limite_vistas.layout().setSpacing(15)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+        label_limite_vistas = QtWidgets.QLabel("Gráficas por vista:")
+        label_limite_vistas.setFont(font)
+
+        self.spinbox_limite_vistas = QtWidgets.QSpinBox()
+        self.spinbox_limite_vistas.setFixedWidth(60)
+        self.spinbox_limite_vistas.setValue(config.LIMITE_GRAFICAS_POR_VISTA)
+        self.spinbox_limite_vistas.setStyleSheet(estilos.estilos_spinbox_filtros())
+
+        wid_limite_vistas.layout().addWidget(label_limite_vistas)
+        wid_limite_vistas.layout().addWidget(self.spinbox_limite_vistas)
+
+        self.layout().addWidget(wid_limite_vistas)
+
+        btn_aceptar = QtWidgets.QPushButton("Aplicar")
+        btn_aceptar.clicked.connect(self.guardar_conf)
+        btn_aceptar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        self.layout().addWidget(btn_aceptar)
+
+    def guardar_conf(self):
+        dato = self.spinbox_limite_vistas.value()
+        dato_int = int(dato)
+
+        config.LIMITE_GRAFICAS_POR_VISTA = dato_int
+        Conexion.set_limite_graficas(dato_int)
+        self.close()

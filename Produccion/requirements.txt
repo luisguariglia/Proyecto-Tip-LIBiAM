@@ -14,3 +14,4 @@ pytz==2021.1
 qtwidgets==0.18
 six==1.16.0
 scipy
+sympy

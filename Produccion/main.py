@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, uic
-from PyQt5.QtWidgets import (QLabel,QGraphicsDropShadowEffect,QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
-from PyQt5.QtGui import QIcon,QFont,QFontDatabase,QPixmap
+from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
@@ -23,9 +23,10 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
-
 import img
+from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from matplotlib.patches import Polygon
+import scipy
 
 def load_fonts_from_dir(directory):
     families = set()
@@ -150,6 +151,14 @@ class ventana_principal(QWidget):
         Sobre.setEnabled(False)
         ayudaMenu.addAction(Sobre)
 
+        confMenu = menubar.addMenu("Configuracion")
+        confArchivos = QAction("Archivos", self)
+        confVistas = QAction("Limite vistas", self)
+        confVistas.triggered.connect(self.ventana_conf_vistas)
+        confMenu.addAction(confArchivos)
+        confMenu.addAction(confVistas)
+
+
         #TOOLBAR
         self.widget_toolbar = QWidget()
         self.widget_toolbar.setMaximumHeight(40)
@@ -197,10 +206,10 @@ class ventana_principal(QWidget):
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
 
-        wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
-        wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
-        wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
+        wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
+        wid_derecha_toolbar.layout().addWidget(btn_cortar)
+        wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_comparar)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
@@ -338,6 +347,10 @@ class ventana_principal(QWidget):
 
     def cerrar(self):
         sys.exit()
+
+    def ventana_conf_vistas(self):
+        ventana_conf_vistas(self).exec_()
+
 
     def ventana_inicio(self):
 
@@ -600,20 +613,69 @@ class ventana_principal(QWidget):
 
                     self.tree_widget.addTopLevelItem(EMG)
 
+    def get_numero_grafica(self, vista : Vista, nombre_grafica, numero_archivo):
+        numero_grafica = None
+        existe = False
+        existe_numero = False
+        graficas = vista.get_graficas()
+        graficas_aux = []
+
+        for grafica in graficas:
+            if nombre_grafica == grafica.get_nombre_columna_grafica() and grafica.get_numero_archivo() == numero_archivo:
+                existe = True
+                graficas_aux.append(grafica)
+
+        # CÓDIGO DE LA NASA PURO PAAA
+        if not existe:
+            return 1
+        else:
+            for i in range(len(graficas_aux)):
+                existe_numero = False
+                numero_grafica = i + 1
+
+                for grafica in graficas_aux:
+                    if numero_grafica == grafica.get_numero_grafica():
+                        existe_numero = True
+                        break
+
+                if not existe_numero:
+                    break
+
+
+        if existe_numero:
+            return numero_grafica + 1
+
+        return numero_grafica
+
+
     def agregar_grafica_a_vista(self, item, col):
+
+
+
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
 
         if not index == -1 and item.parent() is not None:
             object_name = current_widget.objectName()
             if not object_name == "Inicio":
-                nombre_item = item.text(col) + " - A" + str(self.combo.currentData())
+                widget_tab = self.widget_der.currentWidget()
+                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+
+                limite_graficas = config.LIMITE_GRAFICAS_POR_VISTA
+
+                if len(vista.get_graficas()) == limite_graficas:
+                    QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite vistas")
+                    return
+
+                numero_archivo = self.combo.currentData()
+                numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
+
+                nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
                 grafica_vista = QTreeWidgetItem([nombre_item])
                 grafica_vista.setToolTip(0, nombre_item )
-                widget_tab = self.widget_der.currentWidget()
-                vista : Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+
                 vista.get_tree_widget_item().addChild(grafica_vista)
-                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item)
+                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item, numero_grafica, int(numero_archivo))
                 vista.agregar_grafica(grafica)
                 cant_vistas = vista.get_tree_widget_item().childCount()
                 self.listar_graficas(False)
@@ -646,6 +708,38 @@ class ventana_principal(QWidget):
 
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
+
+    def mostrar_integral(self, ax, _tiempo, datos,valores_integral):
+
+        a, b = valores_integral[0], valores_integral[1]  # integral limits
+        aux = _tiempo
+
+        iy = []
+        ix = []
+        for i in range(0, aux.size):
+            if (aux[i] > a and aux[i] < b):
+                iy.append(datos[i])
+                ix.append(aux[i])
+
+        verts = [(a, 0), *zip(ix, iy), (b, 0)]
+        poly = Polygon(verts, facecolor='limegreen', edgecolor='darkgreen',alpha = 0.5)
+        ax.add_patch(poly)
+
+        ax.set_xticks((a, b))
+        ax.set_xticklabels((a, b))
+
+        # calculo la integral
+        def getVoltajeAPartirDeUnTiempo(x):
+            ret=0
+            for i in range(0, aux.size):
+                if (aux[i] > x):
+                    ret = datos[i]
+                    return ret
+            return ret
+
+        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=600)
+        numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
+        ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
@@ -689,19 +783,34 @@ class ventana_principal(QWidget):
                     if graficas[0].get_valores_picos() is not None:
                         self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos())
 
+                    # calculo y muestro integral
+                    if graficas[0].get_integral()[2]:
+                        self.mostrar_integral(axes, tiempoRecortado.values, aux,
+                                                       graficas[0].get_integral())
+
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                     axes.plot(tiempoRecortado,
-                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica()}")
+                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
                     axes.legend()
 
                     # ------------------------------------- Aspecto
-                    axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
-                    axes.xaxis.set_minor_locator(MultipleLocator(0.5))
-                    axes.xaxis.set_major_locator(MultipleLocator(1))
-                    axes.tick_params(which='minor', length=5, width=1.5, color='r')
-                    axes.set_xmargin(0)
-                    axes.grid()
+                    # si no esta recortado
+                    if graficas[0].get_recorte()[0] == 0 and graficas[0].get_recorte()[1] == 0:
+
+                        axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                        axes.xaxis.set_minor_locator(MultipleLocator(0.5))
+                        axes.xaxis.set_major_locator(MultipleLocator(1))
+                        axes.tick_params(which='minor', length=5, width=1.5, color='r')
+                        axes.set_xmargin(0)
+                        axes.grid()
+                    else:
+                        axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                        axes.xaxis.set_minor_locator(MultipleLocator(0.125))
+                        axes.xaxis.set_major_locator(MultipleLocator(0.25))
+                        axes.tick_params(which='minor', length=5, width=1.5, color='r')
+                        axes.set_xmargin(0)
+                        axes.grid()
                     # -------------------------------------
                     plt.close(fig)
                     fig.tight_layout()
@@ -748,18 +857,30 @@ class ventana_principal(QWidget):
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado.values, aux,
                                                        graficas[x].get_valores_picos())
-
+                        # calculo y muestro integral
+                        if graficas[x].get_integral()[2]:
+                            self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
+                                                      graficas[x].get_integral())
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
-                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
                         # ------------------------------------- Aspecto
-                        axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
-                        axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
-                        axes[x].xaxis.set_major_locator(MultipleLocator(1))
-                        axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
-                        axes[x].set_xmargin(0)
-                        axes[x].grid()
+                        # si no esta recortado
+                        if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
+                            axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.5))
+                            axes[x].xaxis.set_major_locator(MultipleLocator(1))
+                            axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
+                            axes[x].set_xmargin(0)
+                            axes[x].grid()
+                        else:
+                            axes[x].set(xlabel='tiempo (s)', ylabel='voltage (mV)')
+                            axes[x].xaxis.set_minor_locator(MultipleLocator(0.125))
+                            axes[x].xaxis.set_major_locator(MultipleLocator(0.25))
+                            axes[x].tick_params(which='minor', length=5, width=1.5, color='r')
+                            axes[x].set_xmargin(0)
+                            axes[x].grid()
                         # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
                         if graficas[x].get_valores_picos() is not None:
@@ -797,11 +918,11 @@ class ventana_principal(QWidget):
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
 
-    def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista):
+    def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista, numero_grafica, numero_archivo):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
-        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista)
+        grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista, numero_grafica=numero_grafica, numero_archivo=numero_archivo)
         return grafica
 
     def get_archivo_en_combobox(self):
@@ -1019,7 +1140,7 @@ class ventana_principal(QWidget):
 
         self.anim4 = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim4.setEndValue(QPoint(0, 0))
-        self.anim4.setDuration(450)
+        self.anim4.setDuration(200)
 
         self.anim_group = QSequentialAnimationGroup()
         self.anim_group.addAnimation(self.anim3)
