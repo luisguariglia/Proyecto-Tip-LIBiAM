@@ -665,7 +665,6 @@ class ventana_principal(QWidget):
                 numero_archivo = self.combo.currentData()
                 numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
 
-
                 nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
                 grafica_vista = QTreeWidgetItem([nombre_item])
                 grafica_vista.setToolTip(0, nombre_item )

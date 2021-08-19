@@ -1179,7 +1179,7 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Configurar limite de vistas")
-        self.setFixedSize(280, 150)
+        self.setFixedSize(260, 150)
         self.setStyleSheet("background-color:#FAFAFA;")
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setSpacing(10)
@@ -1190,11 +1190,16 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         wid_limite_vistas = QtWidgets.QWidget()
         wid_limite_vistas.setLayout(QtWidgets.QHBoxLayout())
         wid_limite_vistas.layout().setContentsMargins(0, 0, 0, 0)
-        wid_limite_vistas.layout().setAlignment(Qt.AlignRight)
+        wid_limite_vistas.layout().setAlignment(Qt.AlignHCenter)
+        wid_limite_vistas.layout().setSpacing(15)
 
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
         label_limite_vistas = QtWidgets.QLabel("Gráficas por vista:")
+        label_limite_vistas.setFont(font)
 
         self.spinbox_limite_vistas = QtWidgets.QSpinBox()
+        self.spinbox_limite_vistas.setFixedWidth(60)
         self.spinbox_limite_vistas.setValue(config.LIMITE_GRAFICAS_POR_VISTA)
         self.spinbox_limite_vistas.setStyleSheet(estilos.estilos_spinbox_filtros())
 
