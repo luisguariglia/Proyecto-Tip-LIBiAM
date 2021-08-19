@@ -1223,3 +1223,108 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         config.LIMITE_GRAFICAS_POR_VISTA = dato_int
         Conexion.set_limite_graficas(dato_int)
         self.close()
+
+class ventana_exportarVP(QtWidgets.QDialog):
+    def __init__(self, parent=None, graficas=None):
+        super(ventana_exportarVP, self).__init__()
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Exportar valores pico")
+        self.setFixedSize(420, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(10)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_derecha = QtWidgets.QWidget()
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("EXPORTAR VALORES PICO")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        # BOTÓN APLICAR FILTROS
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.exportar_valores_pico)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn.layout().addWidget(btn_aplicar)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def exportar_valores_pico(self):
+        graficas = []
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            graficas.append(grafica)
+
+            if len(graficas) >= 1:
+                self.parent.exportar_VP(graficas)
+                self.close()
+
+    def get_grafica(self, id_grafica):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_id() == id_grafica:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux

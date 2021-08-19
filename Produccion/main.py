@@ -24,9 +24,10 @@ from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
 import img
-from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar
 from matplotlib.patches import Polygon
 import scipy
+import csv
 
 def load_fonts_from_dir(directory):
     families = set()
@@ -201,16 +202,20 @@ class ventana_principal(QWidget):
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_rectificar.clicked.connect(self.ventana_rectificar)
 
-
         btn_comparar = QPushButton("Comparar gráficas")
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
+
+        btn_exportar_VP = QPushButton("Exportar valores pico")
+        btn_exportar_VP.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_exportar_VP.clicked.connect(self.ventana_exportar_valores_pico)
 
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_comparar)
+        wid_derecha_toolbar.layout().addWidget(btn_exportar_VP)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
         self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
@@ -967,6 +972,17 @@ class ventana_principal(QWidget):
         else:
             ventana_comparar(self).exec_()
 
+    def ventana_exportar_valores_pico(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_exportarVP(self, graficas).exec_()
+        else:
+            ventana_exportarVP(self).exec_()
+
     def ventana_rectificar(self):
         widget_tab = self.widget_der.currentWidget()
         object_name = widget_tab.objectName()
@@ -1198,6 +1214,56 @@ class ventana_principal(QWidget):
             if self.vistas[i].get_widget() == widget:
                 self.vistas.pop(i)
                 break
+
+    def exportar_VP(self, graficas):
+        current_widget = self.widget_der.currentWidget()
+        index = self.widget_der.indexOf(current_widget)
+        object_name = current_widget.objectName()
+        if not object_name == "Inicio":
+            widget_tab = self.widget_der.currentWidget()
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = len(graficas)
+            if vista is not None:
+                for x in range(cant_graficas):
+                    archivo = graficas[x].get_archivo()
+
+                    # /########################        Aplicando valores de todas las ventanas        ########################/#
+
+                    # aplico offset
+                    conOffset = self.aplicarOffset(archivo[graficas[x].get_nombre_columna_grafica()],
+                                                   archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                   graficas[x].get_offset())
+
+                    # aplico butter
+                    filtrado = self.setFiltros(conOffset, graficas[x].get_filtro())
+
+                    recorte = self.recortarGraficos(filtrado,
+                                                    archivo[graficas[x].get_nombre_columna_tiempo()],
+                                                    graficas[x].get_recorte())
+                    # aplico recorte
+                    aux = recorte[0]
+                    tiempoRecortado = recorte[1]
+
+                    # /########################        Aplicando valores de todas las ventanas        ########################/#
+
+
+                    valores_picos = graficas[x].get_valores_picos()
+                    peaks = find_peaks(aux, height=(valores_picos.get_min_height() * pow(10, 15)),
+                                       threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+                    height = peaks[1]['peak_heights']  # list of the heights of the peaks
+                    peak_pos = tiempoRecortado[peaks[0]]  # list of the peaks positions
+                    #print(height)
+                    myData = [["EMG_1"]]
+
+                    #for i in range(0, height.size):
+                    #numeroAMostrar = str("{:.2f}".format(height[i] / (pow(10, 15))))
+                    myData.append(height)
+
+
+                    myFile = open('example2.csv', 'w')
+                    with myFile:
+                        writer = csv.writer(myFile)
+                        writer.writerows(myData)
 
 
 def main():
