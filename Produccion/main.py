@@ -4,6 +4,7 @@ from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
+import numpy as np
 import pandas
 import os
 import config
@@ -585,6 +586,9 @@ class ventana_principal(QWidget):
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
         nombre_archivo += " - A" + str(self.id_archivo)
         frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
+        dat = frame_archivo['GLd: EMG 1 (IM) [V]']
+
+
         archivo = Archivo(nombre_archivo,frame_archivo)
         archivo.agregar_electromiografias(frame_archivo)
 
@@ -694,8 +698,8 @@ class ventana_principal(QWidget):
     def aplicarOffset(self, datos,tiempo, datosOffset):
         return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
 
-    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico):
-        peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, 15)), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente):
+        peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
         peak_pos = _tiempo[peaks[0]]  # list of the peaks positions
 
@@ -704,8 +708,8 @@ class ventana_principal(QWidget):
             tiempo.append(pos)
 
         for i in range(0, height.size):
-            numeroAMostrar = str("{:.2f}".format(height[i] / (pow(10, 15))))
-            ax.annotate(numeroAMostrar + "x10e15", xy=(tiempo[i + 1], height[i]))
+            numeroAMostrar = str("{:.2f}".format(height[i] / (pow(10, int(exponente)))))
+            ax.annotate(numeroAMostrar + "x10e" + str(exponente), xy=(tiempo[i + 1], height[i]))
 
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
@@ -782,7 +786,7 @@ class ventana_principal(QWidget):
 
                     # calculo y muestro valores picos
                     if graficas[0].get_valores_picos() is not None:
-                        self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos())
+                        self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos(), graficas[0].get_exponente())
 
                     # calculo y muestro integral
                     if graficas[0].get_integral()[2]:
@@ -793,6 +797,10 @@ class ventana_principal(QWidget):
 
                     axes.plot(tiempoRecortado,
                               aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
+
+                    plt.tight_layout()
+                    exponent = axes.yaxis.get_offset_text().get_text()
+                    graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
                     # ------------------------------------- Aspecto
@@ -813,8 +821,10 @@ class ventana_principal(QWidget):
                         axes.set_xmargin(0)
                         axes.grid()
                     # -------------------------------------
+
                     plt.close(fig)
-                    fig.tight_layout()
+
+
 
                     canvas = FigureCanvas(fig)
                     scroll_area = QScrollArea(widget_tab)
@@ -829,6 +839,8 @@ class ventana_principal(QWidget):
 
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
+
+
 
                 elif cant_graficas > 1:
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
@@ -857,7 +869,7 @@ class ventana_principal(QWidget):
                         # calculo y muestro valores picos
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado.values, aux,
-                                                       graficas[x].get_valores_picos())
+                                                       graficas[x].get_valores_picos(), graficas[x].get_exponente())
                         # calculo y muestro integral
                         if graficas[x].get_integral()[2]:
                             self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
@@ -885,11 +897,15 @@ class ventana_principal(QWidget):
                         # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
                         if graficas[x].get_valores_picos() is not None:
-                            self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos())
+                            self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos(), graficas[x].get_exponente())
 
                         axes[x].legend()
+                        plt.tight_layout()
+                        exponent = axes[x].yaxis.get_offset_text().get_text()
+                        graficas[x].set_exponente(int(exponent.split('e')[1]))
+
                     plt.close(fig)
-                    fig.tight_layout()
+                    #fig.tight_layout()
 
                     widget_tab.layout().removeWidget(vista.get_canvas())
                     widget_tab.layout().removeWidget(vista.get_nav_toolbar())
@@ -919,10 +935,14 @@ class ventana_principal(QWidget):
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
 
+
+
+
     def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista, numero_grafica, numero_archivo):
         dt_archivo = self.get_archivo_en_combobox()
         index_xs = dt_archivo.columns.get_loc(nombre_columna)-1
         nom_col = dt_archivo.columns[index_xs]
+        #numero_base_grafica = self.get_numero_base_grafica(nombre_columna, nom_col, dt_archivo)
         grafica = Grafica(nombre_columna, nom_col, dt_archivo, tree_item_vista, self.get_id_grafica(), nombre_columna_vista, numero_grafica=numero_grafica, numero_archivo=numero_archivo)
         return grafica
 

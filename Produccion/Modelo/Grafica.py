@@ -15,6 +15,7 @@ class Grafica:
         self.__integral = [0, 0,False]
         self.__numero_grafica = numero_grafica
         self.__numero_archivo = numero_archivo
+        self.__exponente = None
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -93,3 +94,9 @@ class Grafica:
 
     def set_numero_archivo(self, numero_archivo):
         self.__numero_archivo = numero_archivo
+
+    def get_exponente(self):
+        return self.__exponente
+
+    def set_exponente(self, exponente):
+        self.__exponente = exponente
