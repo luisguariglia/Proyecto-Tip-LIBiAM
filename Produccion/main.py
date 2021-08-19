@@ -23,7 +23,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_conf_archivos, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 from matplotlib.patches import Polygon
 import scipy
 
@@ -152,8 +152,11 @@ class ventana_principal(QWidget):
 
         confMenu = menubar.addMenu("Configuracion")
         confArchivos = QAction("Archivos", self)
-        confVistas = QAction("Limite vistas", self)
+        confArchivos.triggered.connect(self.ventana_conf_archivos)
+
+        confVistas = QAction("Limite gráficas", self)
         confVistas.triggered.connect(self.ventana_conf_vistas)
+
         confMenu.addAction(confArchivos)
         confMenu.addAction(confVistas)
 
@@ -346,6 +349,9 @@ class ventana_principal(QWidget):
 
     def ventana_conf_vistas(self):
         ventana_conf_vistas(self).exec_()
+
+    def ventana_conf_archivos(self):
+        ventana_conf_archivos(self).exec_()
 
     def ventana_inicio(self):
 
@@ -659,7 +665,7 @@ class ventana_principal(QWidget):
                 limite_graficas = config.LIMITE_GRAFICAS_POR_VISTA
 
                 if len(vista.get_graficas()) == limite_graficas:
-                    QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite vistas")
+                    QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite gráficas")
                     return
 
                 numero_archivo = self.combo.currentData()

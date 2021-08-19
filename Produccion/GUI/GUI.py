@@ -1178,7 +1178,56 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         super(ventana_conf_vistas, self).__init__()
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Configurar limite de vistas")
+        self.setWindowTitle("Configurar limite de gráficas")
+        self.setFixedSize(260, 150)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setSpacing(10)
+
+        # PARAMETROS
+        self.parent = parent
+
+        wid_limite_vistas = QtWidgets.QWidget()
+        wid_limite_vistas.setLayout(QtWidgets.QHBoxLayout())
+        wid_limite_vistas.layout().setContentsMargins(0, 0, 0, 0)
+        wid_limite_vistas.layout().setAlignment(Qt.AlignHCenter)
+        wid_limite_vistas.layout().setSpacing(15)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+        label_limite_vistas = QtWidgets.QLabel("Gráficas por vista:")
+        label_limite_vistas.setFont(font)
+
+        self.spinbox_limite_vistas = QtWidgets.QSpinBox()
+        self.spinbox_limite_vistas.setFixedWidth(60)
+        self.spinbox_limite_vistas.setValue(config.LIMITE_GRAFICAS_POR_VISTA)
+        self.spinbox_limite_vistas.setStyleSheet(estilos.estilos_spinbox_filtros())
+
+        wid_limite_vistas.layout().addWidget(label_limite_vistas)
+        wid_limite_vistas.layout().addWidget(self.spinbox_limite_vistas)
+
+        self.layout().addWidget(wid_limite_vistas)
+
+        btn_aceptar = QtWidgets.QPushButton("Aplicar")
+        btn_aceptar.clicked.connect(self.guardar_conf)
+        btn_aceptar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        self.layout().addWidget(btn_aceptar)
+
+    def guardar_conf(self):
+        dato = self.spinbox_limite_vistas.value()
+        dato_int = int(dato)
+
+        config.LIMITE_GRAFICAS_POR_VISTA = dato_int
+        Conexion.set_limite_graficas(dato_int)
+        self.close()
+
+class ventana_conf_archivos(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_conf_archivos, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Configuraciones de archivos")
         self.setFixedSize(260, 150)
         self.setStyleSheet("background-color:#FAFAFA;")
         self.setLayout(QtWidgets.QVBoxLayout())
