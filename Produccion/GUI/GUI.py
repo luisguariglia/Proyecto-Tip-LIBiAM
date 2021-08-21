@@ -1180,8 +1180,8 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         super(ventana_conf_vistas, self).__init__()
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Configurar limite de vistas")
-        self.setFixedSize(260, 150)
+        self.setWindowTitle("Configurar limite de gráficas")
+        self.setFixedSize(290, 150)
         self.setStyleSheet("background-color:#FAFAFA;")
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setSpacing(10)
@@ -1328,3 +1328,66 @@ class ventana_exportarVP(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+class ventana_conf_archivos(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_conf_archivos, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Configuraciones de archivos")
+        self.setFixedSize(300, 150)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setAlignment(Qt.AlignTop)
+        self.layout().setSpacing(10)
+
+        wid_content = QtWidgets.QWidget()
+        wid_content.setLayout(QtWidgets.QVBoxLayout())
+        wid_content.layout().setAlignment(Qt.AlignTop)
+
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+
+        self.layout().addWidget(wid_content, 9)
+        self.layout().addWidget(wid_btn, 1)
+
+        # PARAMETROS
+        self.parent = parent
+
+        wid_row_columns = QtWidgets.QWidget()
+        wid_row_columns.setLayout(QtWidgets.QHBoxLayout())
+        wid_row_columns.layout().setContentsMargins(0, 0, 0, 0)
+        wid_row_columns.layout().setAlignment(Qt.AlignHCenter)
+        wid_row_columns.layout().setSpacing(15)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+        label_limite_vistas = QtWidgets.QLabel("Nro. Linea de columnas:")
+        label_limite_vistas.setFont(font)
+
+        self.spinbox_row_column = QtWidgets.QSpinBox()
+        self.spinbox_row_column.setFixedWidth(70)
+        self.spinbox_row_column.setMinimum(0)
+        self.spinbox_row_column.setMaximum(1000000)
+        self.spinbox_row_column.setValue(config.ROW_COLUMNS + 1)
+        self.spinbox_row_column.setStyleSheet(estilos.estilos_spinbox_filtros())
+
+        wid_row_columns.layout().addWidget(label_limite_vistas)
+        wid_row_columns.layout().addWidget(self.spinbox_row_column)
+
+        wid_content.layout().addWidget(wid_row_columns)
+
+        btn_aceptar = QtWidgets.QPushButton("Aplicar")
+        btn_aceptar.clicked.connect(self.guardar_conf)
+        btn_aceptar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn.layout().addWidget(btn_aceptar)
+
+    def guardar_conf(self):
+        dato = self.spinbox_row_column.value()
+        dato_int = int(dato) - 1
+
+        config.ROW_COLUMNS = dato_int
+        Conexion.set_row_columns(dato_int)
+        self.close()
+

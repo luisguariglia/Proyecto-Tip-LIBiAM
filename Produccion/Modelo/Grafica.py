@@ -1,7 +1,9 @@
 from Modelo.Filtro import Filtro
 
+
 class Grafica:
-    def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None, nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None):
+    def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None,
+                 nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
@@ -9,29 +11,31 @@ class Grafica:
         self.__id = id
         self.__nombre_columna_grafica_vista = nombre_columna_grafica_vista
         self.__filtro = Filtro()
-        self.__recorte = [0,0]
-        self.__offset= [0.25,2,True]
+        self.__recorte = [0, 0]
+        self.__offset = [0.25, 2, True]
         self.__valores_pico = None
-        self.__integral = [0, 0,False]
+        self.__integral = [0, 0, False]
         self.__numero_grafica = numero_grafica
         self.__numero_archivo = numero_archivo
+        self.__exponente = None
+        self.__valores_pico_para_exportar = None
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
 
-    def set_nombre_columna_grafica(self,nuevo_nombre):
+    def set_nombre_columna_grafica(self, nuevo_nombre):
         self.__nombre_columna_grafica = nuevo_nombre
 
     def get_nombre_columna_tiempo(self):
         return self.__nombre_columna_tiempo
 
-    def set_nombre_columna_tiempo(self,nuevo_nombre):
+    def set_nombre_columna_tiempo(self, nuevo_nombre):
         self.__nombre_columna_tiempo = nuevo_nombre
 
     def get_archivo(self):
         return self.__archivo
 
-    def set_archivo(self,archivo):
+    def set_archivo(self, archivo):
         self.__archivo = archivo
 
     def get_tree_item(self):
@@ -43,7 +47,7 @@ class Grafica:
     def get_id(self):
         return self.__id
 
-    def set_id(self, id ):
+    def set_id(self, id):
         self.__id = id
 
     def get_nombre_columna_grafica_vista(self):
@@ -93,3 +97,15 @@ class Grafica:
 
     def set_numero_archivo(self, numero_archivo):
         self.__numero_archivo = numero_archivo
+
+    def get_exponente(self):
+        return self.__exponente
+
+    def set_exponente(self, exponente):
+        self.__exponente = exponente
+
+    def get_valores_pico_para_exportar(self):
+        return self.__valores_pico_para_exportar
+
+    def set_valores_pico_para_exportar(self, valores_pico_para_exportar):
+        self.__valores_pico_para_exportar = valores_pico_para_exportar
