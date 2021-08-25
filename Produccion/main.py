@@ -745,8 +745,28 @@ class ventana_principal(QWidget):
                     return ret
             return ret
 
-        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=600)
-        numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
+        totalDeLaIntegral=0
+        contador=a
+        calculando=True
+        intervalo=0.1
+
+        #tod  esto se hace para que se fraccione el calculo de la integral y no de error y ande mas rapido
+        if (b-a)<=intervalo:                #primer caso que la integral sea menor a 0.25 segundos
+            i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo, a, b, limit=120, epsabs = 9999999999999)
+            totalDeLaIntegral = i
+        else:                        #si es mayor a 0.25
+            while (calculando):
+                print(contador)
+                if (contador+intervalo)<b:                 #pregunto si estoy llegando al final
+                    i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,contador,contador+intervalo, limit=60, epsabs = 9999999999999)
+                    totalDeLaIntegral = totalDeLaIntegral+i
+                    contador= contador+intervalo
+                else:                               #calculo el resto que me queda
+                    i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo, contador, b, limit=50, epsabs = 9999999999999)
+                    totalDeLaIntegral = totalDeLaIntegral + i
+                    calculando=False
+
+        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, 15))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
