@@ -585,9 +585,12 @@ class ventana_principal(QWidget):
 
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
         nombre_archivo += " - A" + str(self.id_archivo)
-        frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
-        dat = frame_archivo['GLd: EMG 1 (IM) [V]']
+        try:
 
+            frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
+        except Exception as e:
+            QMessageBox.about(self, "Error", "No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
+            return
 
         archivo = Archivo(nombre_archivo,frame_archivo)
         archivo.agregar_electromiografias(frame_archivo)

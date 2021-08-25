@@ -1,11 +1,43 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import sys
+import time
 
-x = [1,2,3,4,5]
-y = [0.000001,0.000002,0.000003,0.000004,0.000005]
-fig, axs = plt.subplots(nrows=1, ncols=1, figsize=(8, 4))
-axs.plot(x,y)
-plt.tight_layout()
-exponent = axs.yaxis.get_offset_text().get_text()
-print('exponent:', int(exponent.split('e−')[1]))
-plt.show()
+from PyQt5.QtWidgets import (QApplication, QDialog,
+                             QProgressBar, QPushButton)
+
+TIME_LIMIT = 100
+
+
+class Actions(QDialog):
+    """
+    Simple dialog that consists of a Progress Bar and a Button.
+    Clicking on the button results in the start of a timer and
+    updates the progress bar.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle('Progress Bar')
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(0, 0, 300, 25)
+        self.progress.setMaximum(100)
+        self.button = QPushButton('Start', self)
+        self.button.move(0, 30)
+        self.show()
+
+        self.button.clicked.connect(self.onButtonClick)
+
+    def onButtonClick(self):
+        count = 0
+        while count < TIME_LIMIT:
+            count += 1
+            time.sleep(000.1)
+            self.progress.setValue(count)
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = Actions()
+    sys.exit(app.exec_())
