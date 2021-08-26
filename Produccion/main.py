@@ -28,6 +28,7 @@ from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ven
 from matplotlib.patches import Polygon
 import scipy
 import csv
+import img
 
 def load_fonts_from_dir(directory):
     families = set()
