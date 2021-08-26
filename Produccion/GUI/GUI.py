@@ -11,7 +11,7 @@ from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 
-import img
+
 
 
 
@@ -325,7 +325,6 @@ class ventana_filtro(QtWidgets.QDialog):
 
         return grafica_aux
 
-
 class ventana_comparar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_comparar, self).__init__()
@@ -430,7 +429,6 @@ class ventana_comparar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
-
 
 class ventana_valores_en_graficas(QtWidgets.QDialog):
     def __init__(self, parent=None,graficas=None,v=""):
@@ -723,7 +721,6 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                 break
 
         return grafica_aux
-
 
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):

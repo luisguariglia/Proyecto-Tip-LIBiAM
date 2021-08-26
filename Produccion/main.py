@@ -664,8 +664,6 @@ class ventana_principal(QWidget):
 
     def agregar_grafica_a_vista(self, item, col):
 
-
-
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
 
@@ -906,8 +904,10 @@ class ventana_principal(QWidget):
                             axes[x].grid()
                         # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
-                        if graficas[x].get_valores_picos() is not None:
-                            self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos(), graficas[x].get_exponente(), graficas[x])
+                        #if graficas[x].get_valores_picos() is not None:
+                        #    self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset,
+                        #                               graficas[x].get_valores_picos(), graficas[x].get_exponente(),
+                        #                               graficas[x])
 
                         axes[x].legend()
                         plt.tight_layout()
@@ -944,9 +944,6 @@ class ventana_principal(QWidget):
                     vista.set_scroll(scroll_area)
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
-
-
-
 
     def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista, numero_grafica, numero_archivo):
         dt_archivo = self.get_archivo_en_combobox()
@@ -1154,10 +1151,8 @@ class ventana_principal(QWidget):
         for v in self.vistas:
             self.treeView2.addTopLevelItem(v.get_tree_widget_item())
 
-
     def get_numero_vista(self,vista):
         return vista.get_numero_vista()
-
 
     def eliminar_csv(self):
         if not self.combo.currentText() == "Agregue un archivo csv":
@@ -1165,7 +1160,6 @@ class ventana_principal(QWidget):
             self.combo.removeItem(self.combo.currentIndex())
             if self.combo.count() == 0:
                 self.combo.addItem("Agregue un archivo csv")
-
 
     def minimizar_panel(self):
         self.anim = QPropertyAnimation(self.widget_der, b"pos")
@@ -1192,14 +1186,12 @@ class ventana_principal(QWidget):
         self.anim_2.start()
         self.anim_group.start()
 
-
     def maximizar_panel(self):
         self.anim_wid_toggle_buttons = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim_wid_toggle_buttons.setEndValue(QPoint(-25, 0))
         self.anim_wid_toggle_buttons.setDuration(200)
         self.anim_wid_toggle_buttons.finished.connect(self.maximizar_panel_2)
         self.anim_wid_toggle_buttons.start()
-
 
     def maximizar_panel_2(self):
         self.anim_wid_der = QPropertyAnimation(self.widget_der, b"pos")
@@ -1218,7 +1210,6 @@ class ventana_principal(QWidget):
         self.anim_2_wid_der.start()
         self.anim_wid_izq.start()
 
-
     def eliminar_vista(self, tab_index):
         widget = self.widget_der.widget(tab_index)
         cant_hijos = self.treeView2.topLevelItemCount()
@@ -1234,7 +1225,6 @@ class ventana_principal(QWidget):
                         self.widget_der.removeTab(tab_index)
                         break
 
-
     def eliminar_vista_de_array(self,widget):
         for i in range(len(self.vistas)):
             if self.vistas[i].get_widget() == widget:
@@ -1245,37 +1235,29 @@ class ventana_principal(QWidget):
         #cant_graficas = len(graficas)
         #data = []
         #data2 = []
-        cabecera = []
-        datos = []
+        graficas_sin_filtro = 0
+        if len(graficas) != 0:
+            cabecera = []
+            datos = []
+            with open('valores_pico.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                for grafica in graficas:
+                    if grafica.get_valores_pico_para_exportar() is not None:
+                        writer.writerow([grafica.get_nombre_columna_grafica()])
+                        height = grafica.get_valores_pico_para_exportar()
+                        writer.writerow(height)
+                    else:
+                        graficas_sin_filtro += 1
 
-        with open('innovators.csv', 'w', newline='') as file:
-            writer = csv.writer(file)
-            for grafica in graficas:
-                cabecera.append(grafica.get_nombre_columna_grafica())
-            writer.writerow(cabecera)
+                if graficas_sin_filtro == len(graficas):
+                    QMessageBox.about(self, "Error", "Todavía no ha aplicado ningún filtro a las gráficas.")
+                    return
+                else:
+                    QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
+                    return
 
-            for grafica in graficas:
-                height = grafica.get_valores_pico_para_exportar()
-                writer.writerows(map(lambda x: [x], height))
-
-
-            #for x in range(cant_graficas):
-                #writer.writerow([1, "Linus Torvalds", "Linux Kernel"])
-                #writer.writerow([2, "Tim Berners-Lee", "World Wide Web"])
-                #writer.writerow([3, "Guido van Rossum", "Python Programming"])
-
-
-
-
-        #print(data)
-
-        #fruit_dictionary = dict(zip(data, data2))
-        #print(fruit_dictionary)
-        #df = pandas.DataFrame(fruit_dictionary, columns=['EMG 1', 'EMG 2'])
-        #df.to_csv('example.csv')
 
 def main():
-
     app = QApplication(sys.argv)
     ex = ventana_principal()
     ex.show()
