@@ -24,7 +24,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_conf_archivos, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_conf_archivos, ventana_conf_linea_archivo, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
 from matplotlib.patches import Polygon
 import scipy
 
@@ -583,8 +583,6 @@ class ventana_principal(QWidget):
         if not filepath[0]:
             return
 
-        nombre_archivo = funciones.get_nombre_csv(filepath[0])
-        nombre_archivo += " - A" + str(self.id_archivo)
         try:
 
             frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
@@ -592,8 +590,16 @@ class ventana_principal(QWidget):
             QMessageBox.about(self, "Error", "No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
             return
 
+        nombre_archivo = funciones.get_nombre_csv(filepath[0])
+        nombre_archivo += " - A" + str(self.id_archivo)
+
+
         archivo = Archivo(nombre_archivo,frame_archivo)
         archivo.agregar_electromiografias(frame_archivo)
+
+        if len(archivo.get_electromiografias()) == 0:
+            QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
+            ventana_conf_linea_archivo(self, archivo).exec_()
 
         self.archivos_csv.append(archivo)
         text_current_index = self.combo.currentText()
@@ -695,11 +701,11 @@ class ventana_principal(QWidget):
         filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
-    def recortarGraficos(self, datos,tiempo, datosRecorte):
-        return filtersHelper.recortarGrafico(datos,tiempo,datosRecorte)
+    def recortarGraficos(self, datos, tiempo, datosRecorte):
+        return filtersHelper.recortarGrafico(datos, tiempo, datosRecorte)
 
-    def aplicarOffset(self, datos,tiempo, datosOffset):
-        return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
+    def aplicarOffset(self, datos, tiempo, datosOffset):
+        return filtersHelper.offsetGrafico(datos, tiempo, datosOffset)
 
     def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente):
         peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
