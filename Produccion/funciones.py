@@ -1,3 +1,5 @@
+import config
+
 def listar_emg_especifica(emg_seleccionada, archivo_csv):
     """
         Busca solamente las columnas especificas a una EMG seleccionada previamente.
@@ -8,14 +10,14 @@ def listar_emg_especifica(emg_seleccionada, archivo_csv):
         Retorna una lista con todas las columnas relacionadas a la EMG seleccionada previamente.
     """
 
-    emg = "EMG " + emg_seleccionada
+    emg = config.EMG + " " + emg_seleccionada
     encontrado = False
     lista = []
     for i in range(len(archivo_csv.columns)):
         cadena = archivo_csv.columns[i]
 
         if encontrado:  # AGREGA LAS COLUMNAS DE CADA DATO DE LA EMG A LA LISTA HASTA ENCONTRAR LA SIGUIENTE
-            if cadena.find('EMG') != -1:
+            if cadena.find(config.EMG) != -1:
                 lista.pop()
                 break
             else:
@@ -42,7 +44,7 @@ def listar_emg(archivo_csv):
     lista = []
     for i in range(1, len(columnas), 2):  # SALTEARSE LAS COLUMNAS X[S]
         cadena = columnas[i]
-        if cadena.find('EMG') > -1:
+        if cadena.find(config.EMG) > -1:
             lista.append(cadena)
     return lista
 

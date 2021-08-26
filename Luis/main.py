@@ -15,6 +15,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 import sympy as sy
 import scipy
+from numpy import exp
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -158,17 +159,24 @@ class MatplotlibWidget(QWidget):
 
         self.ax.annotate('local max', xy=((a+b)/2, 0), xytext=((a+b)/2, 0))
 
+
+
         def getVoltajeAPartirDeUnTiempo(x):
             ret=0
             for i in range(0, aux.size):
                 if (aux[i] >= x):
                     ret = self.datos[1][i]
                     break
-            return ret
+            return int(ret)
 
 
-        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,5.1,5.2)
-        print(i)
+        intr, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,1,1.25, limit=1000, epsabs = 10000)
+        print(intr)
+        #
+        # f = lambda x: getVoltajeAPartirDeUnTiempo(x)
+        # i = scipy.integrate.quad(f, 0, 1)
+        # print(i)
+
 
 
         # for i in range(0, tiempo.size):

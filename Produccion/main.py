@@ -24,8 +24,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-import img
-from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos
+from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -592,14 +591,23 @@ class ventana_principal(QWidget):
         if not filepath[0]:
             return
 
+        try:
+
+            frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
+        except Exception as e:
+            QMessageBox.about(self, "Error", "No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
+            return
+
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
         nombre_archivo += " - A" + str(self.id_archivo)
-        frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
-        dat = frame_archivo['GLd: EMG 1 (IM) [V]']
 
 
         archivo = Archivo(nombre_archivo,frame_archivo)
         archivo.agregar_electromiografias(frame_archivo)
+
+        if len(archivo.get_electromiografias()) == 0:
+            QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
+            ventana_conf_linea_archivo(self, archivo).exec_()
 
         self.archivos_csv.append(archivo)
         text_current_index = self.combo.currentText()
@@ -699,11 +707,11 @@ class ventana_principal(QWidget):
         filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
-    def recortarGraficos(self, datos,tiempo, datosRecorte):
-        return filtersHelper.recortarGrafico(datos,tiempo,datosRecorte)
+    def recortarGraficos(self, datos, tiempo, datosRecorte):
+        return filtersHelper.recortarGrafico(datos, tiempo, datosRecorte)
 
-    def aplicarOffset(self, datos,tiempo, datosOffset):
-        return filtersHelper.offsetGrafico(datos,tiempo,datosOffset)
+    def aplicarOffset(self, datos, tiempo, datosOffset):
+        return filtersHelper.offsetGrafico(datos, tiempo, datosOffset)
 
     def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente, grafica : Grafica):
         peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
@@ -749,8 +757,28 @@ class ventana_principal(QWidget):
                     return ret
             return ret
 
-        i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,a,b, limit=600)
-        numeroAMostrar = str("{:.2f}".format(i / (pow(10, 15))))
+        totalDeLaIntegral=0
+        contador=a
+        calculando=True
+        intervalo=0.1
+
+        #tod  esto se hace para que se fraccione el calculo de la integral y no de error y ande mas rapido
+        if (b-a)<=intervalo:                #primer caso que la integral sea menor a 0.25 segundos
+            i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo, a, b, limit=120, epsabs = 9999999999999)
+            totalDeLaIntegral = i
+        else:                        #si es mayor a 0.25
+            while (calculando):
+                print(contador)
+                if (contador+intervalo)<b:                 #pregunto si estoy llegando al final
+                    i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,contador,contador+intervalo, limit=60, epsabs = 9999999999999)
+                    totalDeLaIntegral = totalDeLaIntegral+i
+                    contador= contador+intervalo
+                else:                               #calculo el resto que me queda
+                    i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo, contador, b, limit=50, epsabs = 9999999999999)
+                    totalDeLaIntegral = totalDeLaIntegral + i
+                    calculando=False
+
+        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, 15))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):

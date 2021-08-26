@@ -390,4 +390,20 @@ def estilos_combobox_filtro():
 
     """
 
+def textbox():
+    return """
+    QLineEdit{
+        border:1px solid #757575;
+        border-radius:2px;
+        padding: 5px; 
+        background : #F5F5F5;
+    }
+    
+    QLineEdit::hover{
+        border:1px solid #424242;
+        background : #EEEEEE;
+    }
+    
+    """
+
 fuenteParametros = ("Open Sans", "Regular", 10)

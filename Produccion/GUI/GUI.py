@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
+from PyQt5.QtCore import QVariant
 from matplotlib import pyplot as plt
 
 import config
@@ -16,7 +17,7 @@ from Modelo.Pico import Pico
 
 
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
-    def __init__(self, text, id):
+    def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
         self.setText(0,text)
         self.id = id
@@ -1388,3 +1389,384 @@ class ventana_conf_archivos(QtWidgets.QDialog):
         Conexion.set_row_columns(dato_int)
         self.close()
 
+
+class ventana_conf_linea_archivo(QtWidgets.QDialog):
+    def __init__(self, parent=None, archivo=None):
+        super(ventana_conf_linea_archivo, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Configuraciones de columnas de información")
+        self.setFixedSize(770, 500)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(15)
+
+
+
+        # PARAMETROS
+        self.parent = parent
+        self.archivo = archivo
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_derecha = QtWidgets.QWidget()
+        wid_filtro2 = QtWidgets.QWidget()
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+
+        wid_izquierda.setGraphicsEffect(shadow)
+        wid_derecha.setGraphicsEffect(shadow2)
+        #wid_filtro2.setGraphicsEffect(shadow2)
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_filtro2.setStyleSheet("background-color:white; border-radius:4px;")
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_filtro2.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("COLUMNAS DEL ARCHIVO")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        label_2 = QtWidgets.QLabel("FILTRAR COLUMNAS")
+        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;margin-bottom:16px;")
+
+        label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
+        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+        wid_derecha.layout().addWidget(label_2, 1)
+        wid_filtro2.layout().addWidget(label_3, 1)
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        columnas = self.archivo.get_archivo().columns
+        for x in range(1, len(columnas), 2):
+
+            item = tree_widget_item_grafica(columnas[x])
+            self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        btn_seleccionar = QtWidgets.QPushButton("SELECCIONAR")
+        btn_seleccionar.clicked.connect(self.seleccionar)
+        btn_seleccionar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().setAlignment(Qt.AlignLeft)
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+        wid_btn.layout().addWidget(btn_seleccionar)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        # YO
+
+        # GROUP BOX VALORES FILTRO
+        wid_content_der = QtWidgets.QWidget()
+        wid_content_der.setLayout(QtWidgets.QVBoxLayout())
+        wid_content_der.layout().setAlignment(Qt.AlignTop)
+        wid_content_der.layout().setContentsMargins(10, 0, 0, 0)
+        wid_content_der.layout().setSpacing(20)
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+
+        # ORDER
+        btn_filtrar_seleccionados = QtWidgets.QPushButton("FILTRAR SELECCIONADOS")
+        btn_filtrar_seleccionados.clicked.connect(self.filtrar_seleccionados)
+        btn_filtrar_seleccionados.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        btn_filtrar_no_seleccionados = QtWidgets.QPushButton("FILTRAR NO SELECCIONADOS")
+        btn_filtrar_no_seleccionados.clicked.connect(self.filtrar_no_seleccionados)
+        btn_filtrar_no_seleccionados.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_order = QtWidgets.QWidget()
+        wid_order.setLayout(QtWidgets.QHBoxLayout())
+        wid_order.layout().setContentsMargins(0, 0, 0, 0)
+        wid_order.layout().addWidget(btn_filtrar_seleccionados)
+        wid_order.layout().addWidget(btn_filtrar_no_seleccionados)
+
+        # ARRAY LIKE
+        wid_filtrar_content = QtWidgets.QWidget()
+        wid_filtrar_content.setLayout(QtWidgets.QVBoxLayout())
+        wid_filtrar_content.layout().setContentsMargins(0, 0, 0, 0)
+        wid_filtrar_content.layout().setSpacing(0)
+
+        label_filtrar_por_caracter = QtWidgets.QLabel("Filtrar por caracteres:")
+        label_filtrar_por_caracter.setFont(font)
+
+        wid_label_filtrar_caracter = QtWidgets.QWidget()
+        wid_label_filtrar_caracter.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_filtrar_caracter.layout().addWidget(label_filtrar_por_caracter)
+
+        self.textbox = QtWidgets.QLineEdit()
+        self.textbox.setStyleSheet(estilos.textbox())
+
+        wid_textbox = QtWidgets.QWidget()
+        wid_textbox.setLayout(QtWidgets.QHBoxLayout())
+        wid_textbox.layout().setContentsMargins(8, 2, 0, 2)
+        wid_textbox.layout().setAlignment(Qt.AlignRight)
+        wid_textbox.layout().addWidget(self.textbox)
+
+        wid_textbox_label = QtWidgets.QWidget()
+        wid_textbox_label.setLayout(QtWidgets.QHBoxLayout())
+        wid_textbox_label.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_textbox_label.layout().addWidget(wid_label_filtrar_caracter, 4)
+        wid_textbox_label.layout().addWidget(wid_textbox, 6)
+
+        wid_filtrar_content.layout().addWidget(wid_textbox_label)
+
+        wid_checkbox = QtWidgets.QWidget()
+        wid_checkbox.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox.layout().setAlignment(Qt.AlignRight)
+        wid_checkbox.layout().setSpacing(0)
+
+
+        label_palabra = QtWidgets.QLabel("Eliminar coincidencias")
+        self.checkbox = QtWidgets.QCheckBox()
+        self.checkbox.setCheckState(Qt.Checked)
+
+        wid_checkbox.layout().addWidget(self.checkbox)
+        wid_checkbox.layout().addWidget(label_palabra)
+        wid_filtrar_content.layout().addWidget(wid_checkbox)
+
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().setContentsMargins(0, 10, 0, 0)
+        wid_btn.layout().setAlignment(Qt.AlignRight)
+
+        btn = QtWidgets.QPushButton("FILTRAR")
+        btn.clicked.connect(self.filtrar_por_caracteres)
+        btn.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn.layout().addWidget(btn)
+        wid_filtrar_content.layout().addWidget(wid_btn)
+
+        # BTYPE
+        label_btype = QtWidgets.QLabel("Tipo de filtro")
+        label_btype.setFont(font)
+        wid_label_btype = QtWidgets.QWidget()
+        wid_label_btype.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_btype.layout().addWidget(label_btype)
+
+        self.combobox_btype = QtWidgets.QComboBox()
+        self.combobox_btype.setFixedWidth(150)
+        self.combobox_btype.addItem("lowpass")
+        self.combobox_btype.addItem("highpass")
+        self.combobox_btype.addItem("bandpass")
+        self.combobox_btype.addItem("bandstop")
+        self.combobox_btype.setCurrentIndex(2)
+        self.combobox_btype.setStyleSheet(estilos.estilos_combobox_filtro())
+
+        wid_combobox_btype = QtWidgets.QWidget()
+        wid_combobox_btype.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_btype.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_btype.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_btype.layout().addWidget(self.combobox_btype)
+
+        wid_btype = QtWidgets.QWidget()
+        wid_btype.setLayout(QtWidgets.QHBoxLayout())
+        wid_btype.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_btype.layout().addWidget(wid_label_btype, 5)
+        wid_btype.layout().addWidget(wid_combobox_btype, 5)
+
+        # ANALOG
+        label_analog = QtWidgets.QLabel("Analógico")
+        label_analog.setFont(font)
+
+        wid_label_analog = QtWidgets.QWidget()
+        wid_label_analog.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_analog.layout().addWidget(label_analog)
+
+        self.combobox_analog = QtWidgets.QComboBox()
+        self.combobox_analog.setFixedWidth(150)
+        self.combobox_analog.setStyleSheet(estilos.estilos_combobox_filtro())
+        self.combobox_analog.addItem("True")
+        self.combobox_analog.addItem("False")
+        self.combobox_analog.setCurrentIndex(0)
+
+        wid_combobox_analog = QtWidgets.QWidget()
+        wid_combobox_analog.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_analog.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_analog.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_analog.layout().addWidget(self.combobox_analog)
+
+        wid_analog = QtWidgets.QWidget()
+        wid_analog.setLayout(QtWidgets.QHBoxLayout())
+        wid_analog.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_analog.layout().addWidget(wid_label_analog, 5)
+        wid_analog.layout().addWidget(wid_combobox_analog, 5)
+
+        # "lowpass")
+        # self.combobox_btype.addItem("highpass")
+        # self.combobox_btype.addItem("bandpass")
+        # self.combobox_btype.addItem("bandstop")
+        #   infooo
+        label_info = QtWidgets.QLabel("")
+        # order- arraylike - btype - analog
+        label_info.setFont(font)
+        label_info.setWordWrap(True);
+        # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
+        wid_content_der.layout().addWidget(wid_order)
+        wid_content_der.layout().addWidget(wid_filtrar_content)
+        wid_content_der.layout().addWidget(wid_btype)
+        wid_content_der.layout().addWidget(wid_analog)
+        wid_content_der.layout().addWidget(label_info)
+
+        # BOTÓN APLICAR FILTROS
+        wid_btn_aplicar = QtWidgets.QWidget()
+        wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
+        wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
+
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.aplicar_valores_filtro)
+        btn_aplicar.setFixedWidth(80)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn_aplicar.layout().addWidget(btn_aplicar)
+
+        wid_derecha.layout().addWidget(wid_content_der, 8)
+        wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def seleccionar(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Unchecked)
+
+    def filtrar_no_seleccionados(self):
+
+        while True:
+            hay = False
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if not hijo.checkState(0):
+                        hay = True
+                        self.tree_graficas.invisibleRootItem().removeChild(hijo)
+
+            if not hay:
+                break
+            elif hay:
+                hay = False
+
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                hijo.setData(0,Qt.CheckStateRole, None)
+
+    def filtrar_seleccionados(self):
+
+        while True:
+            hay = False
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        hay = True
+                        self.tree_graficas.invisibleRootItem().removeChild(hijo)
+
+            if not hay:
+                break
+            elif hay:
+                hay = False
+
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                hijo.setData(0,Qt.CheckStateRole, None)
+
+    def filtrar_por_caracteres(self):
+        if len(self.checkbox.text()) == 0:
+            return
+
+        while True:
+            hay = False
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.text(0).find(self.textbox.text()) > -1 and self.checkbox.isChecked():
+                        hay = True
+                        self.tree_graficas.invisibleRootItem().removeChild(hijo)
+                    elif hijo.text(0).find(self.textbox.text()) == -1 and not self.checkbox.isChecked():
+                        hay = True
+                        self.tree_graficas.invisibleRootItem().removeChild(hijo)
+
+            if not hay:
+                break
+            elif hay:
+                hay = False
+
+
+    def aplicar_valores_filtro(self):
+        hay_almenos_un_check = False
+        order = self.spin_box.value()
+        array_a = int(self.spiner_array_a.value()) * 0.001
+        array_b = int(self.spiner_array_b.value()) * 0.001
+        btype = self.combobox_btype.currentText()
+        analog = None
+        if self.combobox_analog.currentText() == "True":
+            analog = True
+        else:
+            analog = False
+
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+                self.close()
+
+    def get_grafica(self, id_grafica):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_id() == id_grafica:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux

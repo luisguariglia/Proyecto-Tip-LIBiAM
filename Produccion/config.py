@@ -1,5 +1,6 @@
 from BD.Queries import Conexion
 
+EMG = "EMG"
 DB_FILE = 'bd_humilde.db'
 ROW_COLUMNS = Conexion.get_row_columns()
 ENCODING = 'cp1252'
