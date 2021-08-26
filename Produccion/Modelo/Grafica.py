@@ -19,6 +19,7 @@ class Grafica:
         self.__numero_archivo = numero_archivo
         self.__exponente = None
         self.__valores_pico_para_exportar = None
+        self.__valor_integral_para_exportar = None
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -109,3 +110,10 @@ class Grafica:
 
     def set_valores_pico_para_exportar(self, valores_pico_para_exportar):
         self.__valores_pico_para_exportar = valores_pico_para_exportar
+
+    def get_valor_integral_para_exportar(self):
+        return self.__valor_integral_para_exportar
+
+    def set_valor_integral_para_exportar(self, valor_integral_para_exportar):
+        self.__valor_integral_para_exportar = valor_integral_para_exportar
+

@@ -730,7 +730,7 @@ class ventana_principal(QWidget):
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
 
-    def mostrar_integral(self, ax, _tiempo, datos,valores_integral):
+    def mostrar_integral(self, ax, _tiempo, datos,valores_integral, exponente, grafica: Grafica):
 
         a, b = valores_integral[0], valores_integral[1]  # integral limits
         aux = _tiempo
@@ -769,7 +769,7 @@ class ventana_principal(QWidget):
             totalDeLaIntegral = i
         else:                        #si es mayor a 0.25
             while (calculando):
-                print(contador)
+                #print(contador)
                 if (contador+intervalo)<b:                 #pregunto si estoy llegando al final
                     i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,contador,contador+intervalo, limit=60, epsabs = 9999999999999)
                     totalDeLaIntegral = totalDeLaIntegral+i
@@ -779,8 +779,9 @@ class ventana_principal(QWidget):
                     totalDeLaIntegral = totalDeLaIntegral + i
                     calculando=False
 
-        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, 15))))
-        ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
+        ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+        grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
@@ -827,7 +828,7 @@ class ventana_principal(QWidget):
                     # calculo y muestro integral
                     if graficas[0].get_integral()[2]:
                         self.mostrar_integral(axes, tiempoRecortado.values, aux,
-                                                       graficas[0].get_integral())
+                                              graficas[0].get_integral(), graficas[0].get_exponente(), graficas[0])
 
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
@@ -910,7 +911,7 @@ class ventana_principal(QWidget):
                         # calculo y muestro integral
                         if graficas[x].get_integral()[2]:
                             self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
-                                                      graficas[x].get_integral())
+                                                      graficas[x].get_integral(), graficas[x].get_exponente(), graficas[x])
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
@@ -1264,6 +1265,7 @@ class ventana_principal(QWidget):
         #cant_graficas = len(graficas)
         #data = []
         #data2 = []
+
         graficas_sin_filtro = 0
         if len(graficas) != 0:
             cabecera = []
@@ -1271,19 +1273,22 @@ class ventana_principal(QWidget):
             with open('valores_pico.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 for grafica in graficas:
+                    print(grafica.get_valores_pico_para_exportar())
                     if grafica.get_valores_pico_para_exportar() is not None:
                         writer.writerow([grafica.get_nombre_columna_grafica()])
-                        height = grafica.get_valores_pico_para_exportar()
-                        writer.writerow(height)
-                    else:
-                        graficas_sin_filtro += 1
+                        valores_pico = grafica.get_valores_pico_para_exportar()
+                        writer.writerow([f"Valores pico: "])
+                        writer.writerow(valores_pico)
 
-                if graficas_sin_filtro == len(graficas):
-                    QMessageBox.about(self, "Error", "Todavía no ha aplicado ningún filtro a las gráficas.")
-                    return
-                else:
-                    QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
-                    return
+                    if grafica.get_valor_integral_para_exportar() is not None:
+                        valor_integral = grafica.get_valor_integral_para_exportar()
+                        writer.writerow([f"Valor de integral: "])
+                        writer.writerow([valor_integral])
+
+                    writer.writerow("")
+
+                QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
+                return
 
 
 def main():

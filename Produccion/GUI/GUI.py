@@ -564,7 +564,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
             "<br>"
             )
         label_info.setFont(font)
-        label_info.setWordWrap(True);
+        label_info.setWordWrap(True)
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
         wid_content_derecha.layout().addWidget(wid_checkbox)
