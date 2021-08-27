@@ -748,6 +748,8 @@ class ventana_principal(QWidget):
 
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
+        print(exponente)
+        print("integral_antes de la ranciada")
 
         # calculo la integral
         def getVoltajeAPartirDeUnTiempo(x):
@@ -782,6 +784,8 @@ class ventana_principal(QWidget):
         numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
         grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
+        print(exponente)
+        print("integral_antes de la ranciada")
 
     def calcularYMostrar_RMS(self,axes, ax, tiempo,grafica: Grafica):
         resultado=0
@@ -853,7 +857,8 @@ class ventana_principal(QWidget):
 
                     plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
-                    graficas[0].set_exponente(int(exponent.split('e')[1]))
+                    if graficas[0].get_exponente() is None:
+                        graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
                     if graficas[0].get_rmsLimites()[2]:
@@ -961,7 +966,8 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        if graficas[x].get_exponente() is None:
+                            graficas[x].set_exponente(int(exponent.split('e')[1]))
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
