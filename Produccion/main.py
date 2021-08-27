@@ -1298,8 +1298,14 @@ class ventana_principal(QWidget):
                     if grafica.get_valores_pico_para_exportar() is not None:
                         writer.writerow([grafica.get_nombre_columna_grafica()])
                         valores_pico = grafica.get_valores_pico_para_exportar()
+
+                        # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
+                        promedio = [f"Promedio: {np.mean(valores_pico)}"]
+
+                        #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
+                        valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
                         writer.writerow([f"Valores pico: "])
-                        writer.writerow(valores_pico)
+                        writer.writerow(valores_pico_y_promedio)
 
                     if grafica.get_valor_integral_para_exportar() is not None:
                         valor_integral = grafica.get_valor_integral_para_exportar()
