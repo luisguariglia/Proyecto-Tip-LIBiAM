@@ -1261,7 +1261,7 @@ class ventana_conf_archivos(QtWidgets.QDialog):
 
         self.spinbox_row_column = QtWidgets.QSpinBox()
         self.spinbox_row_column.setFixedWidth(70)
-        self.spinbox_row_column.setMinimum(0)
+        self.spinbox_row_column.setMinimum(1)
         self.spinbox_row_column.setMaximum(1000000)
         self.spinbox_row_column.setValue(config.ROW_COLUMNS + 1)
         self.spinbox_row_column.setStyleSheet(estilos.estilos_spinbox_filtros())
@@ -1330,13 +1330,36 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         label_1 = QtWidgets.QLabel("COLUMNAS DEL ARCHIVO")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
+        self.label_1_2 = QtWidgets.QLabel("")
+        self.label_1_2.setStyleSheet("margin-top:14px;")
+
+        wid_content_label_1 = QtWidgets.QWidget()
+        wid_content_label_1.setLayout(QtWidgets.QHBoxLayout())
+        wid_content_label_1.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_label_1_2 = QtWidgets.QWidget()
+        wid_label_1_2.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_1_2.layout().setAlignment(Qt.AlignRight)
+        wid_label_1_2.layout().setContentsMargins(0, 0, 20, 0)
+        wid_label_1_2.layout().addWidget(self.label_1_2)
+
+        wid_label_1 = QtWidgets.QWidget()
+        wid_label_1.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_1.layout().setAlignment(Qt.AlignLeft)
+        wid_label_1.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_1.layout().addWidget(label_1)
+
+        wid_content_label_1.layout().addWidget(wid_label_1, 5)
+        wid_content_label_1.layout().addWidget(wid_label_1_2, 5)
+
+
         label_2 = QtWidgets.QLabel("FILTRAR COLUMNAS")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;margin-bottom:16px;")
 
         label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
         label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-        wid_izquierda.layout().addWidget(label_1, 1)
+        wid_izquierda.layout().addWidget(wid_content_label_1, 1)
         wid_derecha.layout().addWidget(label_2, 1)
         wid_filtro2.layout().addWidget(label_3, 1)
         # GRAFICAS
@@ -1345,6 +1368,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.tree_graficas.setHeaderHidden(True)
 
         columnas = self.archivo.get_archivo().columns
+        self.label_1_2.setText("Total:" + str(int(len(columnas)/2)))
         for x in range(1, len(columnas), 2):
 
             item = tree_widget_item_grafica(columnas[x])
@@ -1370,8 +1394,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
-
-        # YO
 
         # GROUP BOX VALORES FILTRO
         wid_content_der = QtWidgets.QWidget()
@@ -1434,7 +1456,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_checkbox.layout().setAlignment(Qt.AlignRight)
         wid_checkbox.layout().setSpacing(0)
 
-
         label_palabra = QtWidgets.QLabel("Eliminar coincidencias")
         self.checkbox = QtWidgets.QCheckBox()
         self.checkbox.setCheckState(Qt.Checked)
@@ -1456,77 +1477,12 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_filtrar_content.layout().addWidget(wid_btn)
 
         # BTYPE
-        label_btype = QtWidgets.QLabel("Tipo de filtro")
-        label_btype.setFont(font)
-        wid_label_btype = QtWidgets.QWidget()
-        wid_label_btype.setLayout(QtWidgets.QHBoxLayout())
-        wid_label_btype.layout().addWidget(label_btype)
-
-        self.combobox_btype = QtWidgets.QComboBox()
-        self.combobox_btype.setFixedWidth(150)
-        self.combobox_btype.addItem("lowpass")
-        self.combobox_btype.addItem("highpass")
-        self.combobox_btype.addItem("bandpass")
-        self.combobox_btype.addItem("bandstop")
-        self.combobox_btype.setCurrentIndex(2)
-        self.combobox_btype.setStyleSheet(estilos.estilos_combobox_filtro())
-
-        wid_combobox_btype = QtWidgets.QWidget()
-        wid_combobox_btype.setLayout(QtWidgets.QHBoxLayout())
-        wid_combobox_btype.layout().setContentsMargins(0, 0, 0, 0)
-        wid_combobox_btype.layout().setAlignment(Qt.AlignRight)
-        wid_combobox_btype.layout().addWidget(self.combobox_btype)
-
-        wid_btype = QtWidgets.QWidget()
-        wid_btype.setLayout(QtWidgets.QHBoxLayout())
-        wid_btype.layout().setContentsMargins(0, 0, 0, 0)
-
-        wid_btype.layout().addWidget(wid_label_btype, 5)
-        wid_btype.layout().addWidget(wid_combobox_btype, 5)
 
         # ANALOG
-        label_analog = QtWidgets.QLabel("Analógico")
-        label_analog.setFont(font)
 
-        wid_label_analog = QtWidgets.QWidget()
-        wid_label_analog.setLayout(QtWidgets.QHBoxLayout())
-        wid_label_analog.layout().addWidget(label_analog)
-
-        self.combobox_analog = QtWidgets.QComboBox()
-        self.combobox_analog.setFixedWidth(150)
-        self.combobox_analog.setStyleSheet(estilos.estilos_combobox_filtro())
-        self.combobox_analog.addItem("True")
-        self.combobox_analog.addItem("False")
-        self.combobox_analog.setCurrentIndex(0)
-
-        wid_combobox_analog = QtWidgets.QWidget()
-        wid_combobox_analog.setLayout(QtWidgets.QHBoxLayout())
-        wid_combobox_analog.layout().setContentsMargins(0, 0, 0, 0)
-        wid_combobox_analog.layout().setAlignment(Qt.AlignRight)
-        wid_combobox_analog.layout().addWidget(self.combobox_analog)
-
-        wid_analog = QtWidgets.QWidget()
-        wid_analog.setLayout(QtWidgets.QHBoxLayout())
-        wid_analog.layout().setContentsMargins(0, 0, 0, 0)
-
-        wid_analog.layout().addWidget(wid_label_analog, 5)
-        wid_analog.layout().addWidget(wid_combobox_analog, 5)
-
-        # "lowpass")
-        # self.combobox_btype.addItem("highpass")
-        # self.combobox_btype.addItem("bandpass")
-        # self.combobox_btype.addItem("bandstop")
-        #   infooo
-        label_info = QtWidgets.QLabel("")
-        # order- arraylike - btype - analog
-        label_info.setFont(font)
-        label_info.setWordWrap(True);
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_order)
         wid_content_der.layout().addWidget(wid_filtrar_content)
-        wid_content_der.layout().addWidget(wid_btype)
-        wid_content_der.layout().addWidget(wid_analog)
-        wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR FILTROS
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -1564,6 +1520,23 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                     hijo.setCheckState(0, Qt.Unchecked)
 
     def filtrar_no_seleccionados(self):
+        cantidad_seleccionados = 0
+        cant_hijos_tree = 0
+
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                cant_hijos_tree += 1
+                if not hijo.checkState(0):
+                    cantidad_seleccionados += 1
+
+        if cantidad_seleccionados == cant_hijos_tree:
+            for i in range(self.tree_graficas.topLevelItemCount()):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    hijo.setData(0, Qt.CheckStateRole, None)
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
+            return
 
         while True:
             hay = False
@@ -1579,13 +1552,33 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 break
             elif hay:
                 hay = False
+        cant = 0
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                cant += 1
+                hijo.setData(0,Qt.CheckStateRole, None)
+
+        self.label_1_2.setText("Total: " + str(cant))
+
+    def filtrar_seleccionados(self):
+        cantidad_seleccionados = 0
+        cant_hijos_tree = 0
 
         for i in range(self.tree_graficas.topLevelItemCount()):
             hijo = self.tree_graficas.topLevelItem(i)
             if isinstance(hijo, tree_widget_item_grafica):
-                hijo.setData(0,Qt.CheckStateRole, None)
+                cant_hijos_tree += 1
+                if hijo.checkState(0):
+                    cantidad_seleccionados += 1
 
-    def filtrar_seleccionados(self):
+        if cantidad_seleccionados == cant_hijos_tree:
+            for i in range(self.tree_graficas.topLevelItemCount()):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    hijo.setData(0, Qt.CheckStateRole, None)
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
+            return
 
         while True:
             hay = False
@@ -1601,14 +1594,33 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 break
             elif hay:
                 hay = False
+        cant = 0
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                cant += 1
+                hijo.setData(0,Qt.CheckStateRole, None)
+
+        self.label_1_2.setText("Total: " + str(cant))
+
+    def filtrar_por_caracteres(self):
+        if len(self.textbox.text()) == 0:
+            return
+
+        cantidad_coincidencias = 0
+        cant_hijos_tree = 0
 
         for i in range(self.tree_graficas.topLevelItemCount()):
             hijo = self.tree_graficas.topLevelItem(i)
             if isinstance(hijo, tree_widget_item_grafica):
-                hijo.setData(0,Qt.CheckStateRole, None)
+                cant_hijos_tree += 1
+                if hijo.text(0).find(self.textbox.text()) > -1 and self.checkbox.isChecked():
+                    cantidad_coincidencias += 1
+                elif hijo.text(0).find(self.textbox.text()) == -1 and not self.checkbox.isChecked():
+                    cantidad_coincidencias += 1
 
-    def filtrar_por_caracteres(self):
-        if len(self.checkbox.text()) == 0:
+        if cantidad_coincidencias == cant_hijos_tree:
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
             return
 
         while True:
@@ -1628,6 +1640,14 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 break
             elif hay:
                 hay = False
+
+        cant = 0
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                cant += 1
+
+        self.label_1_2.setText("Total: " + str(cant))
 
 
     def aplicar_valores_filtro(self):
