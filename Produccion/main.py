@@ -210,7 +210,7 @@ class ventana_principal(QWidget):
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
 
-        btn_exportar_VP = QPushButton("Exportar valores pico")
+        btn_exportar_VP = QPushButton("Exportar datos")
         btn_exportar_VP.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_exportar_VP.clicked.connect(self.ventana_exportar_valores_pico)
 
@@ -1311,6 +1311,11 @@ class ventana_principal(QWidget):
                         valor_integral = grafica.get_valor_integral_para_exportar()
                         writer.writerow([f"Valor de integral: "])
                         writer.writerow([valor_integral])
+
+                    if grafica.get_rms() is not None:
+                        valor_rms = grafica.get_rms()
+                        writer.writerow([f"Valor RMS: "])
+                        writer.writerow([valor_rms])
 
                     writer.writerow("")
 

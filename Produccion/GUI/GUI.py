@@ -1290,7 +1290,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
         super(ventana_exportarVP, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Exportar valores pico")
+        self.setWindowTitle("Exportar datos")
         self.setFixedSize(420, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -1315,7 +1315,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
-        label_1 = QtWidgets.QLabel("EXPORTAR VALORES PICO")
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
         wid_izquierda.layout().addWidget(label_1, 1)
