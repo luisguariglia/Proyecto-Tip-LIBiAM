@@ -126,7 +126,7 @@ class Grafica:
         self.__rmsLimites = limites
 
     def get_rms(self):
-        return self.__exponente
+        return self.__rms
 
-    def set_rms(self, exponente):
-        self.__exponente = exponente
+    def set_rms(self, rms):
+        self.__rms = rms
