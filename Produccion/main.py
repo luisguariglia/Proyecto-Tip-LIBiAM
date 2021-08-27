@@ -783,6 +783,20 @@ class ventana_principal(QWidget):
         ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
         grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
 
+    def calcularYMostrar_RMS(self,axes, ax, tiempo,grafica: Grafica):
+        resultado=0
+        a = grafica.get_rmsLimites()[0]
+        b = grafica.get_rmsLimites()[1]
+        exponente=grafica.get_exponente()
+        aux = filtersHelper.recortarGrafico(ax, tiempo, [a,b])[0]
+
+        resultado = np.sqrt(np.mean(pow(aux,2)))
+
+        numeroAMostrar = str("{:.2f}".format(resultado / (pow(10, int(exponente)))))
+        axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
+                    xytext=((a + b) / 2, 0))
+        grafica.set_rms(resultado)
+
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
         if widget_tab is None:
@@ -830,6 +844,8 @@ class ventana_principal(QWidget):
                         self.mostrar_integral(axes, tiempoRecortado.values, aux,
                                               graficas[0].get_integral(), graficas[0].get_exponente(), graficas[0])
 
+
+
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                     axes.plot(tiempoRecortado,
@@ -840,6 +856,8 @@ class ventana_principal(QWidget):
                     graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
+                    if graficas[0].get_rmsLimites()[2]:
+                        self.calcularYMostrar_RMS(axes,aux,tiempoRecortado, graficas[0])
                     # ------------------------------------- Aspecto
                     # si no esta recortado
                     if graficas[0].get_recorte()[0] == 0 and graficas[0].get_recorte()[1] == 0:
@@ -912,6 +930,7 @@ class ventana_principal(QWidget):
                         if graficas[x].get_integral()[2]:
                             self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
                                                       graficas[x].get_integral(), graficas[x].get_exponente(), graficas[x])
+
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
@@ -944,6 +963,8 @@ class ventana_principal(QWidget):
                         exponent = axes[x].yaxis.get_offset_text().get_text()
                         graficas[x].set_exponente(int(exponent.split('e')[1]))
 
+                        if graficas[x].get_rmsLimites()[2]:
+                            self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
                     plt.close(fig)
                     #fig.tight_layout()
 

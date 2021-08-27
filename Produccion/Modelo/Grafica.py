@@ -12,14 +12,16 @@ class Grafica:
         self.__nombre_columna_grafica_vista = nombre_columna_grafica_vista
         self.__filtro = Filtro()
         self.__recorte = [0, 0]
-        self.__offset = [0.25, 2, True]
+        self.__offset = [0.25, 2, True]                     # [valor,valor,si se muestra o no]
         self.__valores_pico = None
-        self.__integral = [0, 0, False]
+        self.__integral = [0, 0, False]                     # [valor,valor,si se muestra o no]
         self.__numero_grafica = numero_grafica
         self.__numero_archivo = numero_archivo
         self.__exponente = None
         self.__valores_pico_para_exportar = None
         self.__valor_integral_para_exportar = None
+        self.__rms = 0                                      # valor rms
+        self.__rmsLimites = [0, 0, False]                   # [valor,valor,si se muestra o no]
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -117,3 +119,14 @@ class Grafica:
     def set_valor_integral_para_exportar(self, valor_integral_para_exportar):
         self.__valor_integral_para_exportar = valor_integral_para_exportar
 
+    def get_rmsLimites(self):
+        return self.__rmsLimites
+
+    def set_rmsLimites(self,limites):
+        self.__rmsLimites=limites
+
+    def get_rms(self):
+        return self.__exponente
+
+    def set_rms(self, exponente):
+        self.__exponente = exponente

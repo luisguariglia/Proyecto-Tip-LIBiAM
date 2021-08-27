@@ -437,7 +437,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(770, 470*1.5)
+        self.setFixedSize(800, 470*1.5)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10,0,10,10)
         self.layout().setSpacing(15)
@@ -629,6 +629,65 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
         wid_content_derecha.layout().addWidget(wid_checkbox_integral)
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+        # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
+
+        label_4 = QtWidgets.QLabel("Valor RMS")
+        label_4.setStyleSheet("font:14px bold; margin:5px;")
+        wid_content_derecha.layout().addWidget(label_4)
+
+        wid_inicioRMS = QtWidgets.QWidget()
+        wid_inicioRMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_inicioRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicioRMS.layout().setSpacing(0)
+
+        label_inicioRMS = QtWidgets.QLabel("Valor inicial")
+        label_inicioRMS.setFont(font)
+
+        self.spinbox_inicioRMS = QtWidgets.QDoubleSpinBox()
+        self.spinbox_inicioRMS.setValue(0.0)
+        self.spinbox_inicioRMS.setMaximumWidth(90)
+        self.spinbox_inicioRMS.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_inicioRMS.layout().addWidget(label_inicioRMS, 5)
+        wid_inicioRMS.layout().addWidget(self.spinbox_inicioRMS, 2)
+        wid_content_derecha.layout().addWidget(wid_inicioRMS)
+
+        # segundo parametro
+        wid_finRMS = QtWidgets.QWidget()
+        wid_finRMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_finRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_finRMS.layout().setSpacing(0)
+
+        label_finRMS = QtWidgets.QLabel("Valor final")
+        label_finRMS.setFont(font)
+
+        self.spinbox_finRMS = QtWidgets.QDoubleSpinBox()
+        self.spinbox_finRMS.setValue(0.0)
+        self.spinbox_finRMS.setMaximumWidth(90)
+        self.spinbox_finRMS.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_finRMS.layout().addWidget(label_finRMS, 5)
+        wid_finRMS.layout().addWidget(self.spinbox_finRMS, 2)
+        wid_content_derecha.layout().addWidget(wid_finRMS)
+
+        # checkbox
+        wid_checkbox_RMS = QtWidgets.QWidget()
+        wid_checkbox_RMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_RMS.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_RMS.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_RMS.layout().setSpacing(0)
+
+        label_checkbox_RMS = QtWidgets.QLabel("Mostrar Valor RMS")
+        label_checkbox_RMS.setFont(font)
+        label_checkbox_RMS.setStyleSheet("margin:0px;")
+
+        self.checkbox_mostrar_RMS = QtWidgets.QCheckBox()
+        self.checkbox_mostrar_RMS.setStyleSheet("margin-left:14px;")
+
+        wid_checkbox_RMS.layout().addWidget(self.checkbox_mostrar_RMS)
+        wid_checkbox_RMS.layout().addWidget(label_checkbox_RMS)
+        wid_content_derecha.layout().addWidget(wid_checkbox_RMS)
+        # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
 
         wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
@@ -683,10 +742,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         distance = self.spinbox_distance.value()
         mostrarPicos = self.checkbox_mostrar_picos.isChecked()
 
-
         inicio = self.spinbox_inicio.value()
         fin = self.spinbox_fin.value()
         mostrarIntegral = self.checkbox_mostrar_integral.isChecked()
+
+        inicioRMS = self.spinbox_inicioRMS.value()
+        finRMS = self.spinbox_finRMS.value()
+        mostrarRMS = self.checkbox_mostrar_RMS.isChecked()
 
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -701,6 +763,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                             if mostrarPicos:
                                 grafica.set_valores_picos(Pico(min_height, treshold, distance))
                             grafica.set_integral(([inicio,fin,mostrarIntegral]))
+                            grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
