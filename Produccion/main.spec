@@ -3,9 +3,8 @@
 
 block_cipher = None
 
-
 a = Analysis(['main.py'],
-             pathex=['C:\\Users\\Luis\\Desktop\\PROYECTO\\Proyecto-Tip-LIBiAM\\Produccion'],
+             pathex=['C:\\Users\\joaco\\Documents\\Proyecto-Tip-LIBiAM\\Produccion'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -30,6 +29,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True,
+          icon='Static/img/LIBiAM.ico',
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,

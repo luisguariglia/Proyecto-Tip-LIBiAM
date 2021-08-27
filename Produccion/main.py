@@ -24,9 +24,11 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_conf_archivos, ventana_conf_linea_archivo, ventana_conf_vistas, ventana_comparar, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas
+from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
+import csv
+import img
 
 def load_fonts_from_dir(directory):
     families = set()
@@ -72,7 +74,7 @@ class ventana_principal(QWidget):
     def initUI(self):
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.setWindowTitle("LIBiAM")
-        self.setWindowIcon(QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QIcon(":/Static/img/LIBiAM.jpg"))
         self.resize(700, 500)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -122,7 +124,7 @@ class ventana_principal(QWidget):
 
         actionFile.addSeparator()
         Salir = QAction("Salir", self)
-        Salir.triggered.connect(quit)
+        Salir.triggered.connect(self.cerrar)
         actionFile.addAction(Salir)
 
         editarMenu=menubar.addMenu("Editar")
@@ -204,21 +206,25 @@ class ventana_principal(QWidget):
         btn_rectificar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_rectificar.clicked.connect(self.ventana_rectificar)
 
-
         btn_comparar = QPushButton("Comparar gráficas")
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
+
+        btn_exportar_VP = QPushButton("Exportar datos")
+        btn_exportar_VP.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_exportar_VP.clicked.connect(self.ventana_exportar_valores_pico)
 
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_cortar)
         wid_derecha_toolbar.layout().addWidget(btn_valores_en_grafica)
         wid_derecha_toolbar.layout().addWidget(btn_comparar)
+        wid_derecha_toolbar.layout().addWidget(btn_exportar_VP)
 
         self.widget_toolbar.layout().addWidget(wid_izquierda_toolbar, 2)
         self.widget_toolbar.layout().addWidget(wid_derecha_toolbar, 8)
 
-        botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
+        #botonesFiltrado = uic.loadUi('Static/uiFiles/botonesGraficado.ui')
 
         self.layout().addWidget(self.widget_toolbar, 1)
 
@@ -313,9 +319,9 @@ class ventana_principal(QWidget):
         widget_botones_csv = QToolBar()
         widget_botones_csv.setIconSize(QSize(14,14))
         widget_botones_csv.setStyleSheet(estilos.estilos_toolbar_archvos_csv())
-        icono_hide = QIcon("Static/img/hide.svg")
-        icono_remove = QIcon("Static/img/eliminar.svg")
-        icono_agregar = QIcon("Static/img/add.svg")
+        icono_hide = QIcon(":/Static/img/hide.svg")
+        icono_remove = QIcon(":/Static/img/eliminar.svg")
+        icono_agregar = QIcon(":/Static/img/add.svg")
         widget_botones_csv.addAction(icono_remove, 'eliminar', self.eliminar_csv)
         widget_botones_csv.addAction(icono_agregar, 'agregar', self.agregar_csv)
         widget_botones_csv.addAction(icono_hide,'ocultar',self.minimizar_panel)
@@ -348,6 +354,9 @@ class ventana_principal(QWidget):
         self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
         self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
 
+    def cerrar(self):
+        sys.exit()
+
     def ventana_conf_vistas(self):
         ventana_conf_vistas(self).exec_()
 
@@ -377,22 +386,22 @@ class ventana_principal(QWidget):
         widget_contenido.layout().setContentsMargins(6,10,0,0)
         widget_contenido.layout().setSpacing(0)
 
-        img_ANEP_UTU = QPixmap('Static/img/utu.png')
+        img_ANEP_UTU = QPixmap(':/Static/img/utu.png')
         lab_ANEP_UTU = QLabel()
         lab_ANEP_UTU.setFixedWidth(img_ANEP_UTU.width())
         lab_ANEP_UTU.setPixmap(img_ANEP_UTU)
 
-        img_LIBiAM = QPixmap('Static/img/LIBiAM2.jpg')
+        img_LIBiAM = QPixmap(':/Static/img/LIBiAM2.jpg')
         lab_LIBiAM = QLabel()
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
 
-        img_UDELAR = QPixmap('Static/img/udelar2.png')
+        img_UDELAR = QPixmap(':/Static/img/udelar2.png')
         lab_UDELAR = QLabel()
         lab_UDELAR.setFixedWidth(img_UDELAR.width())
         lab_UDELAR.setPixmap(img_UDELAR)
 
-        img_UTEC = QPixmap('Static/img/utec.png')
+        img_UTEC = QPixmap(':/Static/img/utec.png')
         lab_UTEC = QLabel()
         lab_UTEC.setFixedWidth(img_UTEC.width())
         lab_UTEC.setPixmap(img_UTEC)
@@ -457,9 +466,9 @@ class ventana_principal(QWidget):
         widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
-        img1 = QPixmap('Static/img/img_content3.jpg')
-        img2 = QPixmap('Static/img/img_content2.jpg')
-        img3 = QPixmap('Static/img/img_content.jpg')
+        img1 = QPixmap(':/Static/img/img_content3.jpg')
+        img2 = QPixmap(':/Static/img/img_content2.jpg')
+        img3 = QPixmap(':/Static/img/img_content.jpg')
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
@@ -664,8 +673,6 @@ class ventana_principal(QWidget):
 
     def agregar_grafica_a_vista(self, item, col):
 
-
-
         current_widget = self.widget_der.currentWidget()
         index = self.widget_der.indexOf(current_widget)
 
@@ -707,11 +714,11 @@ class ventana_principal(QWidget):
     def aplicarOffset(self, datos, tiempo, datosOffset):
         return filtersHelper.offsetGrafico(datos, tiempo, datosOffset)
 
-    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente):
+    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente, grafica : Grafica):
         peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
         peak_pos = _tiempo[peaks[0]]  # list of the peaks positions
-
+        grafica.set_valores_pico_para_exportar(height)
         tiempo = [0]
         for pos in peak_pos:
             tiempo.append(pos)
@@ -723,7 +730,7 @@ class ventana_principal(QWidget):
         ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
         ax.legend()
 
-    def mostrar_integral(self, ax, _tiempo, datos,valores_integral):
+    def mostrar_integral(self, ax, _tiempo, datos,valores_integral, exponente, grafica: Grafica):
 
         a, b = valores_integral[0], valores_integral[1]  # integral limits
         aux = _tiempo
@@ -762,7 +769,7 @@ class ventana_principal(QWidget):
             totalDeLaIntegral = i
         else:                        #si es mayor a 0.25
             while (calculando):
-                print(contador)
+                #print(contador)
                 if (contador+intervalo)<b:                 #pregunto si estoy llegando al final
                     i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo,contador,contador+intervalo, limit=60, epsabs = 9999999999999)
                     totalDeLaIntegral = totalDeLaIntegral+i
@@ -772,8 +779,23 @@ class ventana_principal(QWidget):
                     totalDeLaIntegral = totalDeLaIntegral + i
                     calculando=False
 
-        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, 15))))
-        ax.annotate("Valor de la integral: "+numeroAMostrar+ " x10e15", xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
+        ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
+        grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
+
+    def calcularYMostrar_RMS(self,axes, ax, tiempo,grafica: Grafica):
+        resultado=0
+        a = grafica.get_rmsLimites()[0]
+        b = grafica.get_rmsLimites()[1]
+        exponente=grafica.get_exponente()
+        aux = filtersHelper.recortarGrafico(ax, tiempo, [a,b])[0]
+
+        resultado = np.sqrt(np.mean(pow(aux,2)))
+
+        numeroAMostrar = str("{:.2f}".format(resultado / (pow(10, int(exponente)))))
+        axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
+                    xytext=((a + b) / 2, 0))
+        grafica.set_rms(resultado)
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
 
@@ -815,12 +837,14 @@ class ventana_principal(QWidget):
 
                     # calculo y muestro valores picos
                     if graficas[0].get_valores_picos() is not None:
-                        self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos(), graficas[0].get_exponente())
+                        self.mostrar_valores_picos(axes, tiempoRecortado.values, aux, graficas[0].get_valores_picos(), graficas[0].get_exponente(), graficas[0])
 
                     # calculo y muestro integral
                     if graficas[0].get_integral()[2]:
                         self.mostrar_integral(axes, tiempoRecortado.values, aux,
-                                                       graficas[0].get_integral())
+                                              graficas[0].get_integral(), graficas[0].get_exponente(), graficas[0])
+
+
 
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
@@ -832,6 +856,8 @@ class ventana_principal(QWidget):
                     graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
+                    if graficas[0].get_rmsLimites()[2]:
+                        self.calcularYMostrar_RMS(axes,aux,tiempoRecortado, graficas[0])
                     # ------------------------------------- Aspecto
                     # si no esta recortado
                     if graficas[0].get_recorte()[0] == 0 and graficas[0].get_recorte()[1] == 0:
@@ -898,11 +924,13 @@ class ventana_principal(QWidget):
                         # calculo y muestro valores picos
                         if graficas[x].get_valores_picos() is not None:
                             self.mostrar_valores_picos(axes[x], tiempoRecortado.values, aux,
-                                                       graficas[x].get_valores_picos(), graficas[x].get_exponente())
+                                                       graficas[x].get_valores_picos(), graficas[x].get_exponente(),
+                                                       graficas[x])
                         # calculo y muestro integral
                         if graficas[x].get_integral()[2]:
                             self.mostrar_integral(axes[x], tiempoRecortado.values, aux,
-                                                      graficas[x].get_integral())
+                                                      graficas[x].get_integral(), graficas[x].get_exponente(), graficas[x])
+
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
                         axes[x].plot(tiempoRecortado,
@@ -925,14 +953,18 @@ class ventana_principal(QWidget):
                             axes[x].grid()
                         # -------------------------------------
                         #VALORES PICOS DE LA GRÁFICA
-                        if graficas[x].get_valores_picos() is not None:
-                            self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset, graficas[x].get_valores_picos(), graficas[x].get_exponente())
+                        #if graficas[x].get_valores_picos() is not None:
+                        #    self.mostrar_valores_picos(axes[x], tiempoRecortado, conOffset,
+                        #                               graficas[x].get_valores_picos(), graficas[x].get_exponente(),
+                        #                               graficas[x])
 
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
                         graficas[x].set_exponente(int(exponent.split('e')[1]))
 
+                        if graficas[x].get_rmsLimites()[2]:
+                            self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
                     plt.close(fig)
                     #fig.tight_layout()
 
@@ -963,9 +995,6 @@ class ventana_principal(QWidget):
                     vista.set_scroll(scroll_area)
                     canvas.draw()
                     widget_tab.layout().addWidget(scroll_area)
-
-
-
 
     def get_grafica(self, nombre_columna, tree_item_vista, nombre_columna_vista, numero_grafica, numero_archivo):
         dt_archivo = self.get_archivo_en_combobox()
@@ -1017,6 +1046,17 @@ class ventana_principal(QWidget):
         else:
             ventana_comparar(self).exec_()
 
+    def ventana_exportar_valores_pico(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_exportarVP(self, graficas).exec_()
+        else:
+            ventana_exportarVP(self).exec_()
+
     def ventana_rectificar(self):
         widget_tab = self.widget_der.currentWidget()
         object_name = widget_tab.objectName()
@@ -1066,7 +1106,7 @@ class ventana_principal(QWidget):
 
 
                     ax1.plot(tiempoRecortado,
-                                 conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+                             conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     # ------------------------------------- Aspecto
                     ax1.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
@@ -1162,10 +1202,8 @@ class ventana_principal(QWidget):
         for v in self.vistas:
             self.treeView2.addTopLevelItem(v.get_tree_widget_item())
 
-
     def get_numero_vista(self,vista):
         return vista.get_numero_vista()
-
 
     def eliminar_csv(self):
         if not self.combo.currentText() == "Agregue un archivo csv":
@@ -1173,7 +1211,6 @@ class ventana_principal(QWidget):
             self.combo.removeItem(self.combo.currentIndex())
             if self.combo.count() == 0:
                 self.combo.addItem("Agregue un archivo csv")
-
 
     def minimizar_panel(self):
         self.anim = QPropertyAnimation(self.widget_der, b"pos")
@@ -1200,14 +1237,12 @@ class ventana_principal(QWidget):
         self.anim_2.start()
         self.anim_group.start()
 
-
     def maximizar_panel(self):
         self.anim_wid_toggle_buttons = QPropertyAnimation(self.widget_buttons_toggle, b"pos")
         self.anim_wid_toggle_buttons.setEndValue(QPoint(-25, 0))
         self.anim_wid_toggle_buttons.setDuration(200)
         self.anim_wid_toggle_buttons.finished.connect(self.maximizar_panel_2)
         self.anim_wid_toggle_buttons.start()
-
 
     def maximizar_panel_2(self):
         self.anim_wid_der = QPropertyAnimation(self.widget_der, b"pos")
@@ -1226,7 +1261,6 @@ class ventana_principal(QWidget):
         self.anim_2_wid_der.start()
         self.anim_wid_izq.start()
 
-
     def eliminar_vista(self, tab_index):
         widget = self.widget_der.widget(tab_index)
         cant_hijos = self.treeView2.topLevelItemCount()
@@ -1242,12 +1276,51 @@ class ventana_principal(QWidget):
                         self.widget_der.removeTab(tab_index)
                         break
 
-
     def eliminar_vista_de_array(self,widget):
         for i in range(len(self.vistas)):
             if self.vistas[i].get_widget() == widget:
                 self.vistas.pop(i)
                 break
+
+    def exportar_VP(self, graficas):
+        #cant_graficas = len(graficas)
+        #data = []
+        #data2 = []
+
+        graficas_sin_filtro = 0
+        if len(graficas) != 0:
+            cabecera = []
+            datos = []
+            with open('valores_pico.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                for grafica in graficas:
+                    print(grafica.get_valores_pico_para_exportar())
+                    if grafica.get_valores_pico_para_exportar() is not None:
+                        writer.writerow([grafica.get_nombre_columna_grafica()])
+                        valores_pico = grafica.get_valores_pico_para_exportar()
+
+                        # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
+                        promedio = [f"Promedio: {np.mean(valores_pico)}"]
+
+                        #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
+                        valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
+                        writer.writerow([f"Valores pico: "])
+                        writer.writerow(valores_pico_y_promedio)
+
+                    if grafica.get_valor_integral_para_exportar() is not None:
+                        valor_integral = grafica.get_valor_integral_para_exportar()
+                        writer.writerow([f"Valor de integral: "])
+                        writer.writerow([valor_integral])
+
+                    if grafica.get_rms() is not None:
+                        valor_rms = grafica.get_rms()
+                        writer.writerow([f"Valor RMS: "])
+                        writer.writerow([valor_rms])
+
+                    writer.writerow("")
+
+                QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
+                return
 
 
 def main():

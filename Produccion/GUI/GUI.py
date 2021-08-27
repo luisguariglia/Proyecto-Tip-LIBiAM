@@ -14,6 +14,8 @@ from Modelo.Pico import Pico
 
 
 
+
+
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
@@ -30,7 +32,7 @@ class ventana_filtro(QtWidgets.QDialog):
     def __init__(self,parent=None,graficas=None,v=""):
 
         super(ventana_filtro, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Butter Filter - " + v )
         self.setFixedSize(770, 500)
@@ -324,11 +326,10 @@ class ventana_filtro(QtWidgets.QDialog):
 
         return grafica_aux
 
-
 class ventana_comparar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_comparar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Comparar gráficas")
         self.setFixedSize(420, 470)
@@ -368,7 +369,7 @@ class ventana_comparar(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = tree_widget_item_grafica(nom_col, grafica.get_id)
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -430,14 +431,13 @@ class ventana_comparar(QtWidgets.QDialog):
 
         return grafica_aux
 
-
 class ventana_valores_en_graficas(QtWidgets.QDialog):
     def __init__(self, parent=None,graficas=None,v=""):
         super(ventana_valores_en_graficas, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(770, 470*1.5)
+        self.setFixedSize(800, 470*1.5)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10,0,10,10)
         self.layout().setSpacing(15)
@@ -564,7 +564,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
             "<br>"
             )
         label_info.setFont(font)
-        label_info.setWordWrap(True);
+        label_info.setWordWrap(True)
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
         wid_content_derecha.layout().addWidget(wid_checkbox)
@@ -629,6 +629,65 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
         wid_content_derecha.layout().addWidget(wid_checkbox_integral)
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+        # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
+
+        label_4 = QtWidgets.QLabel("Valor RMS")
+        label_4.setStyleSheet("font:14px bold; margin:5px;")
+        wid_content_derecha.layout().addWidget(label_4)
+
+        wid_inicioRMS = QtWidgets.QWidget()
+        wid_inicioRMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_inicioRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicioRMS.layout().setSpacing(0)
+
+        label_inicioRMS = QtWidgets.QLabel("Valor inicial")
+        label_inicioRMS.setFont(font)
+
+        self.spinbox_inicioRMS = QtWidgets.QDoubleSpinBox()
+        self.spinbox_inicioRMS.setValue(0.0)
+        self.spinbox_inicioRMS.setMaximumWidth(90)
+        self.spinbox_inicioRMS.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_inicioRMS.layout().addWidget(label_inicioRMS, 5)
+        wid_inicioRMS.layout().addWidget(self.spinbox_inicioRMS, 2)
+        wid_content_derecha.layout().addWidget(wid_inicioRMS)
+
+        # segundo parametro
+        wid_finRMS = QtWidgets.QWidget()
+        wid_finRMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_finRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_finRMS.layout().setSpacing(0)
+
+        label_finRMS = QtWidgets.QLabel("Valor final")
+        label_finRMS.setFont(font)
+
+        self.spinbox_finRMS = QtWidgets.QDoubleSpinBox()
+        self.spinbox_finRMS.setValue(0.0)
+        self.spinbox_finRMS.setMaximumWidth(90)
+        self.spinbox_finRMS.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+
+        wid_finRMS.layout().addWidget(label_finRMS, 5)
+        wid_finRMS.layout().addWidget(self.spinbox_finRMS, 2)
+        wid_content_derecha.layout().addWidget(wid_finRMS)
+
+        # checkbox
+        wid_checkbox_RMS = QtWidgets.QWidget()
+        wid_checkbox_RMS.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_RMS.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_RMS.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_RMS.layout().setSpacing(0)
+
+        label_checkbox_RMS = QtWidgets.QLabel("Mostrar Valor RMS")
+        label_checkbox_RMS.setFont(font)
+        label_checkbox_RMS.setStyleSheet("margin:0px;")
+
+        self.checkbox_mostrar_RMS = QtWidgets.QCheckBox()
+        self.checkbox_mostrar_RMS.setStyleSheet("margin-left:14px;")
+
+        wid_checkbox_RMS.layout().addWidget(self.checkbox_mostrar_RMS)
+        wid_checkbox_RMS.layout().addWidget(label_checkbox_RMS)
+        wid_content_derecha.layout().addWidget(wid_checkbox_RMS)
+        # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
 
         wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
@@ -683,10 +742,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         distance = self.spinbox_distance.value()
         mostrarPicos = self.checkbox_mostrar_picos.isChecked()
 
-
         inicio = self.spinbox_inicio.value()
         fin = self.spinbox_fin.value()
         mostrarIntegral = self.checkbox_mostrar_integral.isChecked()
+
+        inicioRMS = self.spinbox_inicioRMS.value()
+        finRMS = self.spinbox_finRMS.value()
+        mostrarRMS = self.checkbox_mostrar_RMS.isChecked()
 
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -701,6 +763,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                             if mostrarPicos:
                                 grafica.set_valores_picos(Pico(min_height, treshold, distance))
                             grafica.set_integral(([inicio,fin,mostrarIntegral]))
+                            grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
@@ -723,11 +786,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         return grafica_aux
 
-
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Cortar Graficas - Vista 1")
         self.setFixedSize(770, 470)
@@ -943,7 +1005,7 @@ class ventana_cortar(QtWidgets.QDialog):
 class ventana_rectificar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_rectificar, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Rectificar Graficas - Vista 1")
         self.setFixedSize(770, 470)
@@ -1222,6 +1284,111 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         config.LIMITE_GRAFICAS_POR_VISTA = dato_int
         Conexion.set_limite_graficas(dato_int)
         self.close()
+
+class ventana_exportarVP(QtWidgets.QDialog):
+    def __init__(self, parent=None, graficas=None):
+        super(ventana_exportarVP, self).__init__()
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Exportar datos")
+        self.setFixedSize(420, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(10)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_derecha = QtWidgets.QWidget()
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+        # BOTÓN APLICAR FILTROS
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.exportar_valores_pico)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn.layout().addWidget(btn_aplicar)
+
+        self.layout().addWidget(wid_izquierda, 5)
+        self.layout().addWidget(wid_derecha, 5)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def exportar_valores_pico(self):
+        graficas = []
+        if self.graficas is not None:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            graficas.append(grafica)
+
+            if len(graficas) >= 1:
+                self.parent.exportar_VP(graficas)
+                self.close()
+
+    def get_grafica(self, id_grafica):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_id() == id_grafica:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux
 
 class ventana_conf_archivos(QtWidgets.QDialog):
     def __init__(self, parent=None):

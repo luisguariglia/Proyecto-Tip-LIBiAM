@@ -10,5 +10,7 @@ __pycache__
 ./Produccion/venv
 ./Produccion/.idea
 ./Produccion/__pycache__
+./Produccion/main.spec
+
 
 
