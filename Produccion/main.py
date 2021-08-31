@@ -4,6 +4,7 @@ from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
 from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 import pandas
 import os
@@ -29,7 +30,7 @@ from matplotlib.patches import Polygon
 import scipy
 import csv
 import img
-
+cant_graficas = 0
 def load_fonts_from_dir(directory):
     families = set()
     for fi in QDir(directory).entryInfoList(["*.ttf"]):
@@ -1030,10 +1031,18 @@ class ventana_principal(QWidget):
 
         if not object_name == "Inicio":
             vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-            graficas = vista.get_graficas()
-            ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
+            else:
+                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
         else:
-            ventana_valores_en_graficas(self, v="Inicio").exec_()
+            QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+
+
+        # ventana_valores_en_graficas(self, v="Inicio").exec_()
+
 
     def ventana_comparar(self):
         widget_tab = self.widget_der.currentWidget()

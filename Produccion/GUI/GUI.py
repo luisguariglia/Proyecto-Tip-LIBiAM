@@ -11,7 +11,7 @@ from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
-
+from PyQt5.QtWidgets import QMessageBox
 
 
 
@@ -533,7 +533,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         self.spinbox_distance = QtWidgets.QDoubleSpinBox()
         self.spinbox_distance.setMaximum(1000)
-        self.spinbox_distance.setMinimum(0)
+        self.spinbox_distance.setMinimum(1)
         self.spinbox_distance.setValue(400)
         self.spinbox_distance.setMaximumWidth(90)
         self.spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
@@ -735,6 +735,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.layout().addWidget(wid_derecha, 5)
 
     def aplicar_valores(self):
+
         hay_almenos_un_check = False
 
         min_height = self.spinbox_min_height.value()
@@ -750,7 +751,22 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         finRMS = self.spinbox_finRMS.value()
         mostrarRMS = self.checkbox_mostrar_RMS.isChecked()
 
-        if self.graficas is not None:
+        # *------------------------------------controles------------------------------------
+        seguir = True
+        if mostrarIntegral and inicio<=fin:
+            QMessageBox.warning(self, "Advertencia", "El valor de inicio de la integral no puede ser menor o igual al valor final")
+            seguir = False
+
+        if mostrarRMS and inicioRMS<=finRMS:
+            QMessageBox.warning(self, "Advertencia", "El valor de inicio de RMS no puede ser menor o igual al valor final")
+            seguir = False
+
+        if not mostrarPicos and not mostrarIntegral and not mostrarRMS:
+            QMessageBox.information(self, "Advertencia","Seleccione que datos desea mostrar haciendo click en el checkbox de: \n - mostrarPicos\n - mostrarIntegral \n - mostrarRMS")
+            seguir = False
+
+        # *------------------------------------controles------------------------------------
+        if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
@@ -764,6 +780,8 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                                 grafica.set_valores_picos(Pico(min_height, treshold, distance))
                             grafica.set_integral(([inicio,fin,mostrarIntegral]))
                             grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
+                    else:
+                        QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
