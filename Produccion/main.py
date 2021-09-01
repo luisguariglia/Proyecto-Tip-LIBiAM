@@ -1292,12 +1292,19 @@ class ventana_principal(QWidget):
                 break
 
     def exportar_VP(self, graficas):
-        #cant_graficas = len(graficas)
-        #data = []
-        #data2 = []
+        ninguna_grafica_con_filtro = False
 
         graficas_sin_filtro = 0
         if len(graficas) != 0:
+            for grafica in graficas:
+                if grafica.get_valores_pico_para_exportar() is None and grafica.get_valor_integral_para_exportar()\
+                        is None and grafica.get_rms() is None:
+                    graficas_sin_filtro = graficas_sin_filtro + 1
+
+        if graficas_sin_filtro == len(graficas):
+            ninguna_grafica_con_filtro = True
+
+        if not ninguna_grafica_con_filtro:
             cabecera = []
             datos = []
             with open('valores_pico.csv', 'w', newline='') as file:
@@ -1329,7 +1336,10 @@ class ventana_principal(QWidget):
                     writer.writerow("")
 
                 QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
-                return
+
+        else:
+            QMessageBox.information(self, "Error", "Ninguna gráfica tiene filtro.")
+
 
 
 def main():
