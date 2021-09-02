@@ -295,19 +295,40 @@ class ventana_filtro(QtWidgets.QDialog):
         array_b = int(self.spiner_array_b.value()) * 0.001
         btype = self.combobox_btype.currentText()
         analog = None
+        seguir = True
+
+        # *--------------------------------------------- CONTROLES --------------------------------------------------* #
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+        elif not hay_almenos_un_check and order == 0:
+            QMessageBox.information(self, "Advertencia",
+                                    "El orden del filtro no puede ser 0")
+            seguir = False
+
+        # *--------------------------------------------- FIN DE CONTROLES  ------------------------------------------* #
+
+
         if self.combobox_analog.currentText() == "True":
             analog = True
         else:
             analog = False
 
-        if self.graficas is not None:
+        if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
-                        hay_almenos_un_check = True
-
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
@@ -952,7 +973,7 @@ class ventana_cortar(QtWidgets.QDialog):
                                       "Para dejar la grafica original se deben de poner los valores de desde y hasta en 0"
                                       "<br>")
         label_info.setFont(font)
-        label_info.setWordWrap(True);
+        label_info.setWordWrap(True)
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
@@ -994,15 +1015,39 @@ class ventana_cortar(QtWidgets.QDialog):
         hay_almenos_un_check = False
         desde = self.spin_box.value()
         hasta = self.spin_box2.value()
+        seguir = True
+        valores_en_cero = False
 
-        if self.graficas is not None:
+        # *------------------------------------CONTROLES-------------------------------------------
+        # Tengo que hacer este for rancio al menos una vez para chequear si hay algún check de las graficas chequeados.
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if hay_almenos_un_check and desde == 0 and hasta == 0:
+            valores_en_cero = True
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        elif hay_almenos_un_check and hasta <= desde and not valores_en_cero:
+            QMessageBox.warning(self, "Advertencia",
+                                "El valor de inicio del recorte no puede ser mayor o igual al valor final.")
+            seguir = False
+        # *------------------------------------FIN DE CONTROLES------------------------------------
+
+        if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
-                        hay_almenos_un_check = True
-
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_recorte([desde,hasta])
@@ -1186,7 +1231,7 @@ class ventana_rectificar(QtWidgets.QDialog):
                                       "Para dejar la grafica original se deben de poner los valores de inicio y fin en 0"
                                       "<br>")
         label_info.setFont(font)
-        label_info.setWordWrap(True);
+        label_info.setWordWrap(True)
 
 
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
@@ -1228,15 +1273,39 @@ class ventana_rectificar(QtWidgets.QDialog):
         desde = self.spin_box.value()
         hasta = self.spin_box2.value()
         abs = self.qCheckBox.isChecked()
+        valores_en_cero = False
+        seguir = True
 
-        if self.graficas is not None:
+        # *--------------------------------------------- CONTROLES --------------------------------------------------* #
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if hay_almenos_un_check and desde == 0 and hasta == 0:
+            valores_en_cero = True
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        elif hay_almenos_un_check and hasta <= desde and not valores_en_cero:
+            QMessageBox.warning(self, "Advertencia",
+                                "El valor de inicio no puede ser mayor o igual al valor final.")
+            seguir = False
+
+        # *--------------------------------------------- FIN DE CONTROLES  ------------------------------------------* #
+
+        if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     if hijo.checkState(0):
-                        hay_almenos_un_check = True
-
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_offset([desde,hasta,abs])
@@ -1384,7 +1453,26 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
     def exportar_valores_pico(self):
         graficas = []
-        if self.graficas is not None:
+        seguir = True
+        hay_almenos_un_check = False
+
+        # *--------------------------------------------- CONTROLES --------------------------------------------------* #
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        # *--------------------------------------------- FIN DE CONTROLES  ------------------------------------------* #
+
+        if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
                 hijo = self.tree_graficas.topLevelItem(i)
@@ -1394,9 +1482,9 @@ class ventana_exportarVP(QtWidgets.QDialog):
                         if grafica is not None:
                             graficas.append(grafica)
 
-            if len(graficas) >= 1:
-                self.parent.exportar_VP(graficas)
-                self.close()
+        if len(graficas) >= 1:
+            self.parent.exportar_VP(graficas)
+            self.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
