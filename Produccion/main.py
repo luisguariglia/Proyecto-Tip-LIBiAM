@@ -229,8 +229,6 @@ class ventana_principal(QWidget):
 
         self.layout().addWidget(self.widget_toolbar, 1)
 
-
-
         # CONTENEDOR DEL PANEL Y GRÁFICAS
         self.widget_content = QWidget()
         self.widget_content.setLayout(QHBoxLayout())

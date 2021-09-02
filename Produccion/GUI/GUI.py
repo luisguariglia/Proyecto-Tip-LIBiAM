@@ -1,5 +1,4 @@
-from PyQt5 import QtWidgets
-from PyQt5 import QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
 from PyQt5.QtCore import QVariant
@@ -1477,40 +1476,42 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Configuraciones de columnas de información")
-        self.setFixedSize(770, 500)
+        self.setFixedSize(760, 500)
         self.setStyleSheet("background-color:#FAFAFA;")
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
-
-
         # PARAMETROS
         self.parent = parent
         self.archivo = archivo
 
-        wid_izquierda = QtWidgets.QWidget()
-        wid_derecha = QtWidgets.QWidget()
-        wid_filtro2 = QtWidgets.QWidget()
-
         # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        shadow3 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
 
-        wid_izquierda.setGraphicsEffect(shadow)
-        wid_derecha.setGraphicsEffect(shadow2)
-        #wid_filtro2.setGraphicsEffect(shadow2)
-        # ESTILOS
+        wid_izquierda = QtWidgets.QWidget(self)
+        wid_izquierda.setGeometry(20, 10, 350, 470)
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
-        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
-        wid_filtro2.setStyleSheet("background-color:white; border-radius:4px;")
-
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
-        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
-        wid_filtro2.setLayout(QtWidgets.QVBoxLayout())
-
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+        self.wid_derecha = QtWidgets.QWidget(self)
+        self.wid_derecha.setGeometry(380, 10, 360,470)
+        self.wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        self.wid_derecha.layout().setSpacing(20)
+        self.wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        self.wid_derecha.setGraphicsEffect(shadow2)
+
+        self.wid_derecha2 = QtWidgets.QWidget(self)
+        self.wid_derecha2.setGeometry(380, 500, 360, 470)
+        self.wid_derecha2.setLayout(QtWidgets.QVBoxLayout())
+        self.wid_derecha2.layout().setSpacing(10)
+        self.wid_derecha2.setStyleSheet("background-color:white; border-radius:4px;")
+        self.wid_derecha2.setGraphicsEffect(shadow3)
 
         label_1 = QtWidgets.QLabel("COLUMNAS DEL ARCHIVO")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
@@ -1537,16 +1538,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_content_label_1.layout().addWidget(wid_label_1, 5)
         wid_content_label_1.layout().addWidget(wid_label_1_2, 5)
 
-
-        label_2 = QtWidgets.QLabel("FILTRAR COLUMNAS")
-        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;margin-bottom:16px;")
-
-        label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
-        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
         wid_izquierda.layout().addWidget(wid_content_label_1, 1)
-        wid_derecha.layout().addWidget(label_2, 1)
-        wid_filtro2.layout().addWidget(label_3, 1)
+
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
         self.tree_graficas.setFixedWidth(300)
@@ -1563,9 +1556,9 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
         btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
-        btn_seleccionar = QtWidgets.QPushButton("SELECCIONAR")
-        btn_seleccionar.clicked.connect(self.seleccionar)
-        btn_seleccionar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        self.btn_seleccionar = QtWidgets.QPushButton("SELECCIONAR")
+        self.btn_seleccionar.clicked.connect(self.seleccionar)
+        self.btn_seleccionar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
@@ -1575,17 +1568,21 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
         wid_btn.layout().setAlignment(Qt.AlignLeft)
         wid_btn.layout().addWidget(btn_aplicar_a_todas)
-        wid_btn.layout().addWidget(btn_seleccionar)
+        wid_btn.layout().addWidget(self.btn_seleccionar)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
         # GROUP BOX VALORES FILTRO
-        wid_content_der = QtWidgets.QWidget()
-        wid_content_der.setLayout(QtWidgets.QVBoxLayout())
-        wid_content_der.layout().setAlignment(Qt.AlignTop)
-        wid_content_der.layout().setContentsMargins(10, 0, 0, 0)
-        wid_content_der.layout().setSpacing(20)
+        wid_content_filtrar = QtWidgets.QWidget()
+        wid_content_filtrar.setLayout(QtWidgets.QVBoxLayout())
+        wid_content_filtrar.layout().setAlignment(Qt.AlignTop)
+        wid_content_filtrar.layout().setContentsMargins(10, 0, 0, 0)
+        wid_content_filtrar.layout().setSpacing(20)
+
+        label_2 = QtWidgets.QLabel("FILTRAR COLUMNAS")
+        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;margin-bottom:16px;")
+        wid_content_filtrar.layout().addWidget(label_2)
 
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
@@ -1649,44 +1646,84 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_checkbox.layout().addWidget(label_palabra)
         wid_filtrar_content.layout().addWidget(wid_checkbox)
 
-        wid_btn = QtWidgets.QWidget()
-        wid_btn.setLayout(QtWidgets.QHBoxLayout())
-        wid_btn.layout().setContentsMargins(0, 10, 0, 0)
-        wid_btn.layout().setAlignment(Qt.AlignRight)
+        wid_btn_2 = QtWidgets.QWidget()
+        wid_btn_2.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_2.layout().setContentsMargins(0, 10, 0, 0)
+        wid_btn_2.layout().setAlignment(Qt.AlignRight)
 
         btn = QtWidgets.QPushButton("FILTRAR")
         btn.clicked.connect(self.filtrar_por_caracteres)
         btn.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
-        wid_btn.layout().addWidget(btn)
-        wid_filtrar_content.layout().addWidget(wid_btn)
-
-        # BTYPE
-
-        # ANALOG
+        wid_btn_2.layout().addWidget(btn)
+        wid_filtrar_content.layout().addWidget(wid_btn_2)
 
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
-        wid_content_der.layout().addWidget(wid_order)
-        wid_content_der.layout().addWidget(wid_filtrar_content)
+        wid_content_filtrar.layout().addWidget(wid_order)
+        wid_content_filtrar.layout().addWidget(wid_filtrar_content)
 
         # BOTÓN APLICAR FILTROS
-        wid_btn_aplicar = QtWidgets.QWidget()
-        wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
-        wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
-        wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
+        wid_btn_siguiente = QtWidgets.QWidget()
+        wid_btn_siguiente.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_siguiente.layout().setContentsMargins(0, 0, 0, 0)
+        wid_btn_siguiente.layout().setAlignment(Qt.AlignRight)
 
-        btn_aplicar = QtWidgets.QPushButton("APLICAR")
-        btn_aplicar.clicked.connect(self.aplicar_valores_filtro)
-        btn_aplicar.setFixedWidth(80)
-        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_siguiente = QtWidgets.QPushButton("SIGUIENTE")
+        btn_siguiente.clicked.connect(self.siguiente)
+        btn_siguiente.setFixedWidth(80)
+        btn_siguiente.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
-        wid_btn_aplicar.layout().addWidget(btn_aplicar)
+        wid_btn_siguiente.layout().addWidget(btn_siguiente)
 
-        wid_derecha.layout().addWidget(wid_content_der, 8)
-        wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
+        self.wid_derecha.layout().addWidget(wid_content_filtrar, 9)
+        self.wid_derecha.layout().addWidget(wid_btn_siguiente, 1)
 
-        self.layout().addWidget(wid_izquierda, 5)
-        self.layout().addWidget(wid_derecha, 5)
+        # PANEL DE CREAR DIRECTORES
+        label_3 = QtWidgets.QLabel("DIRECTORIOS")
+        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;margin-bottom:16px;")
+        self.wid_derecha2.layout().addWidget(label_3, 1)
+
+        wid_content_archivos = QtWidgets.QWidget()
+        wid_content_archivos.setLayout(QtWidgets.QVBoxLayout())
+        wid_content_archivos.layout().setAlignment(Qt.AlignTop)
+        wid_content_archivos.layout().setContentsMargins(10, 0, 0, 0)
+        wid_content_archivos.layout().setSpacing(4)
+
+        self.wid_derecha2.layout().addWidget(wid_content_archivos, 8)
+
+        self.tree_widget_directorios = QtWidgets.QTreeWidget()
+        self.tree_widget_directorios.setFixedHeight(250)
+        self.tree_widget_directorios.setStyleSheet("border:1px solid black;padding:0px;")
+        self.tree_widget_directorios.setHeaderHidden(True)
+
+        wid_content_archivos.layout().addWidget(self.tree_widget_directorios)
+
+        wid_btn_crear_dir = QtWidgets.QWidget()
+        wid_btn_crear_dir.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn_crear_dir.setFixedHeight(30)
+        wid_btn_crear_dir.layout().setContentsMargins(0, 0, 0, 0)
+        wid_btn_crear_dir.layout().setAlignment(Qt.AlignLeft)
+
+        btn_crear_dir = QtWidgets.QPushButton("NUEVO DIRECTORIO")
+        btn_crear_dir.clicked.connect(self.crear_directorio)
+        btn_crear_dir.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_btn_crear_dir.layout().addWidget(btn_crear_dir)
+        wid_content_archivos.layout().addWidget(wid_btn_crear_dir)
+
+
+        wid_botones = QtWidgets.QWidget()
+        wid_botones.setLayout(QtWidgets.QHBoxLayout())
+        wid_botones.layout().setContentsMargins(0, 0, 0, 0)
+        wid_botones.layout().setAlignment(Qt.AlignRight)
+
+        btn_volver = QtWidgets.QPushButton("VOLVER")
+        btn_volver.clicked.connect(self.volver)
+        btn_volver.setFixedWidth(80)
+        btn_volver.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        wid_botones.layout().addWidget(btn_volver)
+        self.wid_derecha2.layout().addWidget(wid_botones, 1)
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -1696,13 +1733,24 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
 
+        self.btn_seleccionar.setText("CANCELAR")
+
     def seleccionar(self):
-        cant_hijos = self.tree_graficas.topLevelItemCount()
-        for i in range(cant_hijos):
-            hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, tree_widget_item_grafica):
-                if not hijo.checkState(0):
-                    hijo.setCheckState(0, Qt.Unchecked)
+        if self.btn_seleccionar.text() == "SELECCIONAR":
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if not hijo.checkState(0):
+                        hijo.setCheckState(0, Qt.Unchecked)
+            self.btn_seleccionar.setText("CANCELAR")
+
+        else:
+            for i in range(self.tree_graficas.topLevelItemCount()):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    hijo.setData(0, Qt.CheckStateRole, None)
+            self.btn_seleccionar.setText("SELECCIONAR")
 
     def filtrar_no_seleccionados(self):
         cantidad_seleccionados = 0
@@ -1720,7 +1768,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     hijo.setData(0, Qt.CheckStateRole, None)
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -1762,7 +1810,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     hijo.setData(0, Qt.CheckStateRole, None)
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -1805,7 +1853,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                     cantidad_coincidencias += 1
 
         if cantidad_coincidencias == cant_hijos_tree:
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber almenos 1.")
+            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -1835,33 +1883,32 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.label_1_2.setText("Total: " + str(cant))
 
 
-    def aplicar_valores_filtro(self):
-        hay_almenos_un_check = False
-        order = self.spin_box.value()
-        array_a = int(self.spiner_array_a.value()) * 0.001
-        array_b = int(self.spiner_array_b.value()) * 0.001
-        btype = self.combobox_btype.currentText()
-        analog = None
-        if self.combobox_analog.currentText() == "True":
-            analog = True
-        else:
-            analog = False
+    def siguiente(self):
+        self.anim = QtCore.QPropertyAnimation(self.wid_derecha, b"pos")
+        self.anim.setEndValue(QtCore.QPoint(380, -500))
+        self.anim.setDuration(400)
 
-        if self.graficas is not None:
-            cant_hijos = self.tree_graficas.topLevelItemCount()
-            for i in range(cant_hijos):
-                hijo = self.tree_graficas.topLevelItem(i)
-                if isinstance(hijo, tree_widget_item_grafica):
-                    if hijo.checkState(0):
-                        hay_almenos_un_check = True
+        self.anim2 = QtCore.QPropertyAnimation(self.wid_derecha2, b"pos")
+        self.anim2.setEndValue(QtCore.QPoint(380, 10))
+        self.anim2.setDuration(400)
 
-                        grafica: Grafica = self.get_grafica(hijo.get_id())
-                        if grafica is not None:
-                            grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+        self.anim.start()
+        self.anim2.start()
 
-            if hay_almenos_un_check:
-                self.parent.listar_graficas(True)
-                self.close()
+    def volver(self):
+        self.anim = QtCore.QPropertyAnimation(self.wid_derecha, b"pos")
+        self.anim.setEndValue(QtCore.QPoint(380, 10))
+        self.anim.setDuration(400)
+
+        self.anim2 = QtCore.QPropertyAnimation(self.wid_derecha2, b"pos")
+        self.anim2.setEndValue(QtCore.QPoint(380, 500))
+        self.anim2.setDuration(400)
+
+        self.anim.start()
+        self.anim2.start()
+
+    def crear_directorio(self):
+        ventana_crear_directorio(self).exec_()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1871,3 +1918,48 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+class ventana_crear_directorio(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_crear_directorio, self).__init__()
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Nombre")
+        self.setFixedSize(300, 120)
+        self.setStyleSheet("background-color:#FAFAFA;")
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setContentsMargins(12, 12, 20, 0)
+        self.layout().setAlignment(Qt.AlignTop)
+        self.layout().setSpacing(12)
+
+        # PARAMETROS
+        self.parent = parent
+
+        label = QtWidgets.QLabel("Nombre directorio:")
+        label.setStyleSheet("font-size:12px;")
+
+        self.textbox_nombre = QtWidgets.QLineEdit()
+        self.textbox_nombre.setStyleSheet(estilos.textbox())
+
+        wid_botones = QtWidgets.QWidget()
+        wid_botones.setStyleSheet("margin-top:4px;")
+        wid_botones.setLayout(QtWidgets.QHBoxLayout())
+        wid_botones.layout().setContentsMargins(0, 0, 0, 0)
+        wid_botones.layout().setAlignment(Qt.AlignRight)
+
+        btn_confirmar = QtWidgets.QPushButton("CONFIRMAR")
+        btn_confirmar.clicked.connect(self.crear_directorio)
+        btn_confirmar.setFixedWidth(80)
+        btn_confirmar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        wid_botones.layout().addWidget(btn_confirmar)
+
+        self.layout().addWidget(label)
+        self.layout().addWidget(self.textbox_nombre)
+        self.layout().addWidget(wid_botones)
+
+    def crear_directorio(self):
+        nombre = self.textbox_nombre.text()
+        item = QtWidgets.QTreeWidgetItem([nombre])
+        self.parent.tree_widget_directorios.addTopLevelItem(item)
+        self.close()
+
