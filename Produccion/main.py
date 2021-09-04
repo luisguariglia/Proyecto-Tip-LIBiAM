@@ -601,15 +601,14 @@ class ventana_principal(QWidget):
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
         nombre_archivo += " - A" + str(self.id_archivo)
 
+        self.archivito = Archivo(nombre_archivo,frame_archivo)
+        self.archivito.agregar_electromiografias(frame_archivo)
 
-        archivo = Archivo(nombre_archivo,frame_archivo)
-        archivo.agregar_electromiografias(frame_archivo)
-
-        if len(archivo.get_electromiografias()) == 0:
+        if len(self.archivito.get_electromiografias()) == 0:
             QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
-            ventana_conf_linea_archivo(self, archivo).exec_()
+            ventana_conf_linea_archivo(self).exec_()
 
-        self.archivos_csv.append(archivo)
+        self.archivos_csv.append(self.archivito)
         text_current_index = self.combo.currentText()
 
         if text_current_index == "Agregue un archivo csv":
@@ -634,6 +633,7 @@ class ventana_principal(QWidget):
                         EMG.addChild(grafica)
 
                     self.tree_widget.addTopLevelItem(EMG)
+                break
 
     def get_numero_grafica(self, vista : Vista, nombre_grafica, numero_archivo):
         numero_grafica = None
@@ -783,8 +783,6 @@ class ventana_principal(QWidget):
         numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
         ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
         grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
-        print(exponente)
-        print("integral_antes de la ranciada")
 
     def calcularYMostrar_RMS(self,axes, ax, tiempo,grafica: Grafica):
         resultado=0
@@ -883,8 +881,6 @@ class ventana_principal(QWidget):
 
                     plt.close(fig)
 
-
-
                     canvas = FigureCanvas(fig)
                     scroll_area = QScrollArea(widget_tab)
                     scroll_area.setWidget(canvas)
@@ -898,8 +894,6 @@ class ventana_principal(QWidget):
 
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
-
-
 
                 elif cant_graficas > 1:
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))

@@ -1,5 +1,4 @@
 
-
 def estilos_tree_widget_graficas():
     return """
     QTreeWidget{
@@ -170,6 +169,7 @@ def nuevaVista():
                background-color:#E0E0E0;
             }
         """
+
 def estilos_btn_aplicar_a_todas():
     return """
         QPushButton{
@@ -190,7 +190,6 @@ def estilos_btn_aplicar_a_todas():
            background-color:#E0E0E0;
         }
     """
-
 
 def estilos_spinbox_filtros():
     return """

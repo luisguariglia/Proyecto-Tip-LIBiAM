@@ -1559,7 +1559,7 @@ class ventana_conf_archivos(QtWidgets.QDialog):
 
 
 class ventana_conf_linea_archivo(QtWidgets.QDialog):
-    def __init__(self, parent=None, archivo=None):
+    def __init__(self, parent=None):
         super(ventana_conf_linea_archivo, self).__init__()
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
@@ -1572,7 +1572,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         # PARAMETROS
         self.parent = parent
-        self.archivo = archivo
 
         # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
@@ -1633,7 +1632,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
-        columnas = self.archivo.get_archivo().columns
+        columnas = parent.archivito.get_archivo().columns
         self.label_1_2.setText("Total:" + str(int(len(columnas)/2)))
         for x in range(1, len(columnas), 2):
 
@@ -1782,6 +1781,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.tree_widget_directorios = QtWidgets.QTreeWidget()
         self.tree_widget_directorios.setFixedHeight(250)
         self.tree_widget_directorios.setStyleSheet("border:1px solid black;padding:0px;")
+        self.tree_widget_directorios.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree_widget_directorios.customContextMenuRequested.connect(self.handle_rightClicked)
         self.tree_widget_directorios.setHeaderHidden(True)
 
         wid_content_archivos.layout().addWidget(self.tree_widget_directorios)
@@ -1805,12 +1806,19 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_botones.layout().setContentsMargins(0, 0, 0, 0)
         wid_botones.layout().setAlignment(Qt.AlignRight)
 
+        btn_confirmar = QtWidgets.QPushButton("CONFIRMAR")
+        btn_confirmar.clicked.connect(self.confirmar)
+        btn_confirmar.setFixedWidth(80)
+        btn_confirmar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
         btn_volver = QtWidgets.QPushButton("VOLVER")
         btn_volver.clicked.connect(self.volver)
         btn_volver.setFixedWidth(80)
         btn_volver.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_botones.layout().addWidget(btn_volver)
+        wid_botones.layout().addWidget(btn_confirmar)
+
         self.wid_derecha2.layout().addWidget(wid_botones, 1)
 
     def seleccionar_todas_las_graficas(self):
@@ -1995,8 +2003,12 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.anim.start()
         self.anim2.start()
 
+    def confirmar(self):
+        self.parent.archivito.agregar_electromiografias2(self.tree_widget_directorios)
+        self.close()
+
     def crear_directorio(self):
-        ventana_crear_directorio(self).exec_()
+        ventana_directorio(self, crear_directorio=True).exec_()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -2007,21 +2019,145 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         return grafica_aux
 
-class ventana_crear_directorio(QtWidgets.QDialog):
-    def __init__(self, parent=None):
-        super(ventana_crear_directorio, self).__init__()
+    def importar_seleccionadas(self, padre : QtWidgets.QTreeWidgetItem):
+        #tree_widget_directorios
+        cant_seleccionados = 0
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0) and not self.existe_item_in_tree_dir(padre, hijo.text(0)):
+                    cant_seleccionados += 1
+                    item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                    padre.addChild(item)
+
+        self.tree_widget_directorios.expandItem(padre)
+
+        if cant_seleccionados > 0:
+            self.quitar_checks_tree_columnas()
+
+    def importar_rango(self, padre : QtWidgets.QTreeWidgetItem):
+        primer_check = False
+        cant_seleccionados = 0
+
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    cant_seleccionados += 1
+
+        if cant_seleccionados > 2:
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "Para importar un rango de columnas solo debe haber \n2 columnas seleccionadas.")
+            return
+        elif cant_seleccionados < 2:
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "Para importar un rango de columnas debe haber \n2 columnas seleccionadas.")
+            return
+
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0) and not primer_check:
+                    primer_check = True
+                    if not self.existe_item_in_tree_dir(padre, hijo.text(0)):
+                        item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                        padre.addChild(item)
+                elif not hijo.checkState(0) and primer_check and not self.existe_item_in_tree_dir(padre, hijo.text(0)):
+                    item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                    padre.addChild(item)
+                elif hijo.checkState(0) and primer_check:
+                    if not self.existe_item_in_tree_dir(padre, hijo.text(0)):
+                        item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                        padre.addChild(item)
+                    break
+
+        self.tree_widget_directorios.expandItem(padre)
+        self.quitar_checks_tree_columnas()
+
+    def eliminar_columnas(self, padre : QtWidgets.QTreeWidgetItem):
+        padre.takeChildren()
+
+    def eliminar_directorio(self, padre: QtWidgets.QTreeWidgetItem):
+        self.tree_widget_directorios.takeTopLevelItem(self.tree_widget_directorios.indexOfTopLevelItem(padre))
+
+    def cambiar_nombre_dir(self, padre):
+        ventana_directorio(self, cambiar_nombre=True, dir=padre).exec_()
+
+    def eliminar_columna(self, columna : QtWidgets.QTreeWidgetItem):
+        padre = columna.parent()
+        padre.takeChild(padre.indexOfChild(columna))
+
+    def existe_item_in_tree_dir(self, padre : QtWidgets.QTreeWidgetItem, nombre):
+        existe = False
+        for index in range(padre.childCount()):
+            hijo = padre.child(index)
+            if hijo.text(0) == nombre:
+                existe = True
+                break
+
+        return existe
+
+    def quitar_checks_tree_columnas(self):
+        for i in range(self.tree_graficas.topLevelItemCount()):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                hijo.setCheckState(0, Qt.Unchecked)
+
+
+    def handle_rightClicked(self, pos):
+        item = self.tree_widget_directorios.itemAt(pos)
+        if item is None:
+            return
+        menu = QtWidgets.QMenu()
+        if item.parent() is not None:
+            eliminar_columna = QtWidgets.QAction("Eliminar")
+            eliminar_columna.triggered.connect(lambda checked, item=item: self.eliminar_columna(item))
+            menu.addAction(eliminar_columna)
+
+        elif item.parent() is None:
+            importar_seleccionadas = QtWidgets.QAction("Importar columnas seleccionadas")
+            importar_seleccionadas.triggered.connect(lambda checked, item=item: self.importar_seleccionadas(item))
+
+            importar_entre_dos_puntos = QtWidgets.QAction("Importar rango de columnas")
+            importar_entre_dos_puntos.triggered.connect(lambda checked, item=item: self.importar_rango(item))
+
+            eliminar_col = QtWidgets.QAction("Eliminar columnas")
+            eliminar_col.triggered.connect(lambda checked, item=item: self.eliminar_columnas(item))
+
+            eliminar_dir = QtWidgets.QAction("Eliminar directorio")
+            eliminar_dir.triggered.connect(lambda checked, item=item: self.eliminar_directorio(item))
+
+            cambiar_nombre = QtWidgets.QAction("Cambiar nombre")
+            cambiar_nombre.triggered.connect(lambda checked, item=item: self.cambiar_nombre_dir(item))
+
+            menu.addAction(importar_seleccionadas)
+            menu.addAction(importar_entre_dos_puntos)
+            menu.addAction(eliminar_col)
+            menu.addAction(eliminar_dir)
+            menu.addAction(cambiar_nombre)
+
+        menu.exec_(self.tree_widget_directorios.viewport().mapToGlobal(pos))
+
+
+class ventana_directorio(QtWidgets.QDialog):
+    def __init__(self, parent=None, crear_directorio=False, cambiar_nombre=False, dir=None):
+        super(ventana_directorio, self).__init__()
+
+        # PARAMETROS
+        self.parent = parent
+        self.dir = dir
         self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Nombre")
+        if cambiar_nombre:
+            self.setWindowTitle("Cambiar nombre")
+        elif crear_directorio:
+            self.setWindowTitle("Nombre directorio")
         self.setFixedSize(300, 120)
         self.setStyleSheet("background-color:#FAFAFA;")
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setContentsMargins(12, 12, 20, 0)
         self.layout().setAlignment(Qt.AlignTop)
         self.layout().setSpacing(12)
-
-        # PARAMETROS
-        self.parent = parent
 
         label = QtWidgets.QLabel("Nombre directorio:")
         label.setStyleSheet("font-size:12px;")
@@ -2036,7 +2172,12 @@ class ventana_crear_directorio(QtWidgets.QDialog):
         wid_botones.layout().setAlignment(Qt.AlignRight)
 
         btn_confirmar = QtWidgets.QPushButton("CONFIRMAR")
-        btn_confirmar.clicked.connect(self.crear_directorio)
+
+        if cambiar_nombre:
+            btn_confirmar.clicked.connect(self.cambiar_nombre)
+        elif crear_directorio:
+            btn_confirmar.clicked.connect(self.crear_directorio)
+
         btn_confirmar.setFixedWidth(80)
         btn_confirmar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         wid_botones.layout().addWidget(btn_confirmar)
@@ -2051,3 +2192,7 @@ class ventana_crear_directorio(QtWidgets.QDialog):
         self.parent.tree_widget_directorios.addTopLevelItem(item)
         self.close()
 
+    def cambiar_nombre(self):
+        nombre = self.textbox_nombre.text()
+        self.dir.setText(0, nombre)
+        self.close()
