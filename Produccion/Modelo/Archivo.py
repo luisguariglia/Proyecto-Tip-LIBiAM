@@ -1,5 +1,6 @@
 from Modelo.EMG import EMG
 from Modelo.Grafica import Grafica
+from PyQt5 import QtWidgets
 import funciones
 
 
@@ -42,3 +43,24 @@ class Archivo:
                 emg.agregar_grafica(grafica)
 
             self.__electromiografias.append(emg)
+
+    def agregar_electromiografias2(self, tree : QtWidgets.QTreeWidget):
+
+        for i in range(tree.topLevelItemCount()):
+            top_item = tree.topLevelItem(i)
+            if isinstance(top_item, QtWidgets.QTreeWidgetItem):
+                nombre_dir = top_item.text(0)
+                emg = EMG(nombre_dir, nombre_dir)
+                hijos_top_item = top_item.childCount()
+
+                for j in range(hijos_top_item):
+                    nombre = top_item.child(j).text(0)
+                    index_xs = self.__archivo.columns.get_loc(nombre) - 1
+                    nom_col = self.__archivo.columns[index_xs]
+                    grafica = Grafica(nombre, nom_col, self.__archivo)
+                    emg.agregar_grafica(grafica)
+
+                self.__electromiografias.append(emg)
+
+
+

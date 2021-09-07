@@ -55,4 +55,3 @@ def get_nombre_csv(path):
         nombre += path[indice]
         indice += 1
     return nombre
-

@@ -229,8 +229,6 @@ class ventana_principal(QWidget):
 
         self.layout().addWidget(self.widget_toolbar, 1)
 
-
-
         # CONTENEDOR DEL PANEL Y GRÁFICAS
         self.widget_content = QWidget()
         self.widget_content.setLayout(QHBoxLayout())
@@ -603,15 +601,14 @@ class ventana_principal(QWidget):
         nombre_archivo = funciones.get_nombre_csv(filepath[0])
         nombre_archivo += " - A" + str(self.id_archivo)
 
+        self.archivito = Archivo(nombre_archivo,frame_archivo)
+        self.archivito.agregar_electromiografias(frame_archivo)
 
-        archivo = Archivo(nombre_archivo,frame_archivo)
-        archivo.agregar_electromiografias(frame_archivo)
-
-        if len(archivo.get_electromiografias()) == 0:
+        if len(self.archivito.get_electromiografias()) == 0:
             QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
-            ventana_conf_linea_archivo(self, archivo).exec_()
+            ventana_conf_linea_archivo(self).exec_()
 
-        self.archivos_csv.append(archivo)
+        self.archivos_csv.append(self.archivito)
         text_current_index = self.combo.currentText()
 
         if text_current_index == "Agregue un archivo csv":
@@ -636,6 +633,7 @@ class ventana_principal(QWidget):
                         EMG.addChild(grafica)
 
                     self.tree_widget.addTopLevelItem(EMG)
+                break
 
     def get_numero_grafica(self, vista : Vista, nombre_grafica, numero_archivo):
         numero_grafica = None
@@ -749,6 +747,8 @@ class ventana_principal(QWidget):
 
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
+        print(exponente)
+        print("integral_antes de la ranciada")
 
         # calculo la integral
         def getVoltajeAPartirDeUnTiempo(x):
@@ -854,7 +854,8 @@ class ventana_principal(QWidget):
 
                     plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
-                    graficas[0].set_exponente(int(exponent.split('e')[1]))
+                    if graficas[0].get_exponente() is None:
+                        graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
                     if graficas[0].get_rmsLimites()[2]:
@@ -880,8 +881,6 @@ class ventana_principal(QWidget):
 
                     plt.close(fig)
 
-
-
                     canvas = FigureCanvas(fig)
                     scroll_area = QScrollArea(widget_tab)
                     scroll_area.setWidget(canvas)
@@ -895,8 +894,6 @@ class ventana_principal(QWidget):
 
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
-
-
 
                 elif cant_graficas > 1:
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
@@ -962,7 +959,8 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        if graficas[x].get_exponente() is None:
+                            graficas[x].set_exponente(int(exponent.split('e')[1]))
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
