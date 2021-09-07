@@ -14,27 +14,26 @@ from Modelo.Pico import Pico
 from PyQt5.QtWidgets import QMessageBox
 
 
-
-
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
-        self.setText(0,text)
+        self.setText(0, text)
         self.id = id
 
     def get_id(self):
         return self.id
 
-    def set_id(self,id):
+    def set_id(self, id):
         self.id = id
 
+
 class ventana_filtro(QtWidgets.QDialog):
-    def __init__(self,parent=None,graficas=None,v=""):
+    def __init__(self, parent=None, graficas=None, v=""):
 
         super(ventana_filtro, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Butter Filter - " + v )
+        self.setWindowTitle("Butter Filter - " + v)
         self.setFixedSize(770, 500)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -117,8 +116,6 @@ class ventana_filtro(QtWidgets.QDialog):
 
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
-
-
 
         # ORDER
         wid_label_order = QtWidgets.QWidget()
@@ -318,7 +315,6 @@ class ventana_filtro(QtWidgets.QDialog):
 
         # *--------------------------------------------- FIN DE CONTROLES  ------------------------------------------* #
 
-
         if self.combobox_analog.currentText() == "True":
             analog = True
         else:
@@ -346,6 +342,7 @@ class ventana_filtro(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
 
 class ventana_comparar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -429,6 +426,7 @@ class ventana_comparar(QtWidgets.QDialog):
 
     def mostrar_comparacion_graficas(self):
         graficas = []
+
         if self.graficas is not None:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
@@ -438,10 +436,14 @@ class ventana_comparar(QtWidgets.QDialog):
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             graficas.append(grafica)
-
-            if len(graficas) >= 2:
-                self.parent.comparar_graficas(graficas)
-                self.close()
+        # *--------------------------------------------- CONTROLES --------------------------------------------------* #
+        if len(graficas) >= 2:
+            self.parent.comparar_graficas(graficas)
+            self.close()
+        else:
+            QMessageBox.warning(self, "Advertencia",
+                                "Debe seleccionar 2 o más gráficas.")
+        # *--------------------------------------------- FIN DE CONTROLES -------------------------------------------* #
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -452,15 +454,16 @@ class ventana_comparar(QtWidgets.QDialog):
 
         return grafica_aux
 
+
 class ventana_valores_en_graficas(QtWidgets.QDialog):
-    def __init__(self, parent=None,graficas=None,v=""):
+    def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_valores_en_graficas, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(800, 470*1.5)
+        self.setFixedSize(800, 470 * 1.5)
         self.setLayout(QtWidgets.QHBoxLayout())
-        self.setContentsMargins(10,0,10,10)
+        self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
         # PARAMETROS
@@ -492,17 +495,14 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-
         label_2 = QtWidgets.QLabel("Valores Picos")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-
-
-        wid_derecha.layout().addWidget(label_2,1)
+        wid_derecha.layout().addWidget(label_2, 1)
         wid_izquierda.layout().addWidget(label_1, 1)
 
         wid_content_derecha = QtWidgets.QWidget()
-        #wid_content_derecha.setFixedWidth(225)
+        # wid_content_derecha.setFixedWidth(225)
         wid_content_derecha.setStyleSheet("margin-left:10px;")
         wid_content_derecha.setLayout(QtWidgets.QVBoxLayout())
         wid_content_derecha.layout().setAlignment(Qt.AlignTop)
@@ -578,12 +578,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         #   infooo
         label_info = QtWidgets.QLabel("<br>"
-            "<span style='font-weight: bold'>Altura Minima:</span> altura minima requerida"
-            "<br><span style='font-weight: bold'>Umbral:</span> Umbral minimo requerido, distancia vertical a sus muestras vecinas. "
-            "<br><span style='font-weight: bold'>Distancia:</span>Distancia horizontal mínima requerida (>=1) en muestras entre picos vecinos. "
-            "Los picos más pequeños se eliminan primero hasta que se cumpla la condición para todos los picos restantes."
-            "<br>"
-            )
+                                      "<span style='font-weight: bold'>Altura Minima:</span> altura minima requerida"
+                                      "<br><span style='font-weight: bold'>Umbral:</span> Umbral minimo requerido, distancia vertical a sus muestras vecinas. "
+                                      "<br><span style='font-weight: bold'>Distancia:</span>Distancia horizontal mínima requerida (>=1) en muestras entre picos vecinos. "
+                                      "Los picos más pequeños se eliminan primero hasta que se cumpla la condición para todos los picos restantes."
+                                      "<br>"
+                                      )
         label_info.setFont(font)
         label_info.setWordWrap(True)
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
@@ -716,13 +716,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_btn_aplicar.layout().setSpacing(0)
         wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
 
-
         btn_aplicar = QtWidgets.QPushButton("APLICAR")
         btn_aplicar.clicked.connect(self.aplicar_valores)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
-        wid_derecha.layout().addWidget(wid_btn_aplicar ,1)
+        wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
@@ -732,7 +731,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         if self.graficas is not None:
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
-                item = tree_widget_item_grafica(nom_col,grafica.get_id())
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -774,16 +773,19 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         # *------------------------------------controles------------------------------------
         seguir = True
-        if mostrarIntegral and inicio<=fin:
-            QMessageBox.warning(self, "Advertencia", "El valor de inicio de la integral no puede ser menor o igual al valor final")
+        if mostrarIntegral and inicio <= fin:
+            QMessageBox.warning(self, "Advertencia",
+                                "El valor de inicio de la integral no puede ser menor o igual al valor final")
             seguir = False
 
-        if mostrarRMS and inicioRMS<=finRMS:
-            QMessageBox.warning(self, "Advertencia", "El valor de inicio de RMS no puede ser menor o igual al valor final")
+        if mostrarRMS and inicioRMS <= finRMS:
+            QMessageBox.warning(self, "Advertencia",
+                                "El valor de inicio de RMS no puede ser menor o igual al valor final")
             seguir = False
 
         if not mostrarPicos and not mostrarIntegral and not mostrarRMS:
-            QMessageBox.information(self, "Advertencia","Seleccione que datos desea mostrar haciendo click en el checkbox de: \n - mostrarPicos\n - mostrarIntegral \n - mostrarRMS")
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione que datos desea mostrar haciendo click en el checkbox de: \n - mostrarPicos\n - mostrarIntegral \n - mostrarRMS")
             seguir = False
 
         # *------------------------------------controles------------------------------------
@@ -799,7 +801,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                         if grafica is not None:
                             if mostrarPicos:
                                 grafica.set_valores_picos(Pico(min_height, treshold, distance))
-                            grafica.set_integral(([inicio,fin,mostrarIntegral]))
+                            grafica.set_integral(([inicio, fin, mostrarIntegral]))
                             grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
                     else:
                         QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
@@ -824,6 +826,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
 
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -961,7 +964,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_hasta.layout().addWidget(wid_label_hasta, 5)
         wid_hasta.layout().addWidget(wid_combobox_hasta, 5)
 
-        #boton de reset
+        # boton de reset
         btn_resetear = QtWidgets.QPushButton("Resetear")
         btn_resetear.clicked.connect(self.resetear_valores)
         btn_resetear.setFixedWidth(80)
@@ -1051,7 +1054,7 @@ class ventana_cortar(QtWidgets.QDialog):
                     if hijo.checkState(0):
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
-                            grafica.set_recorte([desde,hasta])
+                            grafica.set_recorte([desde, hasta])
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
@@ -1064,6 +1067,7 @@ class ventana_cortar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
 
 class ventana_rectificar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -1201,7 +1205,6 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_hasta.layout().addWidget(wid_label_hasta, 5)
         wid_hasta.layout().addWidget(wid_combobox_hasta, 5)
 
-
         # valores absolutos
         label_hastaS = QtWidgets.QLabel("Valores absolutos")
         label_hastaS.setFont(font)
@@ -1234,13 +1237,11 @@ class ventana_rectificar(QtWidgets.QDialog):
         label_info.setFont(font)
         label_info.setWordWrap(True)
 
-
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(wid_hastaS)
         wid_content_der.layout().addWidget(label_info)
-
 
         # BOTÓN APLICAR
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -1309,7 +1310,7 @@ class ventana_rectificar(QtWidgets.QDialog):
                     if hijo.checkState(0):
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
-                            grafica.set_offset([desde,hasta,abs])
+                            grafica.set_offset([desde, hasta, abs])
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
@@ -1322,6 +1323,7 @@ class ventana_rectificar(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
 
 class ventana_conf_vistas(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -1371,6 +1373,7 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         config.LIMITE_GRAFICAS_POR_VISTA = dato_int
         Conexion.set_limite_graficas(dato_int)
         self.close()
+
 
 class ventana_exportarVP(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -1496,6 +1499,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         return grafica_aux
 
+
 class ventana_conf_archivos(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ventana_conf_archivos, self).__init__()
@@ -1571,8 +1575,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
-
-
         # PARAMETROS
         self.parent = parent
         self.archivo = archivo
@@ -1587,7 +1589,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         wid_izquierda.setGraphicsEffect(shadow)
         wid_derecha.setGraphicsEffect(shadow2)
-        #wid_filtro2.setGraphicsEffect(shadow2)
+        # wid_filtro2.setGraphicsEffect(shadow2)
         # ESTILOS
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
         wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
@@ -1619,7 +1621,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         columnas = self.archivo.get_archivo().columns
         for x in range(1, len(columnas), 2):
-
             item = tree_widget_item_grafica(columnas[x])
             self.tree_graficas.addTopLevelItem(item)
 
@@ -1706,7 +1707,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         wid_checkbox.setLayout(QtWidgets.QHBoxLayout())
         wid_checkbox.layout().setAlignment(Qt.AlignRight)
         wid_checkbox.layout().setSpacing(0)
-
 
         label_palabra = QtWidgets.QLabel("Eliminar coincidencias")
         self.checkbox = QtWidgets.QCheckBox()
@@ -1856,7 +1856,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         for i in range(self.tree_graficas.topLevelItemCount()):
             hijo = self.tree_graficas.topLevelItem(i)
             if isinstance(hijo, tree_widget_item_grafica):
-                hijo.setData(0,Qt.CheckStateRole, None)
+                hijo.setData(0, Qt.CheckStateRole, None)
 
     def filtrar_seleccionados(self):
 
@@ -1878,7 +1878,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         for i in range(self.tree_graficas.topLevelItemCount()):
             hijo = self.tree_graficas.topLevelItem(i)
             if isinstance(hijo, tree_widget_item_grafica):
-                hijo.setData(0,Qt.CheckStateRole, None)
+                hijo.setData(0, Qt.CheckStateRole, None)
 
     def filtrar_por_caracteres(self):
         if len(self.checkbox.text()) == 0:
@@ -1901,7 +1901,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 break
             elif hay:
                 hay = False
-
 
     def aplicar_valores_filtro(self):
         hay_almenos_un_check = False
