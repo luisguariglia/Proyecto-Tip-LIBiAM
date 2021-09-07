@@ -1307,7 +1307,7 @@ class ventana_principal(QWidget):
         if not ninguna_grafica_con_filtro:
             cabecera = []
             datos = []
-            with open('valores_pico.csv', 'w', newline='') as file:
+            with open('datos_exportados.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 for grafica in graficas:
                     print(grafica.get_valores_pico_para_exportar())
