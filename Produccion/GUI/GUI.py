@@ -772,12 +772,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         # *------------------------------------controles------------------------------------
         seguir = True
-        if mostrarIntegral and inicio <= fin:
+        if mostrarIntegral and inicio >= fin:
             QMessageBox.warning(self, "Advertencia",
                                 "El valor de inicio de la integral no puede ser menor o igual al valor final")
             seguir = False
 
-        if mostrarRMS and inicioRMS <= finRMS:
+        if mostrarRMS and inicioRMS >= finRMS:
             QMessageBox.warning(self, "Advertencia",
                                 "El valor de inicio de RMS no puede ser menor o igual al valor final")
             seguir = False
