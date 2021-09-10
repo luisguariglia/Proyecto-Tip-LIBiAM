@@ -1291,6 +1291,31 @@ class ventana_principal(QWidget):
                 self.vistas.pop(i)
                 break
 
+    def openFileNameDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
+                                                  "All Files (*);;Python Files (*.py)", options=options)
+        if fileName:
+            print(fileName)
+
+    def openFileNamesDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        files, _ = QFileDialog.getOpenFileNames(self, "QFileDialog.getOpenFileNames()", "",
+                                                "All Files (*);;Python Files (*.py)", options=options)
+        if files:
+            print(files)
+
+    def saveFileDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, "Guardar .csv", ".csv",
+                                                  config.FILES_CSV, options=options)
+        if fileName:
+            return fileName
+
+
     def exportar_VP(self, graficas):
         ninguna_grafica_con_filtro = False
 
@@ -1307,39 +1332,40 @@ class ventana_principal(QWidget):
         if not ninguna_grafica_con_filtro:
             cabecera = []
             datos = []
-            with open('datos_exportados.csv', 'w', newline='') as file:
-                writer = csv.writer(file)
-                for grafica in graficas:
-                    writer.writerow([grafica.get_nombre_columna_grafica()])
-                    if grafica.get_valores_pico_para_exportar() is not None:
-                        valores_pico = grafica.get_valores_pico_para_exportar()
+            nombre = self.saveFileDialog()
+            print(nombre)
+            if nombre:
+                with open(nombre, 'w', newline='') as file:
+                    writer = csv.writer(file)
+                    for grafica in graficas:
+                        writer.writerow([grafica.get_nombre_columna_grafica()])
+                        if grafica.get_valores_pico_para_exportar() is not None:
+                            valores_pico = grafica.get_valores_pico_para_exportar()
 
-                        # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
-                        promedio = [f"Promedio: {np.mean(valores_pico)}"]
+                            # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
+                            promedio = [f"Promedio: {np.mean(valores_pico)}"]
 
-                        #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
-                        valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
-                        writer.writerow([f"Valores pico: "])
-                        writer.writerow(valores_pico_y_promedio)
+                            #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
+                            valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
+                            writer.writerow([f"Valores pico: "])
+                            writer.writerow(valores_pico_y_promedio)
 
-                    if grafica.get_valor_integral_para_exportar() is not None:
-                        valor_integral = grafica.get_valor_integral_para_exportar()
-                        writer.writerow([f"Valor de integral: "])
-                        writer.writerow([valor_integral])
+                        if grafica.get_valor_integral_para_exportar() is not None:
+                            valor_integral = grafica.get_valor_integral_para_exportar()
+                            writer.writerow([f"Valor de integral: "])
+                            writer.writerow([valor_integral])
 
-                    if grafica.get_rms() is not None:
-                        valor_rms = grafica.get_rms()
-                        writer.writerow([f"Valor RMS: "])
-                        writer.writerow([valor_rms])
+                        if grafica.get_rms() is not None:
+                            valor_rms = grafica.get_rms()
+                            writer.writerow([f"Valor RMS: "])
+                            writer.writerow([valor_rms])
 
-                    writer.writerow("")
+                        writer.writerow("")
 
-                QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
+                    QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
 
         else:
             QMessageBox.information(self, "Error", "Ninguna gráfica tiene filtro.")
-
-
 
 def main():
     app = QApplication(sys.argv)
