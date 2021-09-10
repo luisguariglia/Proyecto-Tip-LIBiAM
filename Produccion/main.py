@@ -1291,22 +1291,6 @@ class ventana_principal(QWidget):
                 self.vistas.pop(i)
                 break
 
-    def openFileNameDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
-                                                  "All Files (*);;Python Files (*.py)", options=options)
-        if fileName:
-            print(fileName)
-
-    def openFileNamesDialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        files, _ = QFileDialog.getOpenFileNames(self, "QFileDialog.getOpenFileNames()", "",
-                                                "All Files (*);;Python Files (*.py)", options=options)
-        if files:
-            print(files)
-
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -1333,7 +1317,6 @@ class ventana_principal(QWidget):
             cabecera = []
             datos = []
             nombre = self.saveFileDialog()
-            print(nombre)
             if nombre:
                 with open(nombre, 'w', newline='') as file:
                     writer = csv.writer(file)
