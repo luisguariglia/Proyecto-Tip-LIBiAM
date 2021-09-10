@@ -30,7 +30,9 @@ from matplotlib.patches import Polygon
 import scipy
 import csv
 import img
+import configparser
 cant_graficas = 0
+
 def load_fonts_from_dir(directory):
     families = set()
     for fi in QDir(directory).entryInfoList(["*.ttf"]):
@@ -1308,9 +1310,8 @@ class ventana_principal(QWidget):
             with open('datos_exportados.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 for grafica in graficas:
-                    print(grafica.get_valores_pico_para_exportar())
+                    writer.writerow([grafica.get_nombre_columna_grafica()])
                     if grafica.get_valores_pico_para_exportar() is not None:
-                        writer.writerow([grafica.get_nombre_columna_grafica()])
                         valores_pico = grafica.get_valores_pico_para_exportar()
 
                         # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
