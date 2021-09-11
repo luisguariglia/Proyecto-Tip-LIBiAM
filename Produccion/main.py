@@ -25,7 +25,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
+from GUI.GUI import ventana_valoresEnBruto,ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -193,7 +193,11 @@ class ventana_principal(QWidget):
         wid_derecha_toolbar.layout().setAlignment(Qt.AlignLeft)
 
         #BOTONES WIDGET DERECHA TOOLBAR
-        btn_butter_filter = QPushButton("Butter Filter")
+        btn_valores_en_bruto = QPushButton("Valores en bruto")
+        btn_valores_en_bruto.clicked.connect(self.ventana_valoresEnBruto)
+        btn_valores_en_bruto.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        btn_butter_filter = QPushButton("Filtrado")
         btn_butter_filter.clicked.connect(self.ventana_butter)
         btn_butter_filter.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
@@ -213,10 +217,11 @@ class ventana_principal(QWidget):
         btn_comparar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
         btn_comparar.clicked.connect(self.ventana_comparar)
 
-        btn_exportar_VP = QPushButton("Exportar datos")
-        btn_exportar_VP.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_exportar_VP = QPushButton("▪ |Exportar datos| ▪")
+        btn_exportar_VP.setStyleSheet(estilos.estilos_btn_exportar())
         btn_exportar_VP.clicked.connect(self.ventana_exportar_valores_pico)
 
+        wid_derecha_toolbar.layout().addWidget(btn_valores_en_bruto)
         wid_derecha_toolbar.layout().addWidget(btn_rectificar)
         wid_derecha_toolbar.layout().addWidget(btn_butter_filter)
         wid_derecha_toolbar.layout().addWidget(btn_cortar)
@@ -705,8 +710,8 @@ class ventana_principal(QWidget):
 
     def setFiltros(self, datos, datosFiltrado):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
-        filter_signal = filtersHelper.butterFilterDos(filter_signal)
-        filter_signal = filtersHelper.RMS(filter_signal)
+        #filter_signal = filtersHelper.butterFilterDos(filter_signal)
+        #filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
     def recortarGraficos(self, datos, tiempo, datosRecorte):
@@ -793,7 +798,7 @@ class ventana_principal(QWidget):
         exponente=grafica.get_exponente()
         aux = filtersHelper.recortarGrafico(ax, tiempo, [a,b])[0]
 
-        resultado = np.sqrt(np.mean(pow(aux,2)))
+        resultado = np.sum(np.sqrt(np.mean(pow(aux,2))),1)
 
         numeroAMostrar = str("{:.2f}".format(resultado / (pow(10, int(exponente)))))
         axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
@@ -856,8 +861,8 @@ class ventana_principal(QWidget):
 
                     plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
-                    if graficas[0].get_exponente() is None:
-                        graficas[0].set_exponente(int(exponent.split('e')[1]))
+                    #if graficas[0].get_exponente() is None:
+                    #    graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
                     if graficas[0].get_rmsLimites()[2]:
@@ -961,8 +966,8 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        if graficas[x].get_exponente() is None:
-                            graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        #if graficas[x].get_exponente() is None:
+                        #    graficas[x].set_exponente(int(exponent.split('e')[1]))
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
@@ -1077,6 +1082,18 @@ class ventana_principal(QWidget):
         else:
             ventana_rectificar(self).exec_()
 
+    def ventana_valoresEnBruto(self):
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            graficas = vista.get_graficas()
+            ventana_valoresEnBruto(self, graficas).exec_()
+        else:
+            QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+
+
     def ventana_cortar(self):
         widget_tab = self.widget_der.currentWidget()
         object_name = widget_tab.objectName()
@@ -1087,7 +1104,6 @@ class ventana_principal(QWidget):
             ventana_cortar(self, graficas).exec_()
         else:
             ventana_cortar(self).exec_()
-
     def comparar_graficas(self, graficas):
         current_widget = self.widget_der.currentWidget()
         object_name = current_widget.objectName()

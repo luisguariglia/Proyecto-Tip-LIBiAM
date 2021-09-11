@@ -191,6 +191,27 @@ def estilos_btn_aplicar_a_todas():
         }
     """
 
+
+def estilos_btn_exportar():
+    return """
+        QPushButton{
+            color:#FAFAFA;
+            font:bold 9px;
+            border:1px solid #5cb85c;
+            background-color:#5cb85c;
+            border-radius: 2px;
+            padding:6px;
+        }
+
+        QPushButton:hover{
+           color:#5cb85c;
+           background-color:#F5F5F5;
+        }
+
+        QPushButton:pressed{
+           background-color:#E0E0E0;
+        }
+    """
 def estilos_spinbox_filtros():
     return """
         QSpinBox{
