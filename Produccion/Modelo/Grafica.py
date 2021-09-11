@@ -130,3 +130,13 @@ class Grafica:
 
     def set_rms(self, rms):
         self.__rms = rms
+    def aplicarValoresBrutos(self):
+        self.__filtro = None
+        self.__recorte = [0, 0]
+        self.__offset = [0, 0, True]  # [valor,valor,si se muestra o no]
+        self.__valores_pico = None
+        self.__integral = [0, 0, False]  # [valor,valor,si se muestra o no]
+        self.__valores_pico_para_exportar = None
+        self.__valor_integral_para_exportar = None
+        self.__rms = None
+        self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
