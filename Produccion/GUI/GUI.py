@@ -11,8 +11,9 @@ from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 from PyQt5.QtWidgets import QMessageBox
+import numpy as np
 
-
+cont = 0
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
@@ -831,13 +832,16 @@ class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        # self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Cortar Graficas - Vista 1")
         self.setFixedSize(770, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
+        self.cont = 0
+        self.min = 0
+        self.max = 0
         # PARAMETROS
         self.parent = parent
         self.graficas = graficas
@@ -925,6 +929,8 @@ class ventana_cortar(QtWidgets.QDialog):
         self.spin_box.setSingleStep(0.25)
         self.spin_box.setFixedWidth(60)
         self.spin_box.setValue(0)
+
+
         self.spin_box.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_label_desde.layout().addWidget(label_desde)
@@ -969,6 +975,11 @@ class ventana_cortar(QtWidgets.QDialog):
         btn_resetear.setFixedWidth(80)
         btn_resetear.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
+        btn_RecortarConClicks = QtWidgets.QPushButton("Recortar Haciendo Click")
+        btn_RecortarConClicks.clicked.connect(self.RecortarHaciendoClick)
+        btn_RecortarConClicks.setFixedWidth(140)
+        btn_RecortarConClicks.setStyleSheet(estilos.estilos_btn_exportar())
+
         #   infooo
         label_info = QtWidgets.QLabel("<br>"
                                       "Se cortan las graficas desde un determinado valor de tiempo en segundos hasta otro valor"
@@ -981,6 +992,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(btn_resetear)
+        wid_content_der.layout().addWidget(btn_RecortarConClicks)
         wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR RECORTE
@@ -1002,6 +1014,19 @@ class ventana_cortar(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+    def RecortarHaciendoClick(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        if cant_hijos==1:
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            self.parent.setCortandoGrafico(True,self)
+        else:
+            QMessageBox.information(self, "Info", "Todavia no esta programado para varios graficos")
+    def mostrar(self):
+        self.show()
+    def setRecorte(self,min,max):
+        self.spin_box.setValue(min)
+        self.spin_box2.setValue(max)
     def resetear_valores(self):
         self.spin_box.setValue(0)
         self.spin_box2.setValue(0)
@@ -1057,6 +1082,12 @@ class ventana_cortar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+
+        if self.graficas is not None and seguir:
+            return True
+        else:
+            self.parent.listar_graficas(True)
+            return False
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
