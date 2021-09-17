@@ -6,13 +6,16 @@ import pandas as pd
 
 # ------->archivo para tod0 lo relacionado a los filtros
 def butterFilter(signal, datosFiltrado: Filtro):
-    signal = np.nan_to_num(signal, copy=False)
-    b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A(),
-           datosFiltrado.get_array_B()], datosFiltrado.get_type(),analog=datosFiltrado.get_analog())
-    y = scipy.signal.filtfilt(a, b, signal, axis=0)
+    if datosFiltrado is not None:
+        signal = np.nan_to_num(signal, copy=False)
+        b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A(),
+               datosFiltrado.get_array_B()], datosFiltrado.get_type(),analog=datosFiltrado.get_analog())
+        y = scipy.signal.filtfilt(a, b, signal, axis=0)
 
-    # ret = abs(y)
-    return y
+        # ret = abs(y)
+        return y
+    else:
+        return signal
 def butterFilterDos(signal):
     # envelopamento (envolvente) pasa-bajo
     signal = np.nan_to_num(signal, copy=False)
@@ -53,7 +56,7 @@ def recortarGrafico(signal,tiempo, datosRecorte):
         df[tiempo.name] = tiempo
         df["signal"] = signal
 
-        df = df.loc[(df[tiempo.name] > datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
+        df = df.loc[(df[tiempo.name] >= datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
         return [df["signal"].values,df[tiempo.name]]
 
 

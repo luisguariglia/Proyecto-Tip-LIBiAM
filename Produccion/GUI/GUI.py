@@ -11,8 +11,9 @@ from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Pico import Pico
 from PyQt5.QtWidgets import QMessageBox
+import numpy as np
 
-
+cont = 0
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
@@ -831,13 +832,16 @@ class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
         super(ventana_cortar, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        # self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Cortar Graficas - Vista 1")
         self.setFixedSize(770, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
+        self.cont = 0
+        self.min = 0
+        self.max = 0
         # PARAMETROS
         self.parent = parent
         self.graficas = graficas
@@ -925,6 +929,8 @@ class ventana_cortar(QtWidgets.QDialog):
         self.spin_box.setSingleStep(0.25)
         self.spin_box.setFixedWidth(60)
         self.spin_box.setValue(0)
+
+
         self.spin_box.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
         wid_label_desde.layout().addWidget(label_desde)
@@ -969,6 +975,11 @@ class ventana_cortar(QtWidgets.QDialog):
         btn_resetear.setFixedWidth(80)
         btn_resetear.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
+        btn_RecortarConClicks = QtWidgets.QPushButton("Recortar Haciendo Click")
+        btn_RecortarConClicks.clicked.connect(self.RecortarHaciendoClick)
+        btn_RecortarConClicks.setFixedWidth(140)
+        btn_RecortarConClicks.setStyleSheet(estilos.estilos_btn_exportar())
+
         #   infooo
         label_info = QtWidgets.QLabel("<br>"
                                       "Se cortan las graficas desde un determinado valor de tiempo en segundos hasta otro valor"
@@ -981,6 +992,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(btn_resetear)
+        wid_content_der.layout().addWidget(btn_RecortarConClicks)
         wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR RECORTE
@@ -1002,6 +1014,22 @@ class ventana_cortar(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+    def RecortarHaciendoClick(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        if cant_hijos==1:
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            self.parent.setCortandoGrafico(True,False,self)
+        else:
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
+            self.parent.setCortandoGrafico(True,True, self)
+    def mostrar(self):
+        self.show()
+        self.parent.listar_graficas(True)
+    def setRecorte(self,min,max):
+        self.spin_box.setValue(min)
+        self.spin_box2.setValue(max)
     def resetear_valores(self):
         self.spin_box.setValue(0)
         self.spin_box2.setValue(0)
@@ -1057,6 +1085,12 @@ class ventana_cortar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+
+        if self.graficas is not None and seguir:
+            return True
+        else:
+            self.parent.listar_graficas(True)
+            return False
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -2216,3 +2250,144 @@ class ventana_directorio(QtWidgets.QDialog):
         nombre = self.textbox_nombre.text()
         self.dir.setText(0, nombre)
         self.close()
+
+class ventana_valoresEnBruto(QtWidgets.QDialog):
+    def __init__(self, parent=None, graficas=None):
+        super(ventana_valoresEnBruto, self).__init__()
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Valores en bruto - Vista 1")
+        self.setFixedSize(770/2, 470)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        self.setContentsMargins(10, 0, 10, 10)
+        self.layout().setSpacing(15)
+
+        # PARAMETROS
+        self.parent = parent
+        self.graficas = graficas
+
+        wid_izquierda = QtWidgets.QWidget()
+
+
+        # SOMBRAS
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+
+        # ESTILOS
+        wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
+
+
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+
+
+        wid_izquierda.layout().setSpacing(20)
+        wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+
+        label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
+        label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        label_2 = QtWidgets.QLabel("CONFIGURAR RECORTE")
+        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
+
+        wid_izquierda.layout().addWidget(label_1, 1)
+
+
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
+        if self.graficas is not None:
+            for grafica in self.graficas:
+                nom_col = grafica.get_nombre_columna_grafica()
+                item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setCheckState(0, Qt.Unchecked)
+                self.tree_graficas.addTopLevelItem(item)
+
+        btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
+        btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
+        btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar.clicked.connect(self.aplicar_valoresEnBruto)
+        btn_aplicar.setFixedWidth(80)
+        btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+
+        # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
+        wid_btn = QtWidgets.QWidget()
+
+        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
+        #wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
+        wid_btn.layout().setAlignment(Qt.AlignLeft)
+
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+        wid_btn.layout().addWidget(btn_aplicar)
+
+        wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(wid_btn, 1)
+
+
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+
+        self.layout().addWidget(wid_izquierda)
+
+    def seleccionar_todas_las_graficas(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Checked)
+
+    def aplicar_valoresEnBruto(self):
+        hay_almenos_un_check = False
+        seguir = True
+
+        # *------------------------------------CONTROLES-------------------------------------------
+        # Tengo que hacer este for rancio al menos una vez para chequear si hay algún check de las graficas chequeados.
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if hay_almenos_un_check:
+            valores_en_cero = True
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        # *------------------------------------FIN DE CONTROLES------------------------------------
+
+        if self.graficas is not None and seguir:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            grafica.aplicarValoresBrutos()
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+                self.close()
+
+    def get_grafica(self, id_grafica):
+        grafica_aux = None
+        for grafica in self.graficas:
+            if grafica.get_id() == id_grafica:
+                grafica_aux = grafica
+                break
+
+        return grafica_aux
+
