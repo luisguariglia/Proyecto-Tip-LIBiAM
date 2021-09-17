@@ -862,7 +862,7 @@ class ventana_principal(QWidget):
                     plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
                     #if graficas[0].get_exponente() is None:
-                    #    graficas[0].set_exponente(int(exponent.split('e')[1]))
+                        #graficas[0].set_exponente(int(exponent.split('e')[1]))
                     axes.legend()
 
                     if graficas[0].get_rmsLimites()[2]:
@@ -887,6 +887,7 @@ class ventana_principal(QWidget):
                     # -------------------------------------
 
                     plt.close(fig)
+                    fig.tight_layout()
 
                     canvas = FigureCanvas(fig)
                     scroll_area = QScrollArea(widget_tab)
@@ -966,13 +967,13 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        #if graficas[x].get_exponente() is None:
-                        #    graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        if graficas[x].get_exponente() is None:
+                            graficas[x].set_exponente(int(exponent.split('e')[1]))
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
                     plt.close(fig)
-                    #fig.tight_layout()
+                    fig.tight_layout()
 
                     widget_tab.layout().removeWidget(vista.get_canvas())
                     widget_tab.layout().removeWidget(vista.get_nav_toolbar())

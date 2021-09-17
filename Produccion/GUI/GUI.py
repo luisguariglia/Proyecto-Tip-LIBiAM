@@ -2222,7 +2222,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
         super(ventana_valoresEnBruto, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Cortar Graficas - Vista 1")
+        self.setWindowTitle("Valores en bruto - Vista 1")
         self.setFixedSize(770/2, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -2283,13 +2283,15 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
+
         wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
-        wid_btn.setFixedWidth(350)
-        wid_btn.setLayout(QtWidgets.QVBoxLayout())
+        #wid_btn.setFixedWidth(350)
+        wid_btn.setLayout(QtWidgets.QHBoxLayout())
         wid_btn.layout().setAlignment(Qt.AlignLeft)
-        wid_btn.layout().addWidget(btn_aplicar_a_todas,1)
-        wid_btn.layout().addWidget(btn_aplicar,1)
+
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
+        wid_btn.layout().addWidget(btn_aplicar)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
