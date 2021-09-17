@@ -32,13 +32,19 @@ import csv
 import img
 import configparser
 import time
+from PyQt5.QtWidgets import QSplashScreen
 
 cant_graficas = 0
+##       esto es para el cortar
 cont = 0
 min=0
 max=0
 cortando=False
+cortandoVarios=False
+pintoUnGrafico=False
 ventanaCortarInstance= None
+##
+
 def load_fonts_from_dir(directory):
     families = set()
     for fi in QDir(directory).entryInfoList(["*.ttf"]):
@@ -333,6 +339,7 @@ class ventana_principal(QWidget):
         icono_hide = QIcon(":/Static/img/hide.svg")
         icono_remove = QIcon(":/Static/img/eliminar.svg")
         icono_agregar = QIcon(":/Static/img/add.svg")
+
         widget_botones_csv.addAction(icono_remove, 'eliminar', self.eliminar_csv)
         widget_botones_csv.addAction(icono_agregar, 'agregar', self.agregar_csv)
         widget_botones_csv.addAction(icono_hide,'ocultar',self.minimizar_panel)
@@ -920,7 +927,10 @@ class ventana_principal(QWidget):
                 elif cant_graficas > 1:
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
                     # cid = fig.canvas.mpl_connect('button_press_event', onclick())
+                    fig.canvas.mpl_connect('axes_enter_event', enter_axes)
+
                     graficas = vista.get_graficas()
+
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
@@ -954,8 +964,10 @@ class ventana_principal(QWidget):
 
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
-                        axes[x].plot(tiempoRecortado,
+                        line, =axes[x].plot(tiempoRecortado,
                                      aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
+
+                        linebuilder = LineBuilder(line, axes[x], graficas[x], self,True)
                         # ------------------------------------- Aspecto
                         # si no esta recortado
                         if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
@@ -1043,10 +1055,14 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
             else:
-                ventana_filtro(self, v="Inicio").exec_()
+                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
 
     def ventana_valores_en_grafica(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1077,10 +1093,14 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_comparar(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_comparar(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
             else:
-                ventana_comparar(self).exec_()
+                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
 
     def ventana_exportar_valores_pico(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1090,10 +1110,14 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_exportarVP(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_exportarVP(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
             else:
-                ventana_exportarVP(self).exec_()
+                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
 
     def ventana_rectificar(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1103,10 +1127,14 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_rectificar(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_rectificar(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
             else:
-                ventana_rectificar(self).exec_()
+                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
 
     def ventana_valoresEnBruto(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1116,8 +1144,12 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_valoresEnBruto(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_valoresEnBruto(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
             else:
                 QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
 
@@ -1406,21 +1438,27 @@ class ventana_principal(QWidget):
         else:
             QMessageBox.information(self, "Error", "Ninguna gráfica tiene filtro.")
 
-    def setCortandoGrafico(self,val,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
-        setCortandoGraficoMain(val,ventanaRecortar)
+    def setCortandoGrafico(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
+        setCortandoGraficoMain(val,varios,ventanaRecortar)
 
 #funcion principal para cortar haciendo click
-def setCortandoGraficoMain(val,ventanaRecortar = None):
-    global ventanaCortarInstance,cortando,min,max;
+def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
+    global ventanaCortarInstance,cortando,min,max,cortandoVarios,pintoUnGrafico;
+    cortandoVarios = varios
     if ventanaRecortar is not None:
         ventanaCortarInstance=ventanaRecortar
     cortando = val
-    if not cortando:
+    if not cortando and not cortandoVarios:
         ventanaCortarInstance.setRecorte(min,max)
         ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
+        pintoUnGrafico = False
+    elif not cortando and cortandoVarios:
+        ventanaCortarInstance.setRecorte(min, max)
+        ventanaCortarInstance.mostrar()
+        pintoUnGrafico = False
 
 #control para que no se haga otra cosa mientras se esta recortando
 def chequearSiEstaRecortando(self):
@@ -1432,7 +1470,9 @@ def chequearSiEstaRecortando(self):
         return False
 #funcion para mostrar el recorte que se va a hacer, cuando se hace click
 class LineBuilder:
-    def __init__(self, line, axes,grafica,main):
+    def __init__(self, line, axes,grafica,main,hayVarias=False):
+        self.hayVarias = hayVarias
+        print(hayVarias)
         self.main = main
         self.grafica = grafica
         self.axes = axes
@@ -1442,9 +1482,9 @@ class LineBuilder:
         self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
         self.annotations = None
     def __call__(self, event):
-        global cont,min,max
+        global cont,min,max,cortandoVarios
         if cortando:
-            if cont == 0:   #inicio de recorte
+            if cont == 0 and self.grafica.get_recortandoConClick()==0:   #inicio de recorte
                 self.grafica.set_recortandoConClick(1)
                 min = event.xdata
                 cont += 1
@@ -1465,23 +1505,29 @@ class LineBuilder:
                 time.sleep(1)
                 cont = 0
                 self.grafica.set_recortandoConClick(0)
-                setCortandoGraficoMain(False)
-            else:
+                setCortandoGraficoMain(False,cortandoVarios)
+            elif not self.hayVarias:
                 QMessageBox.information(self.main, "Advertencia", "Termine de recortar la grafica Original")
+
             if event.inaxes!=self.line.axes: return
 
 #con esto se pinta de amarillo la grafica que se va a recortar
 def enter_axes(event):
-    global cortando;
-    if cortando:
+    global cortando,pintoUnGrafico;
+    if cortando and not pintoUnGrafico:
         event.inaxes.patch.set_facecolor('gold')
         event.canvas.draw()
-    else:
-        event.inaxes.patch.set_facecolor('white')
-        event.canvas.draw()
+        pintoUnGrafico = True
 
 def main():
     app = QApplication(sys.argv)
+
+    pixmap = QPixmap(":/Static/img/LIBiAM2.jpg")
+    splash = QSplashScreen(pixmap)
+    splash.show()
+    app.processEvents()
+    #cargando modulos
+
     ex = ventana_principal()
     ex.show()
     sys.exit(app.exec_())
