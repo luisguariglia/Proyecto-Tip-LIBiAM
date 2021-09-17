@@ -706,7 +706,7 @@ class ventana_principal(QWidget):
     def setFiltros(self, datos, datosFiltrado):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
         filter_signal = filtersHelper.butterFilterDos(filter_signal)
-        filter_signal = filtersHelper.RMS(filter_signal)
+        #filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
     def recortarGraficos(self, datos, tiempo, datosRecorte):
@@ -893,7 +893,6 @@ class ventana_principal(QWidget):
                     vista.set_nav_toolbar(nav_toolbar)
 
                     canvas.draw()
-
                     widget_tab.layout().addWidget(nav_toolbar)
                     widget_tab.layout().addWidget(scroll_area)
 
@@ -1294,8 +1293,8 @@ class ventana_principal(QWidget):
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Guardar .csv", ".csv",
-                                                  config.FILES_CSV, options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, "Guardar .csv", "ejemplo.csv",
+                                                  "*", options=options)
         if fileName:
             return fileName
 
