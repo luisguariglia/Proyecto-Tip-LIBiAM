@@ -785,7 +785,7 @@ class ventana_principal(QWidget):
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
         print(exponente)
-        print("integral_antes de la ranciada")
+        print("integral_antes")
 
         # calculo la integral
         def getVoltajeAPartirDeUnTiempo(x):
@@ -1574,7 +1574,7 @@ def enter_axes(event):
 def main():
     app = QApplication(sys.argv)
 
-    pixmap = QPixmap(":/Static/img/LIBiAM2.jpg")
+    pixmap = QPixmap(":/Static/img/splashscreenLibiam.jpg")
     splash = QSplashScreen(pixmap)
     splash.show()
     app.processEvents()
