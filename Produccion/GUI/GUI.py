@@ -1019,11 +1019,14 @@ class ventana_cortar(QtWidgets.QDialog):
         if cant_hijos==1:
             self.hide()
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
-            self.parent.setCortandoGrafico(True,self)
+            self.parent.setCortandoGrafico(True,False,self)
         else:
-            QMessageBox.information(self, "Info", "Todavia no esta programado para varios graficos")
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
+            self.parent.setCortandoGrafico(True,True, self)
     def mostrar(self):
         self.show()
+        self.parent.listar_graficas(True)
     def setRecorte(self,min,max):
         self.spin_box.setValue(min)
         self.spin_box2.setValue(max)
