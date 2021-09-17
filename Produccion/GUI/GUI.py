@@ -2377,6 +2377,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None

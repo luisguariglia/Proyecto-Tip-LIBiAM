@@ -301,7 +301,9 @@ class ventana_principal(QWidget):
         self.ventana_inicio()
         self.widget_der.setMovable(True)
         self.widget_der.setTabsClosable(True)
+        self.widget_der.blockSignals(False)
         self.widget_der.tabCloseRequested.connect(self.eliminar_vista)
+        #self.widget_der.currentChanged.connect(self.cambiaso)
 
 
         #CONTENEDOR DE COMBOBOX Y TOOLBAR DE ARCHIVOS CSV
@@ -355,15 +357,12 @@ class ventana_principal(QWidget):
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
 
-        """# filtros
-        self.ventanaConfig = butterConfigClass(self)
-        self.button = self.findChild(QPushButton, 'butterBtn')
-        self.button.clicked.connect(self.ventanaConfig.mostrar)
-
-        # picos
-        self.picosConfig = valoresEnGraficaClass(self)
-        self.buttonPícos = self.findChild(QtWidgets.QPushButton, 'valoresGraficaBtn')
-        self.buttonPícos.clicked.connect(self.picosConfig.mostrar)"""
+    def cambiaso(self, index):
+        continuar = chequearSiEstaRecortando(self)
+        print(index)
+        if not continuar:
+            self.widget_der.setCurrentWidget(self.widget_der.currentWidget())
+            return
 
     def cerrar(self):
         sys.exit()
@@ -720,7 +719,7 @@ class ventana_principal(QWidget):
 
     def setFiltros(self, datos, datosFiltrado):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
-        #filter_signal = filtersHelper.butterFilterDos(filter_signal)
+        #filter_signal = filtersHelper.butterFilter(filter_signal)
         #filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
 
@@ -983,8 +982,8 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        if graficas[x].get_exponente() is None:
-                            graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        #if graficas[x].get_exponente() is None:
+                            #graficas[x].set_exponente(int(exponent.split('e')[1]))
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
@@ -1062,9 +1061,10 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
-                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+                QMessageBox.information(self, "Advertencia",
+                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
 
         # ventana_valores_en_graficas(self, v="Inicio").exec_()
@@ -1078,10 +1078,15 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_comparar(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 2:
+                    graficas = vista.get_graficas()
+                    ventana_comparar(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos 2 gráficas para comparar.")
             else:
-                ventana_comparar(self).exec_()
+                QMessageBox.information(self, "Advertencia", "Debe crear una vista, posicionarte en ella e insertar al menos 2 gráficas para comparar.")
+
 
     def ventana_exportar_valores_pico(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1104,10 +1109,16 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_rectificar(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_rectificar(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
-                ventana_rectificar(self).exec_()
+                QMessageBox.information(self, "Advertencia",
+                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+
 
     def ventana_valoresEnBruto(self):
         continuar = not chequearSiEstaRecortando(self)
@@ -1117,10 +1128,15 @@ class ventana_principal(QWidget):
 
             if not object_name == "Inicio":
                 vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                graficas = vista.get_graficas()
-                ventana_valoresEnBruto(self, graficas).exec_()
+                cant_graficas = vista.get_tree_widget_item().childCount()
+                if cant_graficas >= 1:
+                    graficas = vista.get_graficas()
+                    ventana_valoresEnBruto(self, graficas).exec_()
+                else:
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
-                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+                QMessageBox.information(self, "Advertencia",
+                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
 
     def ventana_cortarMain(self):
@@ -1136,9 +1152,10 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_cortar(self, graficas).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
-                QMessageBox.information(self, "Advertencia", "No hay Graficos para aplicarle valores")
+                QMessageBox.information(self, "Advertencia",
+                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def comparar_graficas(self, graficas):
         current_widget = self.widget_der.currentWidget()
