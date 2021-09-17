@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5 import QtWidgets
 
 class MyWidget(QtWidgets.QWidget):
@@ -31,20 +31,34 @@ class MyWidget(QtWidgets.QWidget):
 
         #QTABWIDGET
         self.tab_widget = QtWidgets.QTabWidget()
-        self.tab_widget.currentChanged.connect(self.changed)
         self.tab_widget.addTab(self.widget_form1,"Form 1")
         self.tab_widget.addTab(self.widget_form2, "Form 2")
+        self.tab_widget.installEventFilter(self)
+        self.tab_widget.tabBar().installEventFilter(self)
 
         self.layout().addWidget(self.tab_widget)
 
-    def changed(self,index):
-        if self.flag:
-            self.flag = False
-            return
+    def eventFilter(self, source, event):
+        if source == self.tab_widget.tabBar() and \
+            event.type() == event.MouseButtonPress and \
+            event.button() == Qt.LeftButton:
+                tab = self.tab_widget.tabBar().tabAt(event.pos())
+                if tab >= 0 and tab != self.tab_widget.currentIndex():
+                    return self.isInvalid()
+        elif source == self.tab_widget and \
+            event.type() == event.KeyPress and \
+            event.key() in (Qt.Key_Tab, Qt.Key_Backtab) and \
+            event.modifiers() & Qt.ControlModifier:
+                return self.isInvalid()
+        return super().eventFilter(source, event)
 
+    def isInvalid(self):
         if not self.form_completed:
-            QtWidgets.QMessageBox.about(self, "Warning", "You must complete the form")
-            return
+
+            QTimer.singleShot(0, lambda: QtWidgets.QMessageBox.about(
+                self, "Warning", "You must complete the form"))
+            return True
+        return False
 
 if __name__ == "__main__":
 
