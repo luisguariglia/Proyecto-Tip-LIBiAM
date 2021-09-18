@@ -461,7 +461,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en grafica - " + v)
-        self.setFixedSize(800, 470 * 1.5)
+        self.setFixedSize(800, 420)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
@@ -485,7 +485,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_derecha = QtWidgets.QWidget()
         wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
         wid_derecha.setLayout(QtWidgets.QVBoxLayout())
-
+        wid_derecha.layout().setContentsMargins(4, 14, 12, 8)
         wid_derecha.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
         wid_derecha.setGraphicsEffect(shadow2)
 
@@ -498,59 +498,130 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_2 = QtWidgets.QLabel("Valores Picos")
         label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
 
-        wid_derecha.layout().addWidget(label_2, 1)
+        #wid_derecha.layout().addWidget(label_2, 1)
         wid_izquierda.layout().addWidget(label_1, 1)
 
         wid_content_derecha = QtWidgets.QWidget()
-        # wid_content_derecha.setFixedWidth(225)
-        wid_content_derecha.setStyleSheet("margin-left:10px;")
+        wid_content_derecha.setStyleSheet("margin-left:10px;background-color:orange;")
         wid_content_derecha.setLayout(QtWidgets.QVBoxLayout())
         wid_content_derecha.layout().setAlignment(Qt.AlignTop)
         wid_content_derecha.layout().setSpacing(10)
 
-        wid_derecha.layout().addWidget(wid_content_derecha, 8)
+        widget_valores_pico = QtWidgets.QWidget()
+        widget_valores_pico.setLayout(QtWidgets.QVBoxLayout())
+        widget_valores_pico.layout().setAlignment(Qt.AlignTop)
+        widget_valores_pico.layout().setContentsMargins(8, 16 , 8, 0)
 
+        widget_integral = QtWidgets.QWidget()
+        widget_integral.setLayout(QtWidgets.QVBoxLayout())
+        widget_integral.layout().setAlignment(Qt.AlignTop)
+        widget_integral.layout().setContentsMargins(8, 16, 8, 0)
+
+        widget_valor_rms = QtWidgets.QWidget()
+        widget_valor_rms.setLayout(QtWidgets.QVBoxLayout())
+        widget_valor_rms.layout().setAlignment(Qt.AlignTop)
+        widget_valor_rms.layout().setContentsMargins(8, 16, 8, 0)
+
+        tabs = QtWidgets.QTabWidget()
+        tabs.setStyleSheet(estilos.estilos_qtab_widget())
+        tabs.addTab(widget_valores_pico, "Valores picos")
+        tabs.addTab(widget_integral, "Integral")
+        tabs.addTab(widget_valor_rms, "Valor RMS")
+
+        wid_derecha.layout().addWidget(tabs, 9)
+
+        #ALTURA MÍNIMA
         wid_min_height = QtWidgets.QWidget()
         wid_min_height.setLayout(QtWidgets.QHBoxLayout())
-        wid_min_height.layout().setContentsMargins(0, 0, 0, 0)
+        wid_min_height.layout().setContentsMargins(8, 8, 8, 0)
         wid_min_height.layout().setSpacing(0)
 
-        label_min_height = QtWidgets.QLabel("Altura Minima (^15)")
+        wid_label_and_tooltip_AM = QtWidgets.QWidget()
+        wid_label_and_tooltip_AM.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_AM.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_AM.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_AM.layout().setSpacing(6)
+
+        label_min_height = QtWidgets.QLabel("Altura Mínima")
+        label_min_height.setStyleSheet("padding:0px;margin:0px;")
         label_min_height.setFont(font)
+
+        self.btn_tooltip_AM = QtWidgets.QPushButton()
+        self.btn_tooltip_AM.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_AM.setFixedWidth(13)
+        self.btn_tooltip_AM.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_AM.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_AM.layout().addWidget(self.btn_tooltip_AM)
+        wid_label_and_tooltip_AM.layout().addWidget(label_min_height)
 
         self.spinbox_min_height = QtWidgets.QDoubleSpinBox()
         self.spinbox_min_height.setValue(2.0)
         self.spinbox_min_height.setMaximumWidth(90)
         self.spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
-        wid_min_height.layout().addWidget(label_min_height, 5)
+        wid_min_height.layout().addWidget(wid_label_and_tooltip_AM, 5)
         wid_min_height.layout().addWidget(self.spinbox_min_height, 2)
-        wid_content_derecha.layout().addWidget(wid_min_height)
+        widget_valores_pico.layout().addWidget(wid_min_height)
 
+        #UMBRAL
         wid_threshold = QtWidgets.QWidget()
         wid_threshold.setLayout(QtWidgets.QHBoxLayout())
-        wid_threshold.layout().setContentsMargins(0, 0, 0, 0)
-        wid_threshold.layout().setSpacing(0)
+        wid_threshold.layout().setAlignment(Qt.AlignTop)
+        wid_threshold.layout().setContentsMargins(8, 8, 8, 0)
+
+        wid_label_and_tooltip_U = QtWidgets.QWidget()
+        wid_label_and_tooltip_U.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_U.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_U.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_U.layout().setSpacing(6)
 
         label_threshold = QtWidgets.QLabel("Umbral")
+        label_threshold.setStyleSheet("padding:0px;margin:0px;")
         label_threshold.setFont(font)
+
+        self.btn_tooltip_umbral = QtWidgets.QPushButton()
+        self.btn_tooltip_umbral.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_umbral.setFixedWidth(13)
+        self.btn_tooltip_umbral.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_umbral.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_U.layout().addWidget(self.btn_tooltip_umbral)
+        wid_label_and_tooltip_U.layout().addWidget(label_threshold)
 
         self.spinbox_threshold = QtWidgets.QDoubleSpinBox()
         self.spinbox_threshold.setValue(1.0)
         self.spinbox_threshold.setMaximumWidth(90)
         self.spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
-        wid_threshold.layout().addWidget(label_threshold, 5)
+        wid_threshold.layout().addWidget(wid_label_and_tooltip_U, 5)
         wid_threshold.layout().addWidget(self.spinbox_threshold, 2)
-        wid_content_derecha.layout().addWidget(wid_threshold)
+        widget_valores_pico.layout().addWidget(wid_threshold)
 
+        #DISTANCIA
         wid_distance = QtWidgets.QWidget()
         wid_distance.setLayout(QtWidgets.QHBoxLayout())
-        wid_distance.layout().setContentsMargins(0, 0, 0, 0)
-        wid_distance.layout().setSpacing(0)
+        wid_distance.layout().setAlignment(Qt.AlignTop)
+        wid_distance.layout().setContentsMargins(8, 8, 8, 0)
+
+        wid_label_and_tooltip_D = QtWidgets.QWidget()
+        wid_label_and_tooltip_D.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_D.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_D.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_D.layout().setSpacing(6)
 
         label_distance = QtWidgets.QLabel("Distancia")
+        label_distance.setStyleSheet("padding:0px;margin:0px;")
         label_distance.setFont(font)
+
+        self.btn_tooltip_distancia = QtWidgets.QPushButton()
+        self.btn_tooltip_distancia.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_distancia.setFixedWidth(13)
+        self.btn_tooltip_distancia.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_distancia.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_D.layout().addWidget(self.btn_tooltip_distancia)
+        wid_label_and_tooltip_D.layout().addWidget(label_distance)
 
         self.spinbox_distance = QtWidgets.QDoubleSpinBox()
         self.spinbox_distance.setMaximum(1000)
@@ -559,13 +630,13 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.spinbox_distance.setMaximumWidth(90)
         self.spinbox_distance.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
-        wid_distance.layout().addWidget(label_distance, 5)
+        wid_distance.layout().addWidget(wid_label_and_tooltip_D, 5)
         wid_distance.layout().addWidget(self.spinbox_distance, 2)
-        wid_content_derecha.layout().addWidget(wid_distance)
+        widget_valores_pico.layout().addWidget(wid_distance)
 
         wid_checkbox = QtWidgets.QWidget()
         wid_checkbox.setLayout(QtWidgets.QHBoxLayout())
-        wid_checkbox.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox.layout().setContentsMargins(8, 5, 0, 0)
         wid_checkbox.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox.layout().setSpacing(0)
 
@@ -574,32 +645,16 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_checkbox.setStyleSheet("margin:0px;")
 
         self.checkbox_mostrar_picos = QtWidgets.QCheckBox()
-        self.checkbox_mostrar_picos.setStyleSheet("margin-left:14px;")
 
-        #   infooo
-        label_info = QtWidgets.QLabel("<br>"
-                                      "<span style='font-weight: bold'>Altura Minima:</span> altura minima requerida"
-                                      "<br><span style='font-weight: bold'>Umbral:</span> Umbral minimo requerido, distancia vertical a sus muestras vecinas. "
-                                      "<br><span style='font-weight: bold'>Distancia:</span>Distancia horizontal mínima requerida (>=1) en muestras entre picos vecinos. "
-                                      "Los picos más pequeños se eliminan primero hasta que se cumpla la condición para todos los picos restantes."
-                                      "<br>"
-                                      )
-        label_info.setFont(font)
-        label_info.setWordWrap(True)
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
-        wid_content_derecha.layout().addWidget(wid_checkbox)
-        wid_content_derecha.layout().addWidget(label_info)
+        widget_valores_pico.layout().addWidget(wid_checkbox)
+
 
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
-
-        label_3 = QtWidgets.QLabel("Integral")
-        label_3.setStyleSheet("font:14px bold; margin:5px;")
-        wid_content_derecha.layout().addWidget(label_3)
-
         wid_inicio = QtWidgets.QWidget()
         wid_inicio.setLayout(QtWidgets.QHBoxLayout())
-        wid_inicio.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicio.layout().setContentsMargins(8, 8, 8, 0)
         wid_inicio.layout().setSpacing(0)
 
         label_inicio = QtWidgets.QLabel("Valor inicial")
@@ -612,12 +667,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         wid_inicio.layout().addWidget(label_inicio, 5)
         wid_inicio.layout().addWidget(self.spinbox_inicio, 2)
-        wid_content_derecha.layout().addWidget(wid_inicio)
+        widget_integral.layout().addWidget(wid_inicio)
 
         # segundo parametro
         wid_fin = QtWidgets.QWidget()
         wid_fin.setLayout(QtWidgets.QHBoxLayout())
-        wid_fin.layout().setContentsMargins(0, 0, 0, 0)
+        wid_fin.layout().setContentsMargins(8, 8, 8, 0)
         wid_fin.layout().setSpacing(0)
 
         label_fin = QtWidgets.QLabel("Valor final")
@@ -630,12 +685,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         wid_fin.layout().addWidget(label_fin, 5)
         wid_fin.layout().addWidget(self.spinbox_fin, 2)
-        wid_content_derecha.layout().addWidget(wid_fin)
+        widget_integral.layout().addWidget(wid_fin)
 
         # checkbox
         wid_checkbox_integral = QtWidgets.QWidget()
         wid_checkbox_integral.setLayout(QtWidgets.QHBoxLayout())
-        wid_checkbox_integral.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_integral.layout().setContentsMargins(8, 5, 0, 0)
         wid_checkbox_integral.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox_integral.layout().setSpacing(0)
 
@@ -644,21 +699,18 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_checkbox_integral.setStyleSheet("margin:0px;")
 
         self.checkbox_mostrar_integral = QtWidgets.QCheckBox()
-        self.checkbox_mostrar_integral.setStyleSheet("margin-left:14px;")
 
         wid_checkbox_integral.layout().addWidget(self.checkbox_mostrar_integral)
         wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
-        wid_content_derecha.layout().addWidget(wid_checkbox_integral)
+        widget_integral.layout().addWidget(wid_checkbox_integral)
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
         # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
 
-        label_4 = QtWidgets.QLabel("Valor RMS")
-        label_4.setStyleSheet("font:14px bold; margin:5px;")
-        wid_content_derecha.layout().addWidget(label_4)
+
 
         wid_inicioRMS = QtWidgets.QWidget()
         wid_inicioRMS.setLayout(QtWidgets.QHBoxLayout())
-        wid_inicioRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_inicioRMS.layout().setContentsMargins(8, 8, 8, 0)
         wid_inicioRMS.layout().setSpacing(0)
 
         label_inicioRMS = QtWidgets.QLabel("Valor inicial")
@@ -671,12 +723,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         wid_inicioRMS.layout().addWidget(label_inicioRMS, 5)
         wid_inicioRMS.layout().addWidget(self.spinbox_inicioRMS, 2)
-        wid_content_derecha.layout().addWidget(wid_inicioRMS)
+        widget_valor_rms.layout().addWidget(wid_inicioRMS)
 
         # segundo parametro
         wid_finRMS = QtWidgets.QWidget()
         wid_finRMS.setLayout(QtWidgets.QHBoxLayout())
-        wid_finRMS.layout().setContentsMargins(0, 0, 0, 0)
+        wid_finRMS.layout().setContentsMargins(8, 8, 8, 0)
         wid_finRMS.layout().setSpacing(0)
 
         label_finRMS = QtWidgets.QLabel("Valor final")
@@ -689,12 +741,12 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         wid_finRMS.layout().addWidget(label_finRMS, 5)
         wid_finRMS.layout().addWidget(self.spinbox_finRMS, 2)
-        wid_content_derecha.layout().addWidget(wid_finRMS)
+        widget_valor_rms.layout().addWidget(wid_finRMS)
 
         # checkbox
         wid_checkbox_RMS = QtWidgets.QWidget()
         wid_checkbox_RMS.setLayout(QtWidgets.QHBoxLayout())
-        wid_checkbox_RMS.layout().setContentsMargins(0, 5, 0, 0)
+        wid_checkbox_RMS.layout().setContentsMargins(8, 5, 0, 0)
         wid_checkbox_RMS.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox_RMS.layout().setSpacing(0)
 
@@ -703,11 +755,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_checkbox_RMS.setStyleSheet("margin:0px;")
 
         self.checkbox_mostrar_RMS = QtWidgets.QCheckBox()
-        self.checkbox_mostrar_RMS.setStyleSheet("margin-left:14px;")
 
         wid_checkbox_RMS.layout().addWidget(self.checkbox_mostrar_RMS)
         wid_checkbox_RMS.layout().addWidget(label_checkbox_RMS)
-        wid_content_derecha.layout().addWidget(wid_checkbox_RMS)
+        widget_valor_rms.layout().addWidget(wid_checkbox_RMS)
         # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
 
@@ -753,6 +804,28 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
+
+        #PARA CAPTURAR EL EVENTO HOVER Y LANZAR UN TOOLTIP MÁS RÁPIDO QUE LOS QUE OFRECE QPushButtons
+        self.btn_tooltip_umbral.installEventFilter(self)
+        self.btn_tooltip_AM.installEventFilter(self)
+        self.btn_tooltip_distancia.installEventFilter(self)
+
+
+    def eventFilter(self, source, event):
+
+        if source == self.btn_tooltip_AM and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Altura mínima requerida", self.btn_tooltip_AM)
+            return True
+        elif source == self.btn_tooltip_umbral and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Umbral mínimo requerido, distancia\nvertical a sus muestras vecinas.", self.btn_tooltip_umbral)
+            return True
+        elif source == self.btn_tooltip_distancia and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), """Distancia horizontal mínima requerida (>=1)\nen muestras entre picos vecinos. Los picos más\npequeños se eliminan primero hasta que se\ncumpla la condición para todos los picos restantes.""", self.btn_tooltip_distancia)
+            return True
+
+        return super().eventFilter(source, event)
+
+
 
     def aplicar_valores(self):
 
