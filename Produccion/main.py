@@ -33,6 +33,7 @@ import img
 import configparser
 import time
 from PyQt5.QtWidgets import QSplashScreen
+import re
 
 cant_graficas = 0
 ##       esto es para el cortar
@@ -750,21 +751,37 @@ class ventana_principal(QWidget):
     def aplicarOffset(self, datos, tiempo, datosOffset):
         return filtersHelper.offsetGrafico(datos, tiempo, datosOffset)
 
-    def mostrar_valores_picos(self, ax, _tiempo, datosOffset,valores_picos : Pico, exponente, grafica : Grafica):
-        peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))), threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+    def mostrar_valores_picos(self, ax, _tiempo, datosOffset, valores_picos : Pico, exponente, grafica : Grafica):
+        if exponente != 1:
+            peaks = find_peaks(datosOffset, height=(valores_picos.get_min_height() * pow(10, int(exponente))),
+                               threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+        else:
+            peaks = find_peaks(datosOffset, height=valores_picos.get_min_height(),
+                               threshold=valores_picos.get_treshold(), distance=valores_picos.get_distance())
+
         height = peaks[1]['peak_heights']  # list of the heights of the peaks
         peak_pos = _tiempo[peaks[0]]  # list of the peaks positions
-        grafica.set_valores_pico_para_exportar(height)
         tiempo = [0]
         for pos in peak_pos:
             tiempo.append(pos)
 
         for i in range(0, height.size):
-            numeroAMostrar = str("{:.2f}".format(height[i] / (pow(10, int(exponente)))))
-            ax.annotate(numeroAMostrar + "x10e" + str(exponente), xy=(tiempo[i + 1], height[i]))
+            if exponente != 1:
+                numeroAMostrar = str("{:.4f}".format(height[i] / (pow(10, int(exponente)))))
+                ax.annotate(numeroAMostrar + "x10e" + str(exponente), xy=(tiempo[i + 1], height[i]))
+            else:
+                numeroAMostrar = str("{:.4f}".format(height[i]))
+                ax.annotate(numeroAMostrar, xy=(tiempo[i + 1], height[i]))
 
-        ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
-        ax.legend()
+            grafica.set_valores_pico_para_exportar(height)
+
+        if height.size == 0:
+            grafica.set_valores_picos(None)
+            QMessageBox.information(self, "Advertencia", "No se encontró ningún valor pico")
+        else:
+            ax.scatter(peak_pos, height, color='r', s=15, marker='o', label='Picos')
+            ax.legend()
+
 
     def mostrar_integral(self, ax, _tiempo, datos,valores_integral, exponente, grafica: Grafica):
 
@@ -816,9 +833,15 @@ class ventana_principal(QWidget):
                     i, err = scipy.integrate.quad(getVoltajeAPartirDeUnTiempo, contador, b, limit=50, epsabs = 9999999999999)
                     totalDeLaIntegral = totalDeLaIntegral + i
                     calculando=False
+        if exponente != 1:
+            numeroAMostrar = str("{:.4f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
+            ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0),
+                        xytext=((a + b) / 2, 0))
+        else:
+            numeroAMostrar = str("{:.4f}".format(totalDeLaIntegral))
+            ax.annotate("Valor de la integral: " + numeroAMostrar, xy=((a + b) / 2, 0),
+                        xytext=((a + b) / 2, 0))
 
-        numeroAMostrar = str("{:.2f}".format(totalDeLaIntegral / (pow(10, int(exponente)))))
-        ax.annotate("Valor de la integral: "+numeroAMostrar+ "x10e" + str(exponente), xy=((a + b) / 2, 0), xytext=((a + b) / 2, 0))
         grafica.set_valor_integral_para_exportar(totalDeLaIntegral)
 
     def calcularYMostrar_RMS(self,axes, ax, tiempo,grafica: Grafica):
@@ -828,11 +851,17 @@ class ventana_principal(QWidget):
         exponente=grafica.get_exponente()
         aux = filtersHelper.recortarGrafico(ax, tiempo, [a,b])[0]
 
-        resultado = np.sum(np.sqrt(np.mean(pow(aux,2))),1)
+        #Una poronga esto, arreglalo Chopan <3.
+        resultado = np.sum(np.sqrt(np.mean(pow(aux,2))),0)
 
-        numeroAMostrar = str("{:.2f}".format(resultado / (pow(10, int(exponente)))))
-        axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
+        if exponente != 1:
+            numeroAMostrar = str("{:.4f}".format(resultado / (pow(10, int(exponente)))))
+            axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
                     xytext=((a + b) / 2, 0))
+        else:
+            numeroAMostrar = str("{:.4f}".format(resultado))
+            axes.annotate("Valor RMS: " + numeroAMostrar, xy=((a + b) / 2, 0),
+                          xytext=((a + b) / 2, 0))
         grafica.set_rms(resultado)
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
@@ -896,8 +925,25 @@ class ventana_principal(QWidget):
 
                     plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
-                    #if graficas[0].get_exponente() is None:
-                    #    graficas[0].set_exponente(int(exponent.split('e')[1]))
+                    if exponent is None or len(exponent) == 0:
+                        graficas[0].set_exponente(1)
+                    else:
+                        exp = 0
+                        #Si el exponente es negativo, entonces el primer elemento del string va a ser "-", de
+                        #lo contrario va a ser cualquier otro número.
+                        #Se aplica una expresión regular para reemplazar el signo de menos fake por el real.
+                        shrek = re.sub(r'[^\x00-\x7F]+', '-', exponent)
+                        exponente_negativo = shrek.index('-')
+
+                        if  exponente_negativo != -1:
+                            #Si el exponente es negativo hay que transformar el signo de - que viene porque no lo toma
+                            #como si fuera el signo de menos real.
+                            exp = int(shrek.split('e')[1])
+                        else:
+                            #Sino queda como estaba antes que ya andaba
+                            exp = int(exponent.split('e')[1])
+                        graficas[0].set_exponente(exp)
+
                     axes.legend()
 
                     if graficas[0].get_rmsLimites()[2]:
@@ -1006,11 +1052,26 @@ class ventana_principal(QWidget):
                         axes[x].legend()
                         plt.tight_layout()
                         exponent = axes[x].yaxis.get_offset_text().get_text()
-                        #if graficas[x].get_exponente() is None:
-                        #    graficas[x].set_exponente(int(exponent.split('e')[1]))
+                        if exponent is None or len(exponent) == 0:
+                            graficas[x].set_exponente(1)
+                        else:
+                            shrek = re.sub(r'[^\x00-\x7F]+', '-', exponent)
+                            exponente_negativo = shrek.index('-')
+                            exp = 0
+                            # Si el exponente es negativo, entonces el primer elemento del string va a ser "-", de
+                            # lo contrario va a ser cualquier otro número.
+                            if exponente_negativo != -1:
+                                # Si el exponente es negativo hay que transformar el signo de - que viene porque no lo toma
+                                # como si fuera el signo de menos real.
+                                exp = int(shrek.split('e')[1])
+                            else:
+                                # Sino queda como estaba antes que ya andaba
+                                exp = int(exponent.split('e')[1])
+                            graficas[x].set_exponente(exp)
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
+
                     plt.close(fig)
                     #fig.tight_layout()
 
@@ -1222,7 +1283,6 @@ class ventana_principal(QWidget):
                                         "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def comparar_graficas(self, graficas):
-
         current_widget = self.widget_der.currentWidget()
         object_name = current_widget.objectName()
         if not object_name == "Inicio":

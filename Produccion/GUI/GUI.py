@@ -515,11 +515,14 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_min_height.layout().setContentsMargins(0, 0, 0, 0)
         wid_min_height.layout().setSpacing(0)
 
-        label_min_height = QtWidgets.QLabel("Altura Minima (^15)")
+        label_min_height = QtWidgets.QLabel("Altura Minima")
         label_min_height.setFont(font)
 
         self.spinbox_min_height = QtWidgets.QDoubleSpinBox()
-        self.spinbox_min_height.setValue(2.0)
+        self.spinbox_min_height.setValue(0.002)
+        self.spinbox_min_height.setMinimum(0)
+        self.spinbox_min_height.setMaximum(20) # Puede cambiar. (La máxima señal que vi llegaba a 8)
+        self.spinbox_min_height.setDecimals(4) # Tiene que tener mínimo 3 decimales, no sé si hay señales más chicas.
         self.spinbox_min_height.setMaximumWidth(90)
         self.spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
@@ -536,7 +539,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         label_threshold.setFont(font)
 
         self.spinbox_threshold = QtWidgets.QDoubleSpinBox()
-        self.spinbox_threshold.setValue(1.0)
+        self.spinbox_threshold.setValue(0.0)
+        self.spinbox_threshold.setMinimum(0)
+        self.spinbox_threshold.setMaximum(20) # Puede cambiar. (La máxima señal que vi llegaba a 8)
+        self.spinbox_threshold.setDecimals(3) # Tiene que tener mínimo 3 decimales, no sé si hay señales más chicas.
         self.spinbox_threshold.setMaximumWidth(90)
         self.spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
