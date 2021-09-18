@@ -1,21 +1,33 @@
+import numpy.fft
 from scipy.signal import filtfilt
 import scipy
 import numpy as np
 from Modelo.Filtro import Filtro
 import pandas as pd
 
+
 # ------->archivo para tod0 lo relacionado a los filtros
 def butterFilter(signal, datosFiltrado: Filtro):
     if datosFiltrado is not None:
         signal = np.nan_to_num(signal, copy=False)
         b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A(),
-               datosFiltrado.get_array_B()], datosFiltrado.get_type(),analog=datosFiltrado.get_analog())
+                                                               datosFiltrado.get_array_B()], datosFiltrado.get_type(),
+                                   analog=datosFiltrado.get_analog())
         y = scipy.signal.filtfilt(a, b, signal, axis=0)
-
         # ret = abs(y)
         return y
-    else:
-        return signal
+    return signal
+
+
+def fft(signal, datosFiltrado: Filtro):
+    #if datosFiltrado is not None:
+    signal = np.nan_to_num(signal, copy=False)
+    y = numpy.fft.fft(signal)
+    # ret = abs(y)
+    return y
+    #return signal
+
+
 def butterFilterDos(signal):
     # envelopamento (envolvente) pasa-bajo
     signal = np.nan_to_num(signal, copy=False)
@@ -48,20 +60,21 @@ class datosButter():
         print(self.Analog)
         print("----------")
 
-def recortarGrafico(signal,tiempo, datosRecorte):
-    if datosRecorte[0]==0 and datosRecorte[1]==0:
-        return [signal,tiempo]
+
+def recortarGrafico(signal, tiempo, datosRecorte):
+    if datosRecorte[0] == 0 and datosRecorte[1] == 0:
+        return [signal, tiempo]
     else:
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
         df["signal"] = signal
 
         df = df.loc[(df[tiempo.name] >= datosRecorte[0]) & (df[tiempo.name] < datosRecorte[1])]
-        return [df["signal"].values,df[tiempo.name]]
+        return [df["signal"].values, df[tiempo.name]]
 
 
-def offsetGrafico(signal,tiempo, datosOffset):
-    if datosOffset[0]==0 and datosOffset[1]==0:
+def offsetGrafico(signal, tiempo, datosOffset):
+    if datosOffset[0] == 0 and datosOffset[1] == 0:
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
         df["signal"] = signal
@@ -72,7 +85,6 @@ def offsetGrafico(signal,tiempo, datosOffset):
         df = pd.DataFrame()
         df[tiempo.name] = tiempo
         df["signal"] = signal
-
 
         cortada = df.loc[(df[tiempo.name] > datosOffset[0]) & (df[tiempo.name] < datosOffset[1])]
         mean_df = cortada["signal"].mean()
@@ -86,13 +98,3 @@ def offsetGrafico(signal,tiempo, datosOffset):
             df = abs(df)
 
         return df["signal"].values
-
-
-
-
-
-
-
-
-
-

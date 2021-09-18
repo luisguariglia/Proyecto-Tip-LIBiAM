@@ -741,6 +741,7 @@ class ventana_principal(QWidget):
 
     def setFiltros(self, datos, datosFiltrado):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
+        #filter_signal = filtersHelper.fft(filter_signal, datosFiltrado)
         #filter_signal = filtersHelper.butterFilterDos(filter_signal)
         #filter_signal = filtersHelper.RMS(filter_signal)
         return filter_signal
@@ -933,7 +934,10 @@ class ventana_principal(QWidget):
                         #lo contrario va a ser cualquier otro número.
                         #Se aplica una expresión regular para reemplazar el signo de menos fake por el real.
                         shrek = re.sub(r'[^\x00-\x7F]+', '-', exponent)
-                        exponente_negativo = shrek.index('-')
+                        try:
+                            exponente_negativo = shrek.index('-')
+                        except ValueError:
+                            exponente_negativo = -1
 
                         if  exponente_negativo != -1:
                             #Si el exponente es negativo hay que transformar el signo de - que viene porque no lo toma
@@ -1056,7 +1060,10 @@ class ventana_principal(QWidget):
                             graficas[x].set_exponente(1)
                         else:
                             shrek = re.sub(r'[^\x00-\x7F]+', '-', exponent)
-                            exponente_negativo = shrek.index('-')
+                            try:
+                                exponente_negativo = shrek.index('-')
+                            except ValueError:
+                                exponente_negativo = -1
                             exp = 0
                             # Si el exponente es negativo, entonces el primer elemento del string va a ser "-", de
                             # lo contrario va a ser cualquier otro número.

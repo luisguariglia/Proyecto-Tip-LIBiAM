@@ -31,5 +31,7 @@
     <file>Static/img/vline.png</file>
     <file>Static/img/LIBiAM.ico</file>
     <file>Static/fonts/Roboto-Light.ttf</file>
+    <file>Static/img/tooltip.png</file>
+    <file>Static/img/splashscreenLibiam.jpg</file>
   </qresource>
 </RCC>

@@ -558,8 +558,8 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.spinbox_min_height = QtWidgets.QDoubleSpinBox()
         self.spinbox_min_height.setValue(0.002)
         self.spinbox_min_height.setMinimum(0)
-        self.spinbox_min_height.setMaximum(20) # Puede cambiar. (La máxima señal que vi llegaba a 8)
-        self.spinbox_min_height.setDecimals(4) # Tiene que tener mínimo 3 decimales, no sé si hay señales más chicas.
+        self.spinbox_min_height.setMaximum(100000)
+        self.spinbox_min_height.setDecimals(4)
         self.spinbox_min_height.setMaximumWidth(90)
         self.spinbox_min_height.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 

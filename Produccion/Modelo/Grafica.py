@@ -3,7 +3,7 @@ from Modelo.Filtro import Filtro
 
 class Grafica:
     def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None,
-                 nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None):
+                 nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None, fft=None):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
@@ -23,6 +23,7 @@ class Grafica:
         self.__rms = None  # valor rms
         self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
         self.__recortandoConClick = 0
+        self.__fastfouriertransform = fft
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
