@@ -425,5 +425,17 @@ def textbox():
     }
     
     """
+def estilos_qtab_widget():
+    return """
+   QTabWidget::pane { /* The tab widget frame */
+    border: none;
+}
+QTabBar::tab {
+    width:95px;
+    height:23px;
+    font-size:12px;
+   
+}
 
+    """
 fuenteParametros = ("Open Sans", "Regular", 10)
