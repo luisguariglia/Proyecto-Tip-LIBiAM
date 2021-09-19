@@ -33,8 +33,8 @@ class ventana_filtro(QtWidgets.QDialog):
         super(ventana_filtro, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Butter Filter - " + v)
-        self.setFixedSize(770, 500)
+        self.setWindowTitle("Filtrado - " + v)
+        self.setFixedSize(800, 420)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
@@ -43,40 +43,43 @@ class ventana_filtro(QtWidgets.QDialog):
         self.parent = parent
         self.graficas = graficas
 
-        wid_izquierda = QtWidgets.QWidget()
-        wid_derecha = QtWidgets.QWidget()
-        wid_filtro2 = QtWidgets.QWidget()
-
-        # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
-        wid_izquierda.setGraphicsEffect(shadow)
-        wid_derecha.setGraphicsEffect(shadow2)
-        wid_filtro2.setGraphicsEffect(shadow2)
-        # ESTILOS
+
+        wid_izquierda = QtWidgets.QWidget()
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
-        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
-        wid_filtro2.setStyleSheet("background-color:white; border-radius:4px;")
-
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
-        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
-        wid_filtro2.setLayout(QtWidgets.QVBoxLayout())
-
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        wid_izquierda.setGraphicsEffect(shadow)
+
+        wid_derecha = QtWidgets.QWidget()
+        wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
+        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_derecha.layout().setContentsMargins(4, 14, 12, 8)
+        wid_derecha.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        wid_derecha.setGraphicsEffect(shadow2)
 
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
-        label_2 = QtWidgets.QLabel("CONFIGURAR FILTRO 1")
-        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
-        label_3 = QtWidgets.QLabel("CONFIGURAR FILTRO 2")
-        label_3.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
         wid_izquierda.layout().addWidget(label_1, 1)
-        wid_derecha.layout().addWidget(label_2, 1)
-        wid_filtro2.layout().addWidget(label_3, 1)
+
+        widget_butter = QtWidgets.QWidget()
+        widget_butter.setLayout(QtWidgets.QVBoxLayout())
+        widget_butter.layout().setAlignment(Qt.AlignTop)
+        widget_butter.layout().setContentsMargins(8, 16, 8, 0)
+        widget_butter.layout().setSpacing(10)
+
+        widget_fft = QtWidgets.QWidget()
+        widget_fft.setLayout(QtWidgets.QVBoxLayout())
+        widget_fft.layout().setAlignment(Qt.AlignTop)
+        widget_fft.layout().setContentsMargins(8, 16, 8, 0)
+
+        tabs = QtWidgets.QTabWidget()
+        tabs.setStyleSheet(estilos.estilos_qtab_widget())
+        tabs.addTab(widget_butter, "Butterworth")
+        tabs.addTab(widget_fft, "FFT")
+
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
         self.tree_graficas.setFixedWidth(300)
@@ -105,30 +108,41 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
-        # YO
-
-        # GROUP BOX VALORES FILTRO
-        wid_content_der = QtWidgets.QWidget()
-        wid_content_der.setLayout(QtWidgets.QVBoxLayout())
-        wid_content_der.layout().setAlignment(Qt.AlignTop)
-        wid_content_der.layout().setContentsMargins(10, 0, 0, 0)
-        wid_content_der.layout().setSpacing(15)
-
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
 
         # ORDER
         wid_label_order = QtWidgets.QWidget()
         wid_label_order.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_order.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_order.layout().setContentsMargins(0, 0, 0, 0)
 
         wid_spiner_order = QtWidgets.QWidget()
         wid_spiner_order.setLayout(QtWidgets.QHBoxLayout())
         wid_spiner_order.layout().setContentsMargins(0, 0, 0, 0)
         wid_spiner_order.layout().setAlignment(Qt.AlignRight)
 
+        wid_label_and_tooltip_order = QtWidgets.QWidget()
+        wid_label_and_tooltip_order.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_order.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_order.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_order.layout().setSpacing(6)
+
         label_order = QtWidgets.QLabel("Orden del filtro")
+        label_order.setStyleSheet("padding:0px;margin:0px;")
         label_order.setFont(font)
-        wid_label_order.layout().addWidget(label_order)
+
+        self.btn_tooltip_order = QtWidgets.QPushButton()
+        self.btn_tooltip_order.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_order.setFixedWidth(13)
+        self.btn_tooltip_order.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_order.setIconSize(QtCore.QSize(13, 13))
+
+        #descomentar si se desea agregar tooltip a futuro
+        #wid_label_and_tooltip_order.layout().addWidget(self.btn_tooltip_order)
+        wid_label_and_tooltip_order.layout().addWidget(label_order)
+
+        wid_label_order.layout().addWidget(wid_label_and_tooltip_order)
 
         self.spin_box = QtWidgets.QSpinBox()
         self.spin_box.setFixedWidth(60)
@@ -140,13 +154,15 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_order = QtWidgets.QWidget()
         wid_order.setLayout(QtWidgets.QHBoxLayout())
-        wid_order.layout().setContentsMargins(0, 0, 0, 0)
+        wid_order.layout().setContentsMargins(8, 8, 8, 0)
         wid_order.layout().addWidget(wid_label_order, 5)
         wid_order.layout().addWidget(wid_spiner_order, 5)
 
         # ARRAY LIKE
         wid_label_array_like = QtWidgets.QWidget()
         wid_label_array_like.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_array_like.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_array_like.layout().setContentsMargins(0, 0, 0, 0)
 
         wid_spiner_array_like = QtWidgets.QWidget()
         wid_spiner_array_like.setLayout(QtWidgets.QHBoxLayout())
@@ -154,8 +170,24 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_spiner_array_like.layout().setSpacing(8)
         wid_spiner_array_like.layout().setAlignment(Qt.AlignRight)
 
+        wid_label_and_tooltip_arrayl = QtWidgets.QWidget()
+        wid_label_and_tooltip_arrayl.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_arrayl.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_arrayl.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_arrayl.layout().setSpacing(6)
+
         label_array_like = QtWidgets.QLabel("Frecuencias críticas")
+        label_array_like.setStyleSheet("padding:0px;margin:0px;")
         label_array_like.setFont(font)
+
+        self.btn_tooltip_arrayl = QtWidgets.QPushButton()
+        self.btn_tooltip_arrayl.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_arrayl.setFixedWidth(13)
+        self.btn_tooltip_arrayl.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_arrayl.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_arrayl.layout().addWidget(self.btn_tooltip_arrayl)
+        wid_label_and_tooltip_arrayl.layout().addWidget(label_array_like)
 
         self.spiner_array_a = QtWidgets.QSpinBox()
         self.spiner_array_a.setFixedWidth(60)
@@ -173,20 +205,39 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_spiner_array_like.layout().addWidget(self.spiner_array_a)
         wid_spiner_array_like.layout().addWidget(self.spiner_array_b)
-        wid_label_array_like.layout().addWidget(label_array_like)
+        wid_label_array_like.layout().addWidget(wid_label_and_tooltip_arrayl)
 
         wid_array_like = QtWidgets.QWidget()
         wid_array_like.setLayout(QtWidgets.QHBoxLayout())
-        wid_array_like.layout().setContentsMargins(0, 0, 0, 0)
+        wid_array_like.layout().setContentsMargins(8, 8, 8, 0)
         wid_array_like.layout().addWidget(wid_label_array_like, 5)
         wid_array_like.layout().addWidget(wid_spiner_array_like, 5)
 
         # BTYPE
-        label_btype = QtWidgets.QLabel("Tipo de filtro")
-        label_btype.setFont(font)
         wid_label_btype = QtWidgets.QWidget()
         wid_label_btype.setLayout(QtWidgets.QHBoxLayout())
-        wid_label_btype.layout().addWidget(label_btype)
+        wid_label_btype.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_btype.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_label_and_tooltip_filtro = QtWidgets.QWidget()
+        wid_label_and_tooltip_filtro.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_filtro.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_filtro.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_filtro.layout().setSpacing(6)
+
+        label_btype = QtWidgets.QLabel("Filtro")
+        label_btype.setStyleSheet("padding:0px;margin:0px;")
+        label_btype.setFont(font)
+
+        self.btn_tooltip_filtro = QtWidgets.QPushButton()
+        self.btn_tooltip_filtro.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_filtro.setFixedWidth(13)
+        self.btn_tooltip_filtro.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_filtro.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_filtro.layout().addWidget(self.btn_tooltip_filtro)
+        wid_label_and_tooltip_filtro.layout().addWidget(label_btype)
+        wid_label_btype.layout().addWidget(wid_label_and_tooltip_filtro)
 
         self.combobox_btype = QtWidgets.QComboBox()
         self.combobox_btype.setFixedWidth(150)
@@ -205,18 +256,35 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_btype = QtWidgets.QWidget()
         wid_btype.setLayout(QtWidgets.QHBoxLayout())
-        wid_btype.layout().setContentsMargins(0, 0, 0, 0)
-
+        wid_btype.layout().setContentsMargins(8, 8, 8, 0)
         wid_btype.layout().addWidget(wid_label_btype, 5)
         wid_btype.layout().addWidget(wid_combobox_btype, 5)
 
         # ANALOG
-        label_analog = QtWidgets.QLabel("Analógico")
-        label_analog.setFont(font)
-
         wid_label_analog = QtWidgets.QWidget()
         wid_label_analog.setLayout(QtWidgets.QHBoxLayout())
-        wid_label_analog.layout().addWidget(label_analog)
+        wid_label_analog.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_analog.layout().setContentsMargins(0, 0, 0, 0)
+
+        wid_label_and_tooltip_analog = QtWidgets.QWidget()
+        wid_label_and_tooltip_analog.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_analog.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_analog.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_analog.layout().setSpacing(6)
+
+        label_analog = QtWidgets.QLabel("Analógico")
+        label_analog.setStyleSheet("padding:0px;margin:0px;")
+        label_analog.setFont(font)
+
+        self.btn_tooltip_analog = QtWidgets.QPushButton()
+        self.btn_tooltip_analog.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_analog.setFixedWidth(13)
+        self.btn_tooltip_analog.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_analog.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_analog.layout().addWidget(self.btn_tooltip_analog)
+        wid_label_and_tooltip_analog.layout().addWidget(label_analog)
+        wid_label_analog.layout().addWidget(wid_label_and_tooltip_analog)
 
         self.combobox_analog = QtWidgets.QComboBox()
         self.combobox_analog.setFixedWidth(150)
@@ -233,31 +301,15 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_analog = QtWidgets.QWidget()
         wid_analog.setLayout(QtWidgets.QHBoxLayout())
-        wid_analog.layout().setContentsMargins(0, 0, 0, 0)
-
+        wid_analog.layout().setContentsMargins(8, 8, 8, 0)
         wid_analog.layout().addWidget(wid_label_analog, 5)
         wid_analog.layout().addWidget(wid_combobox_analog, 5)
 
-        # "lowpass")
-        # self.combobox_btype.addItem("highpass")
-        # self.combobox_btype.addItem("bandpass")
-        # self.combobox_btype.addItem("bandstop")
-        #   infooo
-        label_info = QtWidgets.QLabel("<br>"
-                                      "<span style='font-weight: bold'>Frecuencias críticas: </span> La frecuencia o frecuencias críticas. Indicadas en Hz"
-                                      "<br><span style='font-weight: bold'>Tipo de Filtro: </span> el tipo de filtro. El valor predeterminado es 'Butterworth'."
-                                      "<br><span style='font-weight: bold'>Analogico: </span>Cuando es Verdadero, devuelve un filtro analógico; de lo contrario, se devuelve un filtro digital."
-                                      "<br>"
-                                      )
-        # order- arraylike - btype - analog
-        label_info.setFont(font)
-        label_info.setWordWrap(True);
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
-        wid_content_der.layout().addWidget(wid_order)
-        wid_content_der.layout().addWidget(wid_array_like)
-        wid_content_der.layout().addWidget(wid_btype)
-        wid_content_der.layout().addWidget(wid_analog)
-        wid_content_der.layout().addWidget(label_info)
+        widget_butter.layout().addWidget(wid_order)
+        widget_butter.layout().addWidget(wid_array_like)
+        widget_butter.layout().addWidget(wid_btype)
+        widget_butter.layout().addWidget(wid_analog)
 
         # BOTÓN APLICAR FILTROS
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -272,11 +324,128 @@ class ventana_filtro(QtWidgets.QDialog):
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
 
-        wid_derecha.layout().addWidget(wid_content_der, 8)
+        wid_derecha.layout().addWidget(tabs, 9)
         wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
 
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
+
+        #FFT
+
+        #VALOR1
+        wid_spiner_valor1 = QtWidgets.QWidget()
+        wid_spiner_valor1.setLayout(QtWidgets.QHBoxLayout())
+        wid_spiner_valor1.layout().setContentsMargins(0, 0, 0, 0)
+        wid_spiner_valor1.layout().setAlignment(Qt.AlignRight)
+
+        wid_label_and_tooltip_valor1 = QtWidgets.QWidget()
+        wid_label_and_tooltip_valor1.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_valor1.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_valor1.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_valor1.layout().setSpacing(6)
+
+        label_valor1 = QtWidgets.QLabel("Valor 1")
+        label_valor1.setStyleSheet("padding:0px;margin:0px;")
+        label_valor1.setFont(font)
+
+        self.btn_tooltip_valor1 = QtWidgets.QPushButton()
+        self.btn_tooltip_valor1.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_valor1.setFixedWidth(13)
+        self.btn_tooltip_valor1.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_valor1.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_valor1.layout().addWidget(self.btn_tooltip_valor1)
+        wid_label_and_tooltip_valor1.layout().addWidget(label_valor1)
+
+        self.spin_box_valor1 = QtWidgets.QDoubleSpinBox()
+        self.spin_box_valor1.setValue(0.002)
+        self.spin_box_valor1.setMinimum(0)
+        self.spin_box_valor1.setMaximum(100000)
+        self.spin_box_valor1.setDecimals(4)
+        self.spin_box_valor1.setMaximumWidth(90)
+        self.spin_box_valor1.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        wid_spiner_valor1.layout().addWidget(self.spin_box_valor1)
+
+        wid_valor1 = QtWidgets.QWidget()
+        wid_valor1.setLayout(QtWidgets.QHBoxLayout())
+        wid_valor1.layout().setContentsMargins(8, 8, 8, 0)
+        wid_valor1.layout().addWidget(wid_label_and_tooltip_valor1, 5)
+        wid_valor1.layout().addWidget(wid_spiner_valor1, 5)
+
+        widget_fft.layout().addWidget(wid_valor1)
+
+        #VALOR2
+        wid_spiner_valor2 = QtWidgets.QWidget()
+        wid_spiner_valor2.setLayout(QtWidgets.QHBoxLayout())
+        wid_spiner_valor2.layout().setContentsMargins(0, 0, 0, 0)
+        wid_spiner_valor2.layout().setAlignment(Qt.AlignRight)
+
+        wid_label_and_tooltip_valor2 = QtWidgets.QWidget()
+        wid_label_and_tooltip_valor2.setLayout(QtWidgets.QHBoxLayout())
+        wid_label_and_tooltip_valor2.layout().setContentsMargins(0, 0, 0, 0)
+        wid_label_and_tooltip_valor2.layout().setAlignment(Qt.AlignHCenter | Qt.AlignLeft)
+        wid_label_and_tooltip_valor2.layout().setSpacing(6)
+
+        label_valor2 = QtWidgets.QLabel("Valor 2")
+        label_valor2.setStyleSheet("padding:0px;margin:0px;")
+        label_valor2.setFont(font)
+
+        self.btn_tooltip_valor2 = QtWidgets.QPushButton()
+        self.btn_tooltip_valor2.setStyleSheet("background-color:#114980;color:white;")
+        self.btn_tooltip_valor2.setFixedWidth(13)
+        self.btn_tooltip_valor2.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
+        self.btn_tooltip_valor2.setIconSize(QtCore.QSize(13, 13))
+
+        wid_label_and_tooltip_valor2.layout().addWidget(self.btn_tooltip_valor2)
+        wid_label_and_tooltip_valor2.layout().addWidget(label_valor2)
+
+        self.spin_box_valor2 = QtWidgets.QDoubleSpinBox()
+        self.spin_box_valor2.setValue(0.002)
+        self.spin_box_valor2.setMinimum(0)
+        self.spin_box_valor2.setMaximum(100000)
+        self.spin_box_valor2.setDecimals(4)
+        self.spin_box_valor2.setMaximumWidth(90)
+        self.spin_box_valor2.setStyleSheet(estilos.estilos_double_spinbox_filtros())
+        wid_spiner_valor2.layout().addWidget(self.spin_box_valor2)
+
+        wid_valor2 = QtWidgets.QWidget()
+        wid_valor2.setLayout(QtWidgets.QHBoxLayout())
+        wid_valor2.layout().setContentsMargins(8, 8, 8, 0)
+        wid_valor2.layout().addWidget(wid_label_and_tooltip_valor2, 5)
+        wid_valor2.layout().addWidget(wid_spiner_valor2, 5)
+
+        widget_fft.layout().addWidget(wid_valor2)
+
+        # PARA CAPTURAR EL EVENTO HOVER Y LANZAR UN TOOLTIP MÁS RÁPIDO QUE LOS QUE OFRECE QPushButton
+        self.btn_tooltip_order.installEventFilter(self)
+        self.btn_tooltip_arrayl.installEventFilter(self)
+        self.btn_tooltip_filtro.installEventFilter(self)
+        self.btn_tooltip_analog.installEventFilter(self)
+        self.btn_tooltip_valor1.installEventFilter(self)
+        self.btn_tooltip_valor2.installEventFilter(self)
+
+    def eventFilter(self, source, event):
+
+        if source == self.btn_tooltip_order and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Tooltip order", self.btn_tooltip_order)
+            return True
+        elif source == self.btn_tooltip_arrayl and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Las frecuencias críticas indicadas en Hz.", self.btn_tooltip_arrayl)
+            return True
+        elif source == self.btn_tooltip_filtro and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), """Filtro el cual será aplicado a las gráficas\nseleccionadas. El valor predeterminado\nes Butterworth.""", self.btn_tooltip_filtro)
+            return True
+        elif source == self.btn_tooltip_analog and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Si el valor seleccionado es True, se aplica\nun filtro analógico; si es False, se aplica un\nfiltro digital.", self.btn_tooltip_analog)
+            return True
+        elif source == self.btn_tooltip_valor1 and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Tooltip valor1.", self.btn_tooltip_valor1)
+            return True
+        elif source == self.btn_tooltip_valor2 and event.type() == event.HoverEnter:
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Tooltip valor2 .", self.btn_tooltip_valor2)
+            return True
+
+        return super().eventFilter(source, event)
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -345,11 +514,11 @@ class ventana_filtro(QtWidgets.QDialog):
 
 
 class ventana_comparar(QtWidgets.QDialog):
-    def __init__(self, parent=None, graficas=None):
+    def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_comparar, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Comparar gráficas")
+        self.setWindowTitle("Comparar gráficas - " + v)
         self.setFixedSize(420, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -494,33 +663,25 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         label_1 = QtWidgets.QLabel("SELECCIONAR GRÁFICAS")
         label_1.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
-        label_2 = QtWidgets.QLabel("Valores Picos")
-        label_2.setStyleSheet("font:14px bold; margin-left:5px;margin-top:10px;")
-
-        #wid_derecha.layout().addWidget(label_2, 1)
         wid_izquierda.layout().addWidget(label_1, 1)
-
-        wid_content_derecha = QtWidgets.QWidget()
-        wid_content_derecha.setStyleSheet("margin-left:10px;background-color:orange;")
-        wid_content_derecha.setLayout(QtWidgets.QVBoxLayout())
-        wid_content_derecha.layout().setAlignment(Qt.AlignTop)
-        wid_content_derecha.layout().setSpacing(10)
 
         widget_valores_pico = QtWidgets.QWidget()
         widget_valores_pico.setLayout(QtWidgets.QVBoxLayout())
         widget_valores_pico.layout().setAlignment(Qt.AlignTop)
         widget_valores_pico.layout().setContentsMargins(8, 16 , 8, 0)
+        widget_valores_pico.layout().setSpacing(10)
 
         widget_integral = QtWidgets.QWidget()
         widget_integral.setLayout(QtWidgets.QVBoxLayout())
         widget_integral.layout().setAlignment(Qt.AlignTop)
         widget_integral.layout().setContentsMargins(8, 16, 8, 0)
+        widget_integral.layout().setSpacing(10)
 
         widget_valor_rms = QtWidgets.QWidget()
         widget_valor_rms.setLayout(QtWidgets.QVBoxLayout())
         widget_valor_rms.layout().setAlignment(Qt.AlignTop)
         widget_valor_rms.layout().setContentsMargins(8, 16, 8, 0)
+        widget_valor_rms.layout().setSpacing(10)
 
         tabs = QtWidgets.QTabWidget()
         tabs.setStyleSheet(estilos.estilos_qtab_widget())
@@ -710,10 +871,8 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_checkbox_integral.layout().addWidget(label_checkbox_integral)
         widget_integral.layout().addWidget(wid_checkbox_integral)
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+
         # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
-
-
-
         wid_inicioRMS = QtWidgets.QWidget()
         wid_inicioRMS.setLayout(QtWidgets.QHBoxLayout())
         wid_inicioRMS.layout().setContentsMargins(8, 8, 8, 0)
@@ -767,10 +926,8 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         widget_valor_rms.layout().addWidget(wid_checkbox_RMS)
         # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
         wid_btn_aplicar = QtWidgets.QWidget()
-
         wid_btn_aplicar.setLayout(QtWidgets.QHBoxLayout())
         wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
-        wid_btn_aplicar.layout().setSpacing(0)
         wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
 
         btn_aplicar = QtWidgets.QPushButton("APLICAR")
@@ -908,11 +1065,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
 
 class ventana_cortar(QtWidgets.QDialog):
-    def __init__(self, parent=None, graficas=None):
+    def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_cortar, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         # self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Cortar Graficas - Vista 1")
+        self.setWindowTitle("Cortar Graficas - " + v)
         self.setFixedSize(770, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -1182,11 +1339,11 @@ class ventana_cortar(QtWidgets.QDialog):
 
 
 class ventana_rectificar(QtWidgets.QDialog):
-    def __init__(self, parent=None, graficas=None):
+    def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_rectificar, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Rectificar Graficas - Vista 1")
+        self.setWindowTitle("Rectificar gráficas - " + v)
         self.setFixedSize(770, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
@@ -2331,11 +2488,11 @@ class ventana_directorio(QtWidgets.QDialog):
         self.close()
 
 class ventana_valoresEnBruto(QtWidgets.QDialog):
-    def __init__(self, parent=None, graficas=None):
+    def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_valoresEnBruto, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle("Valores en bruto - Vista 1")
+        self.setWindowTitle("Valores en bruto - " + v)
         self.setFixedSize(770/2, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)

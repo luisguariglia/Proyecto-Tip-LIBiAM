@@ -1189,7 +1189,7 @@ class ventana_principal(QWidget):
                 cant_graficas = vista.get_tree_widget_item().childCount()
                 if cant_graficas >= 2:
                     graficas = vista.get_graficas()
-                    ventana_comparar(self, graficas).exec_()
+                    ventana_comparar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
                     QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
             else:
@@ -1235,7 +1235,7 @@ class ventana_principal(QWidget):
                 cant_graficas = vista.get_tree_widget_item().childCount()
                 if cant_graficas >= 1:
                     graficas = vista.get_graficas()
-                    ventana_rectificar(self, graficas).exec_()
+                    ventana_rectificar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
                     QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
             else:
@@ -1258,7 +1258,7 @@ class ventana_principal(QWidget):
                 cant_graficas = vista.get_tree_widget_item().childCount()
                 if cant_graficas >= 1:
                     graficas = vista.get_graficas()
-                    ventana_valoresEnBruto(self, graficas).exec_()
+                    ventana_valoresEnBruto(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
                     QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
             else:
@@ -1282,7 +1282,7 @@ class ventana_principal(QWidget):
                 cant_graficas = vista.get_tree_widget_item().childCount()
                 if cant_graficas >= 1:
                     graficas = vista.get_graficas()
-                    ventana_cortar(self, graficas).exec_()
+                    ventana_cortar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
                     QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
             else:
