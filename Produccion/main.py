@@ -802,8 +802,8 @@ class ventana_principal(QWidget):
 
         ax.set_xticks((a, b))
         ax.set_xticklabels((a, b))
-        print(exponente)
-        print("integral_antes")
+        #print(exponente)
+        #print("integral_antes")
 
         # calculo la integral
         def getVoltajeAPartirDeUnTiempo(x):
@@ -858,11 +858,14 @@ class ventana_principal(QWidget):
         if exponente != 1:
             numeroAMostrar = str("{:.4f}".format(resultado / (pow(10, int(exponente)))))
             axes.annotate("Valor RMS: " + numeroAMostrar + "x10e" + str(exponente), xy=((a + b) / 2, 0),
-                    xytext=((a + b) / 2, 0))
+                    xytext=((a + b) / 2, resultado))
         else:
             numeroAMostrar = str("{:.4f}".format(resultado))
             axes.annotate("Valor RMS: " + numeroAMostrar, xy=((a + b) / 2, 0),
-                          xytext=((a + b) / 2, 0))
+                          xytext=((a + b) / 2, resultado))
+
+        rectangulo = plt.Rectangle((a, resultado), b-a, resultado/5, color='mediumblue')
+        axes.add_patch(rectangulo)
         grafica.set_rms(resultado)
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
@@ -1301,6 +1304,8 @@ class ventana_principal(QWidget):
                 widget_tab.layout().removeWidget(vista.get_nav_toolbar())
                 widget_tab.layout().removeWidget(vista.get_scroll())
                 fig, ax1 = plt.subplots(nrows=1, ncols=1, figsize=(18, 4))
+                fig.canvas.mpl_connect('axes_enter_event', enter_axes)
+
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
@@ -1314,8 +1319,10 @@ class ventana_principal(QWidget):
                     conOffset = self.aplicarOffset(aux, tiempoRecortado, graficas[x].get_offset())
 
 
-                    ax1.plot(tiempoRecortado,
+                    line,= ax1.plot(tiempoRecortado,
                              conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
+
+                    linebuilder = LineBuilder(line, ax1, graficas[x], self,True)
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     # ------------------------------------- Aspecto
                     ax1.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
@@ -1590,7 +1597,7 @@ def chequearSiEstaRecortando(self):
 class LineBuilder:
     def __init__(self, line, axes,grafica,main,hayVarias=False):
         self.hayVarias = hayVarias
-        print(hayVarias)
+        #print(hayVarias)
         self.main = main
         self.grafica = grafica
         self.axes = axes
@@ -1647,6 +1654,7 @@ def main():
     #cargando modulos
 
     ex = ventana_principal()
+    splash.close()
     ex.show()
     sys.exit(app.exec_())
 

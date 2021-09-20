@@ -977,10 +977,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
     def eventFilter(self, source, event):
 
         if source == self.btn_tooltip_AM and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Altura mínima requerida", self.btn_tooltip_AM)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Altura mínima requerida\n Este parametro es opcional", self.btn_tooltip_AM)
             return True
         elif source == self.btn_tooltip_umbral and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Umbral mínimo requerido, distancia\nvertical a sus muestras vecinas.", self.btn_tooltip_umbral)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Umbral mínimo requerido, distancia\nvertical a sus muestras vecinas.\n Este parametro es opcional", self.btn_tooltip_umbral)
             return True
         elif source == self.btn_tooltip_distancia and event.type() == event.HoverEnter:
             QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), """Distancia horizontal mínima requerida (>=1)\nen muestras entre picos vecinos. Los picos más\npequeños se eliminan primero hasta que se\ncumpla la condición para todos los picos restantes.""", self.btn_tooltip_distancia)
