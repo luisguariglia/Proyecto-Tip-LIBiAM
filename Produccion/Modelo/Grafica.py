@@ -150,3 +150,8 @@ class Grafica:
         self.__valor_integral_para_exportar = None
         self.__rms = None
         self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
+
+    def borrarIntegralYRMS(self):
+        self.__integral = [0, 0, False]
+        self.__rms = None
+        self.__rmsLimites = [0, 0, False]
