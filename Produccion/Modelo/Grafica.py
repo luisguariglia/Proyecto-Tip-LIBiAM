@@ -155,3 +155,8 @@ class Grafica:
 
     def get_fastfouriertransform(self):
         return self.__fastfouriertransform
+
+    def borrarIntegralYRMS(self):
+        self.__integral = [0, 0, False]
+        self.__rms = None
+        self.__rmsLimites = [0, 0, False]

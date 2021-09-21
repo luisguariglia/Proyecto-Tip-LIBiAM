@@ -10,8 +10,9 @@ def estilos_tree_widget_graficas():
     QTreeWidget::branch:has-siblings:!adjoins-item {
         border-image: url(:/Static/img/vline.png) 0;    
     }
-
-    QTreeWidget::branch:has-siblings:adjoins-item {
+    
+    
+    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
         border-image: url(:/Static/img/branch-more.png) 0;
     }
 
@@ -19,28 +20,30 @@ def estilos_tree_widget_graficas():
         border-image: url(:/Static/img/branch-end.png) 0;
     }
 
-    QTreeWidget::branch:has-children:!has-siblings:closed,
-    QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(:/Static/img/branch-closed.png);
-    }
-
-    QTreeWidget::branch:open:has-children:!has-siblings,
-    QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(:/Static/img/branch-open.png);
-    }
     """
 
 
-def estilos_tree_widget_vistas():
+def estilos_tree_widget_importar_directorios():
     return """
-    QTreeWidget::branch:has-children:!has-siblings:closed,
-    QTreeWidget::branch:closed:has-children:has-siblings {
-        border-image: none;image: url(:/Static/img/branch-closed.png);
+    
+    QTreeWidget{
+        border:1px solid black;
+        padding:0px;
+        margin-bottom:6px;
+        background-color:white;
     }
 
-    QTreeWidget::branch:open:has-children:!has-siblings,
-    QTreeWidget::branch:open:has-children:has-siblings{
-        border-image: none;image: url(:/Static/img/branch-open.png);
+    QTreeWidget::branch:has-siblings:!adjoins-item {
+        border-image: url(:/Static/img/vline.png) 0;    
+    }
+    
+    
+    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
+        border-image: url(:/Static/img/branch-more.png) 0;
+    }
+
+    QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
+        border-image: url(:/Static/img/branch-end.png) 0;
     }
     """
 

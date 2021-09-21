@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 
 cont = 0
+
+
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
@@ -90,6 +92,7 @@ class ventana_filtro(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -139,8 +142,8 @@ class ventana_filtro(QtWidgets.QDialog):
         self.btn_tooltip_order.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_order.setIconSize(QtCore.QSize(13, 13))
 
-        #descomentar si se desea agregar tooltip a futuro
-        #wid_label_and_tooltip_order.layout().addWidget(self.btn_tooltip_order)
+        # descomentar si se desea agregar tooltip a futuro
+        # wid_label_and_tooltip_order.layout().addWidget(self.btn_tooltip_order)
         wid_label_and_tooltip_order.layout().addWidget(label_order)
 
         wid_label_order.layout().addWidget(wid_label_and_tooltip_order)
@@ -348,9 +351,9 @@ class ventana_filtro(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
-        #FFT
+        # FFT
 
-        #VALOR1
+        # VALOR1
         wid_spiner_valor1 = QtWidgets.QWidget()
         wid_spiner_valor1.setLayout(QtWidgets.QHBoxLayout())
         wid_spiner_valor1.layout().setContentsMargins(0, 0, 0, 0)
@@ -392,7 +395,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         widget_fft.layout().addWidget(wid_valor1)
 
-        #VALOR2
+        # VALOR2
         wid_spiner_valor2 = QtWidgets.QWidget()
         wid_spiner_valor2.setLayout(QtWidgets.QHBoxLayout())
         wid_spiner_valor2.layout().setContentsMargins(0, 0, 0, 0)
@@ -625,6 +628,7 @@ class ventana_comparar(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -736,7 +740,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         widget_valores_pico = QtWidgets.QWidget()
         widget_valores_pico.setLayout(QtWidgets.QVBoxLayout())
         widget_valores_pico.layout().setAlignment(Qt.AlignTop)
-        widget_valores_pico.layout().setContentsMargins(8, 16 , 8, 0)
+        widget_valores_pico.layout().setContentsMargins(8, 16, 8, 0)
         widget_valores_pico.layout().setSpacing(10)
 
         widget_integral = QtWidgets.QWidget()
@@ -759,7 +763,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         wid_derecha.layout().addWidget(tabs, 9)
 
-        #ALTURA MÍNIMA
+        # ALTURA MÍNIMA
         wid_min_height = QtWidgets.QWidget()
         wid_min_height.setLayout(QtWidgets.QHBoxLayout())
         wid_min_height.layout().setContentsMargins(8, 8, 8, 0)
@@ -796,7 +800,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_min_height.layout().addWidget(self.spinbox_min_height, 2)
         widget_valores_pico.layout().addWidget(wid_min_height)
 
-        #UMBRAL
+        # UMBRAL
         wid_threshold = QtWidgets.QWidget()
         wid_threshold.setLayout(QtWidgets.QHBoxLayout())
         wid_threshold.layout().setAlignment(Qt.AlignTop)
@@ -824,8 +828,8 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.spinbox_threshold = QtWidgets.QDoubleSpinBox()
         self.spinbox_threshold.setValue(0.0)
         self.spinbox_threshold.setMinimum(0)
-        self.spinbox_threshold.setMaximum(20) # Puede cambiar. (La máxima señal que vi llegaba a 8)
-        self.spinbox_threshold.setDecimals(3) # Tiene que tener mínimo 3 decimales, no sé si hay señales más chicas.
+        self.spinbox_threshold.setMaximum(20)  # Puede cambiar. (La máxima señal que vi llegaba a 8)
+        self.spinbox_threshold.setDecimals(3)  # Tiene que tener mínimo 3 decimales, no sé si hay señales más chicas.
         self.spinbox_threshold.setMaximumWidth(90)
         self.spinbox_threshold.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
@@ -833,7 +837,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_threshold.layout().addWidget(self.spinbox_threshold, 2)
         widget_valores_pico.layout().addWidget(wid_threshold)
 
-        #DISTANCIA
+        # DISTANCIA
         wid_distance = QtWidgets.QWidget()
         wid_distance.setLayout(QtWidgets.QHBoxLayout())
         wid_distance.layout().setAlignment(Qt.AlignTop)
@@ -884,7 +888,6 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_checkbox.layout().addWidget(self.checkbox_mostrar_picos)
         wid_checkbox.layout().addWidget(label_checkbox)
         widget_valores_pico.layout().addWidget(wid_checkbox)
-
 
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
         wid_inicio = QtWidgets.QWidget()
@@ -1014,6 +1017,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -1036,27 +1040,29 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
-        #PARA CAPTURAR EL EVENTO HOVER Y LANZAR UN TOOLTIP MÁS RÁPIDO QUE LOS QUE OFRECE QPushButtons
+        # PARA CAPTURAR EL EVENTO HOVER Y LANZAR UN TOOLTIP MÁS RÁPIDO QUE LOS QUE OFRECE QPushButtons
         self.btn_tooltip_umbral.installEventFilter(self)
         self.btn_tooltip_AM.installEventFilter(self)
         self.btn_tooltip_distancia.installEventFilter(self)
 
-
     def eventFilter(self, source, event):
 
         if source == self.btn_tooltip_AM and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Altura mínima requerida\n Este parametro es opcional", self.btn_tooltip_AM)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Altura mínima requerida\nEste parámetro es opcional",
+                                        self.btn_tooltip_AM)
             return True
         elif source == self.btn_tooltip_umbral and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Umbral mínimo requerido, distancia\nvertical a sus muestras vecinas.\n Este parametro es opcional", self.btn_tooltip_umbral)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(),
+                                        "Umbral mínimo requerido, distancia\nvertical a sus muestras vecinas.\nEste parámetro es opcional",
+                                        self.btn_tooltip_umbral)
             return True
         elif source == self.btn_tooltip_distancia and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), """Distancia horizontal mínima requerida (>=1)\nen muestras entre picos vecinos. Los picos más\npequeños se eliminan primero hasta que se\ncumpla la condición para todos los picos restantes.""", self.btn_tooltip_distancia)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(),
+                                        """Distancia horizontal mínima requerida (>=1)\nen muestras entre picos vecinos. Los picos más\npequeños se eliminan primero hasta que se\ncumpla la condición para todos los picos restantes.""",
+                                        self.btn_tooltip_distancia)
             return True
 
         return super().eventFilter(source, event)
-
-
 
     def aplicar_valores(self):
 
@@ -1187,6 +1193,7 @@ class ventana_cortar(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -1233,7 +1240,6 @@ class ventana_cortar(QtWidgets.QDialog):
         self.spin_box.setSingleStep(0.25)
         self.spin_box.setFixedWidth(60)
         self.spin_box.setValue(0)
-
 
         self.spin_box.setStyleSheet(estilos.estilos_double_spinbox_filtros())
 
@@ -1320,20 +1326,24 @@ class ventana_cortar(QtWidgets.QDialog):
 
     def RecortarHaciendoClick(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
-        if cant_hijos==1:
+        if cant_hijos == 1:
             self.hide()
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
-            self.parent.setCortandoGrafico(True,False,self)
+            self.parent.setCortandoGrafico(True, False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
-            self.parent.setCortandoGrafico(True,True, self)
+            QMessageBox.information(self, "Info",
+                                    "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
+            self.parent.setCortandoGrafico(True, True, self)
+
     def mostrar(self):
         self.show()
         self.parent.listar_graficas(True)
-    def setRecorte(self,min,max):
+
+    def setRecorte(self, min, max):
         self.spin_box.setValue(min)
         self.spin_box2.setValue(max)
+
     def resetear_valores(self):
         self.spin_box.setValue(0)
         self.spin_box2.setValue(0)
@@ -1375,6 +1385,57 @@ class ventana_cortar(QtWidgets.QDialog):
             QMessageBox.warning(self, "Advertencia",
                                 "El valor de inicio del recorte no puede ser mayor o igual al valor final.")
             seguir = False
+
+        # controles para integral
+
+
+        tieneIntegralFueradelRecorte = False
+        tieneRMSFueraDelRecorte = False
+        listadegraficasConProblema = []
+
+        if self.graficas is not None and seguir:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            agregargrafica =False
+                            datosIntegral = grafica.get_integral()
+                            if datosIntegral[2]:
+                                if desde >= datosIntegral[0] or hasta <= datosIntegral[1]:
+                                    tieneIntegralFueradelRecorte = True
+                                    agregargrafica=True
+                            datosrms = grafica.get_rmsLimites()
+                            if datosrms[2]:
+                                if desde >= datosrms[0] or hasta <= datosrms[1]:
+                                    tieneRMSFueraDelRecorte = True
+                                    agregargrafica = True
+                            if agregargrafica:
+                                listadegraficasConProblema.append(grafica)
+
+
+        mensaje = ""
+        if tieneIntegralFueradelRecorte and not tieneRMSFueraDelRecorte:
+            mensaje = "Los graficos que se van a recortar poseen una integral fuera del area de recorte \n Si continua esta integral se va a borrar"
+        if tieneRMSFueraDelRecorte and not tieneIntegralFueradelRecorte:
+            mensaje = "Los graficos que se van a recortar poseen un valor RMS fuera del area de recorte \n Si continua este valor se va a borrar"
+        if tieneRMSFueraDelRecorte and tieneIntegralFueradelRecorte:
+            mensaje = "Los graficos que se van a recortar poseen valores de Integral y RMS fuera del area de recorte \n Si continua estos valores se va a borrar"
+        if mensaje != "":
+            msgBox = QMessageBox()
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setText(mensaje)
+            msgBox.setWindowTitle("Advertencia")
+            msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+            returnValue = msgBox.exec()
+            if returnValue == QMessageBox.Ok:
+                for grafica in listadegraficasConProblema:
+                    grafica.borrarIntegralYRMS()
+            else:
+                seguir = False
         # *------------------------------------FIN DE CONTROLES------------------------------------
 
         if self.graficas is not None and seguir:
@@ -1458,6 +1519,7 @@ class ventana_rectificar(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -1756,6 +1818,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -1912,6 +1975,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
 
+        self.desde_confirmar = False
         # PARAMETROS
         self.parent = parent
 
@@ -1934,7 +1998,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         self.wid_derecha = QtWidgets.QWidget(self)
         self.wid_derecha.setGraphicsEffect(shadow2)
-        self.wid_derecha.setGeometry(380, 10, 360,470)
+        self.wid_derecha.setGeometry(380, 10, 360, 470)
         self.wid_derecha.setLayout(QtWidgets.QVBoxLayout())
         self.wid_derecha.layout().setSpacing(20)
         self.wid_derecha.setStyleSheet("background-color:white; border-radius:4px;")
@@ -1980,9 +2044,10 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.tree_graficas.setHeaderHidden(True)
 
         columnas = parent.archivito.get_archivo().columns
-        self.label_1_2.setText("Total:" + str(int(len(columnas)/2)))
+        self.label_1_2.setText("Total:" + str(int(len(columnas) / 2)))
         for x in range(1, len(columnas), 2):
             item = tree_widget_item_grafica(columnas[x])
+            item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
             self.tree_graficas.addTopLevelItem(item)
 
         btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
@@ -2125,8 +2190,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         self.wid_derecha2.layout().addWidget(wid_content_archivos, 8)
 
         self.tree_widget_directorios = QtWidgets.QTreeWidget()
+        self.tree_widget_directorios.setStyleSheet(estilos.estilos_tree_widget_importar_directorios())
         self.tree_widget_directorios.setFixedHeight(250)
-        self.tree_widget_directorios.setStyleSheet("border:1px solid black;padding:0px;")
         self.tree_widget_directorios.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree_widget_directorios.customContextMenuRequested.connect(self.handle_rightClicked)
         self.tree_widget_directorios.setHeaderHidden(True)
@@ -2145,7 +2210,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         wid_btn_crear_dir.layout().addWidget(btn_crear_dir)
         wid_content_archivos.layout().addWidget(wid_btn_crear_dir)
-
 
         wid_botones = QtWidgets.QWidget()
         wid_botones.setLayout(QtWidgets.QHBoxLayout())
@@ -2210,7 +2274,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     hijo.setData(0, Qt.CheckStateRole, None)
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -2233,7 +2298,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
             if isinstance(hijo, tree_widget_item_grafica):
                 hijo.setData(0, Qt.CheckStateRole, None)
                 cant += 1
-                hijo.setData(0,Qt.CheckStateRole, None)
+                hijo.setData(0, Qt.CheckStateRole, None)
         self.label_1_2.setText("Total: " + str(cant))
 
     def filtrar_seleccionados(self):
@@ -2252,7 +2317,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 hijo = self.tree_graficas.topLevelItem(i)
                 if isinstance(hijo, tree_widget_item_grafica):
                     hijo.setData(0, Qt.CheckStateRole, None)
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -2275,7 +2341,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
             if isinstance(hijo, tree_widget_item_grafica):
                 hijo.setData(0, Qt.CheckStateRole, None)
                 cant += 1
-                hijo.setData(0,Qt.CheckStateRole, None)
+                hijo.setData(0, Qt.CheckStateRole, None)
         self.label_1_2.setText("Total: " + str(cant))
 
     def filtrar_por_caracteres(self):
@@ -2295,7 +2361,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                     cantidad_coincidencias += 1
 
         if cantidad_coincidencias == cant_hijos_tree:
-            QtWidgets.QMessageBox.about(self, "Error", "No es posible eliminar todas las columnas, debe haber al menos 1.")
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "No es posible eliminar todas las columnas, debe haber al menos 1.")
             return
 
         while True:
@@ -2336,7 +2403,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         self.label_1_2.setText("Total: " + str(cant))
 
-
     def siguiente(self):
         self.anim = QtCore.QPropertyAnimation(self.wid_derecha, b"pos")
         self.anim.setEndValue(QtCore.QPoint(380, -500))
@@ -2363,6 +2429,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
     def confirmar(self):
         self.parent.archivito.agregar_electromiografias2(self.tree_widget_directorios)
+        self.parent.seguir_proceso = True
         self.close()
 
     def crear_directorio(self):
@@ -2377,8 +2444,8 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         return grafica_aux
 
-    def importar_seleccionadas(self, padre : QtWidgets.QTreeWidgetItem):
-        #tree_widget_directorios
+    def importar_seleccionadas(self, padre: QtWidgets.QTreeWidgetItem):
+        # tree_widget_directorios
         cant_seleccionados = 0
         for i in range(self.tree_graficas.topLevelItemCount()):
             hijo = self.tree_graficas.topLevelItem(i)
@@ -2386,6 +2453,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                 if hijo.checkState(0) and not self.existe_item_in_tree_dir(padre, hijo.text(0)):
                     cant_seleccionados += 1
                     item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                    item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                     padre.addChild(item)
 
         self.tree_widget_directorios.expandItem(padre)
@@ -2393,7 +2461,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
         if cant_seleccionados > 0:
             self.quitar_checks_tree_columnas()
 
-    def importar_rango(self, padre : QtWidgets.QTreeWidgetItem):
+    def importar_rango(self, padre: QtWidgets.QTreeWidgetItem):
         primer_check = False
         cant_seleccionados = 0
 
@@ -2419,20 +2487,23 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
                     primer_check = True
                     if not self.existe_item_in_tree_dir(padre, hijo.text(0)):
                         item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                        item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                         padre.addChild(item)
                 elif not hijo.checkState(0) and primer_check and not self.existe_item_in_tree_dir(padre, hijo.text(0)):
                     item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                    item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                     padre.addChild(item)
                 elif hijo.checkState(0) and primer_check:
                     if not self.existe_item_in_tree_dir(padre, hijo.text(0)):
                         item = QtWidgets.QTreeWidgetItem([hijo.text(0)])
+                        item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                         padre.addChild(item)
                     break
 
         self.tree_widget_directorios.expandItem(padre)
         self.quitar_checks_tree_columnas()
 
-    def eliminar_columnas(self, padre : QtWidgets.QTreeWidgetItem):
+    def eliminar_columnas(self, padre: QtWidgets.QTreeWidgetItem):
         padre.takeChildren()
 
     def eliminar_directorio(self, padre: QtWidgets.QTreeWidgetItem):
@@ -2441,11 +2512,11 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
     def cambiar_nombre_dir(self, padre):
         ventana_directorio(self, cambiar_nombre=True, dir=padre).exec_()
 
-    def eliminar_columna(self, columna : QtWidgets.QTreeWidgetItem):
+    def eliminar_columna(self, columna: QtWidgets.QTreeWidgetItem):
         padre = columna.parent()
         padre.takeChild(padre.indexOfChild(columna))
 
-    def existe_item_in_tree_dir(self, padre : QtWidgets.QTreeWidgetItem, nombre):
+    def existe_item_in_tree_dir(self, padre: QtWidgets.QTreeWidgetItem, nombre):
         existe = False
         for index in range(padre.childCount()):
             hijo = padre.child(index)
@@ -2460,7 +2531,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
             hijo = self.tree_graficas.topLevelItem(i)
             if isinstance(hijo, tree_widget_item_grafica):
                 hijo.setCheckState(0, Qt.Unchecked)
-
 
     def handle_rightClicked(self, pos):
         item = self.tree_widget_directorios.itemAt(pos)
@@ -2546,14 +2616,34 @@ class ventana_directorio(QtWidgets.QDialog):
 
     def crear_directorio(self):
         nombre = self.textbox_nombre.text()
+        if self.verificar_si_existe(nombre):
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "El nombre que ingresó ya existe.")
+            return
         item = QtWidgets.QTreeWidgetItem([nombre])
+        item.setIcon(0, QtGui.QIcon(config.ICONO_CARPETAS))
         self.parent.tree_widget_directorios.addTopLevelItem(item)
         self.close()
 
     def cambiar_nombre(self):
         nombre = self.textbox_nombre.text()
+        if self.verificar_si_existe(nombre):
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "El nombre que ingresó ya existe.")
+            return
         self.dir.setText(0, nombre)
         self.close()
+
+    def verificar_si_existe(self, nombre):
+        existe = False
+        for i in range(self.parent.tree_widget_directorios.topLevelItemCount()):
+            hijo = self.parent.tree_widget_directorios.topLevelItem(i)
+            if isinstance(hijo, QtWidgets.QTreeWidgetItem):
+                if hijo.text(0) == nombre:
+                    existe = True
+                    break
+        return existe
+
 
 class ventana_valoresEnBruto(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None, v=""):
@@ -2561,7 +2651,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Valores en bruto - " + v)
-        self.setFixedSize(770/2, 470)
+        self.setFixedSize(770 / 2, 470)
         self.setLayout(QtWidgets.QHBoxLayout())
         self.setContentsMargins(10, 0, 10, 10)
         self.layout().setSpacing(15)
@@ -2572,20 +2662,14 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         wid_izquierda = QtWidgets.QWidget()
 
-
         # SOMBRAS
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         shadow2 = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         wid_izquierda.setGraphicsEffect(shadow)
 
-
         # ESTILOS
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
-
-
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
-
-
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
@@ -2597,7 +2681,6 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         wid_izquierda.layout().addWidget(label_1, 1)
 
-
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
         self.tree_graficas.setFixedWidth(300)
@@ -2607,6 +2690,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
             for grafica in self.graficas:
                 nom_col = grafica.get_nombre_columna_grafica()
                 item = tree_widget_item_grafica(nom_col, grafica.get_id())
+                item.setIcon(0, QtGui.QIcon(config.ICONO_GRAFICAS))
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
@@ -2624,7 +2708,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
-        #wid_btn.setFixedWidth(350)
+        # wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
         wid_btn.layout().setAlignment(Qt.AlignLeft)
 
@@ -2633,7 +2717,6 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
-
 
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
@@ -2694,4 +2777,3 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
                 break
 
         return grafica_aux
-

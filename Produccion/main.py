@@ -117,6 +117,9 @@ class ventana_principal(QWidget):
         menubar = QMenuBar()
         self.layout().addWidget(menubar, 0)
 
+        #para saber si cerró desde la cruz superor derecha de la ventana o desde el o botón confirmar
+        self.seguir_proceso = False
+
         actionFile = menubar.addMenu("Archivo")
 
         abrirCSV= QAction("Abrir .CSV",self)
@@ -359,9 +362,9 @@ class ventana_principal(QWidget):
 
         # ÁRBOL DE VISTAS
         self.treeView2 = QTreeWidget()
+        self.treeView2.setStyleSheet(estilos.estilos_tree_widget_graficas())
         self.treeView2.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
-        self.treeView2.setStyleSheet(estilos.estilos_tree_widget_vistas())
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
 
@@ -645,6 +648,12 @@ class ventana_principal(QWidget):
             if len(self.archivito.get_electromiografias()) == 0:
                 QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
                 ventana_conf_linea_archivo(self).exec_()
+                if not self.seguir_proceso:
+                    return
+                else:
+                    #dejarlo en el valor inicial
+                    self.seguir_proceso = False
+
 
             self.archivos_csv.append(self.archivito)
             text_current_index = self.combo.currentText()
@@ -664,10 +673,11 @@ class ventana_principal(QWidget):
             if nombre_archivo == archivo.get_nombre_archivo():
                 for emg in archivo.get_electromiografias():
                     EMG = QTreeWidgetItem([emg.get_nombre_corto()])
-
+                    EMG.setIcon(0, QIcon(config.ICONO_CARPETAS))
                     graficas = emg.get_graficas()
                     for grafica in graficas:
                         grafica = QTreeWidgetItem([grafica.get_nombre_columna_grafica()])
+                        grafica.setIcon(0, QIcon(config.ICONO_GRAFICAS))
                         EMG.addChild(grafica)
 
                     self.tree_widget.addTopLevelItem(EMG)
@@ -731,6 +741,7 @@ class ventana_principal(QWidget):
 
                     nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
                     grafica_vista = QTreeWidgetItem([nombre_item])
+                    grafica_vista.setIcon(0, QIcon(config.ICONO_GRAFICAS))
                     grafica_vista.setToolTip(0, nombre_item )
 
                     vista.get_tree_widget_item().addChild(grafica_vista)
@@ -1425,6 +1436,7 @@ class ventana_principal(QWidget):
                 self.widget_der.insertTab(1, widget, "vista 1")
                 self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
                 item_vista = tree_widget_item_vista(name="vista 1", text="vista 1")
+                item_vista.setIcon(0 , QIcon(config.ICONO_VISTA))
                 vista = Vista(item_vista, widget, 1, 1)
                 self.vistas.append(vista)
                 self.treeView2.addTopLevelItem(item_vista)
@@ -1442,6 +1454,7 @@ class ventana_principal(QWidget):
                         self.widget_der.insertTab(self.widget_der.count(), widget, vista)
                         self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
                         item_vista = tree_widget_item_vista(name=vista, text=vista)
+                        item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
                         vista = Vista(item_vista, widget, rango + 1, rango + 1)
                         self.vistas.append(vista)
                         self.treeView2.addTopLevelItem(item_vista)
@@ -1452,6 +1465,7 @@ class ventana_principal(QWidget):
                         self.widget_der.insertTab(self.widget_der.count(), widget, vista)
                         self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
                         item_vista = tree_widget_item_vista(name=vista, text=vista)
+                        item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
                         vista = Vista(item_vista, widget, i + 1, i + 1)
                         self.vistas.append(vista)
                         self.treeView2.addTopLevelItem(item_vista)
