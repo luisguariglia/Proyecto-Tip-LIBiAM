@@ -1,3 +1,4 @@
+import numpy
 from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
@@ -739,8 +740,10 @@ class ventana_principal(QWidget):
                     self.listar_graficas(False)
                     self.treeView2.expandItem(vista.get_tree_widget_item())
 
-    def setFiltros(self, datos, datosFiltrado):
+    def setFiltros(self, datos, datosFiltrado, datosFFT):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
+        #Chequeo si está el fft para aplicarlo también.
+        filter_signal = filtersHelper.fft(filter_signal, datosFFT)
         #filter_signal = filtersHelper.fft(filter_signal, datosFiltrado)
         #filter_signal = filtersHelper.butterFilterDos(filter_signal)
         #filter_signal = filtersHelper.RMS(filter_signal)
@@ -788,9 +791,30 @@ class ventana_principal(QWidget):
 
         a, b = valores_integral[0], valores_integral[1]  # integral limits
         aux = _tiempo
+        #aux_real = aux.real
+        #aux_imag = aux.imag
+
+        #xxx = []
+        #yyy = []
 
         iy = []
         ix = []
+
+        #ry = []
+        #rx = []
+
+        #if grafica.get_fastfouriertransform() is not None:
+        #    for i in range(0, aux_real.size):
+        #        if (aux_real[i] > a and aux_real[i] < b):
+        #            ry.append(datos[i])
+        #            rx.append(aux_real[i])
+
+        #    for i in range(0, aux_imag.size):
+        #        if (aux_imag[i] > a and aux_imag[i] < b):
+        #            iy.append(datos[i])
+        #            ix.append(aux_imag[i])
+
+        #else:
         for i in range(0, aux.size):
             if (aux[i] > a and aux[i] < b):
                 iy.append(datos[i])
@@ -899,8 +923,8 @@ class ventana_principal(QWidget):
                     #aplico offset
                     conOffset= self.aplicarOffset(archivo[graficas[0].get_nombre_columna_grafica()],archivo[graficas[0].get_nombre_columna_tiempo()],graficas[0].get_offset())
 
-                    #aplico butter
-                    filtrado = self.setFiltros(conOffset, graficas[0].get_filtro())
+                    #aplico butter y fft
+                    filtrado = self.setFiltros(conOffset, graficas[0].get_filtro(), graficas[0].get_fastfouriertransform())
 
                     recorte = self.recortarGraficos(filtrado,
                                             archivo[graficas[0].get_nombre_columna_tiempo()],
@@ -922,12 +946,21 @@ class ventana_principal(QWidget):
 
                     # /########################        Aplicando valores de todas las ventanas        ########################/#
 
-                    line, =axes.plot(tiempoRecortado,
-                              aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
+                    y = aux.imag
+                    x = aux.real
+
+                    if graficas[0].get_fastfouriertransform() is not None:
+                        line, = axes.plot(tiempoRecortado,
+                                  y, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
+
+                        line, = axes.plot(tiempoRecortado,
+                                          x, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
+                    else:
+                        line, = axes.plot(tiempoRecortado,
+                                          aux, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
 
                     linebuilder = LineBuilder(line,axes,graficas[0],self)
 
-                    plt.tight_layout()
                     exponent = axes.yaxis.get_offset_text().get_text()
                     if exponent is None or len(exponent) == 0:
                         graficas[0].set_exponente(1)
@@ -973,7 +1006,7 @@ class ventana_principal(QWidget):
                         axes.set_xmargin(0)
                         axes.grid()
                     # -------------------------------------
-
+                    plt.tight_layout()
                     plt.close(fig)
 
                     canvas = FigureCanvas(fig)
@@ -1008,7 +1041,8 @@ class ventana_principal(QWidget):
                                                        graficas[x].get_offset())
 
                         # aplico butter
-                        filtrado = self.setFiltros(conOffset, graficas[x].get_filtro())
+                        filtrado = self.setFiltros(conOffset, graficas[x].get_filtro(),
+                                                   graficas[x].get_fastfouriertransform())
 
                         recorte = self.recortarGraficos(filtrado,
                                                         archivo[graficas[x].get_nombre_columna_tiempo()],
@@ -1029,10 +1063,23 @@ class ventana_principal(QWidget):
 
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
-                        line, =axes[x].plot(tiempoRecortado,
-                                     aux, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
+                        imag = aux.imag
+                        reales = aux.real
 
-                        linebuilder = LineBuilder(line, axes[x], graficas[x], self,True)
+                        if graficas[x].get_fastfouriertransform() is not None:
+                            line, = axes[x].plot(tiempoRecortado,
+                                              imag, linewidth=0.3,
+                                              label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
+
+                            line, = axes[x].plot(tiempoRecortado,
+                                              reales, linewidth=0.3,
+                                              label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
+                        else:
+                            line, = axes[x].plot(tiempoRecortado,
+                                              aux, linewidth=0.3,
+                                              label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
+
+                        linebuilder = LineBuilder(line, axes[x], graficas[x], self, True)
                         # ------------------------------------- Aspecto
                         # si no esta recortado
                         if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
@@ -1309,7 +1356,8 @@ class ventana_principal(QWidget):
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
-                                          graficas[x].get_filtro())
+                                          graficas[x].get_filtro(),  graficas[x].get_fastfouriertransform())
+
                     recorte = self.recortarGraficos(aux,
                                                     archivo[graficas[x].get_nombre_columna_tiempo()],
                                                     graficas[x].get_recorte())

@@ -1,9 +1,8 @@
 from Modelo.Filtro import Filtro
 
-
 class Grafica:
     def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None,
-                 nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None, fft=None):
+                 nombre_columna_grafica_vista=None, numero_grafica=None, numero_archivo=None):
         self.__nombre_columna_grafica = nombre_columna_grafica
         self.__nombre_columna_tiempo = nombre_columna_tiempo
         self.__archivo = archivo
@@ -23,7 +22,7 @@ class Grafica:
         self.__rms = None  # valor rms
         self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
         self.__recortandoConClick = 0
-        self.__fastfouriertransform = fft
+        self.__fastfouriertransform = None
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -131,7 +130,6 @@ class Grafica:
         return self.__rms
 
     def set_rms(self, rms):
-
         self.__rms = rms
 
     def get_recortandoConClick(self):
@@ -150,3 +148,10 @@ class Grafica:
         self.__valor_integral_para_exportar = None
         self.__rms = None
         self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
+        self.__fastfouriertransform = None
+
+    def set_fastfouriertransform(self, fft):
+        self.__fastfouriertransform = fft
+
+    def get_fastfouriertransform(self):
+        return self.__fastfouriertransform
