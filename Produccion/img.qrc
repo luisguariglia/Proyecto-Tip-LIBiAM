@@ -33,5 +33,8 @@
     <file>Static/fonts/Roboto-Light.ttf</file>
     <file>Static/img/tooltip.png</file>
     <file>Static/img/splashscreenLibiam.jpg</file>
+    <file>Static/img/line-graph.svg</file>
+    <file>Static/img/folder.svg</file>
+    <file>Static/img/view.svg</file>
   </qresource>
 </RCC>
