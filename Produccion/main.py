@@ -1578,52 +1578,49 @@ class ventana_principal(QWidget):
     def exportar_VP(self, graficas):
         ninguna_grafica_con_filtro = False
 
-        graficas_sin_filtro = 0
         if len(graficas) != 0:
             for grafica in graficas:
                 if grafica.get_valores_pico_para_exportar() is None and grafica.get_valor_integral_para_exportar()\
                         is None and grafica.get_rms() is None:
-                    graficas_sin_filtro = graficas_sin_filtro + 1
+                    graficas.remove(grafica)
 
-        if graficas_sin_filtro == len(graficas):
-            ninguna_grafica_con_filtro = True
+        if len(graficas) != 0:
+            if not ninguna_grafica_con_filtro:
+                cabecera = []
+                datos = []
+                nombre = self.saveFileDialog()
+                if nombre:
+                    with open(nombre, 'w', newline='') as file:
+                        writer = csv.writer(file)
+                        for grafica in graficas:
+                            writer.writerow([grafica.get_nombre_columna_grafica()])
 
-        if not ninguna_grafica_con_filtro:
-            cabecera = []
-            datos = []
-            nombre = self.saveFileDialog()
-            if nombre:
-                with open(nombre, 'w', newline='') as file:
-                    writer = csv.writer(file)
-                    for grafica in graficas:
-                        writer.writerow([grafica.get_nombre_columna_grafica()])
-                        if grafica.get_valores_pico_para_exportar() is not None:
-                            valores_pico = grafica.get_valores_pico_para_exportar()
+                            if grafica.get_valores_pico_para_exportar() is not None:
+                                valores_pico = grafica.get_valores_pico_para_exportar()
 
-                            # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
-                            promedio = [f"Promedio: {np.mean(valores_pico)}"]
+                                # Acá calculo el promedio usando numPy, le pasas un array y te lo calcula.
+                                promedio = [f"Promedio: {np.mean(valores_pico)}"]
 
-                            #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
-                            valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
-                            writer.writerow([f"Valores pico: "])
-                            writer.writerow(valores_pico_y_promedio)
+                                #Acá se concatenan los valores pico y el promedio así lo puedo insertar en la misma fila.
+                                valores_pico_y_promedio = np.concatenate((valores_pico, promedio))
+                                writer.writerow([f"Valores pico: "])
+                                writer.writerow(valores_pico_y_promedio)
 
-                        if grafica.get_valor_integral_para_exportar() is not None:
-                            valor_integral = grafica.get_valor_integral_para_exportar()
-                            writer.writerow([f"Valor de integral: "])
-                            writer.writerow([valor_integral])
+                            if grafica.get_valor_integral_para_exportar() is not None:
+                                valor_integral = grafica.get_valor_integral_para_exportar()
+                                writer.writerow([f"Valor de integral: "])
+                                writer.writerow([valor_integral])
 
-                        if grafica.get_rms() is not None:
-                            valor_rms = grafica.get_rms()
-                            writer.writerow([f"Valor RMS: "])
-                            writer.writerow([valor_rms])
+                            if grafica.get_rms() is not None:
+                                valor_rms = grafica.get_rms()
+                                writer.writerow([f"Valor RMS: "])
+                                writer.writerow([valor_rms])
 
-                        writer.writerow("")
+                            writer.writerow("")
 
-                    QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
-
+                        QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
         else:
-            QMessageBox.information(self, "Error", "Ninguna gráfica tiene filtro.")
+            QMessageBox.information(self, "Error", "Ninguna gráfica seleccionada tiene filtro.")
 
     def setCortandoGrafico(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
         setCortandoGraficoMain(val,varios,ventanaRecortar)
