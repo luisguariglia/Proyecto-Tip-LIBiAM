@@ -1,4 +1,5 @@
 from Modelo.Filtro import Filtro
+import math
 
 class Grafica:
     def __init__(self, nombre_columna_grafica, nombre_columna_tiempo, archivo, tree_item=None, id=None,
@@ -23,6 +24,8 @@ class Grafica:
         self.__rmsLimites = [0, 0, False]  # [valor,valor,si se muestra o no]
         self.__recortandoConClick = 0
         self.__fastfouriertransform = None
+        self.__limitesTiempo= [0,0]
+
 
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
@@ -160,3 +163,16 @@ class Grafica:
         self.__integral = [0, 0, False]
         self.__rms = None
         self.__rmsLimites = [0, 0, False]
+
+    def getLimitesTiempo(self):              #obtengo los limites de tiempod el grafico para hacer controles
+        if self.__recorte != [0, 0]:
+            return self.__recorte
+        else:
+            contador = -1
+            ultimoValor = self.__archivo[self.__nombre_columna_tiempo].iloc[contador]
+            while math.isnan(ultimoValor):
+                contador = contador-1
+                ultimoValor = self.__archivo[self.__nombre_columna_tiempo].iloc[contador]
+            return [self.__archivo[self.__nombre_columna_tiempo].iloc[0],
+                    ultimoValor]
+

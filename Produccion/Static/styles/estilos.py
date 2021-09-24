@@ -11,20 +11,120 @@ def estilos_tree_widget_graficas():
         border-image: url(:/Static/img/vline.png) 0;    
     }
     
+    QScrollBar:vertical{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+        width:14px; 
+    }
     
-    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
-        border-image: url(:/Static/img/branch-more.png) 0;
+    QScrollBar::handle:vertical{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
     }
-
-    QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(:/Static/img/branch-end.png) 0;
+    QScrollBar::handle:vertical:hover{
+        background-color:#BDBDBD;
     }
+    
+    QScrollBar::handle:vertical:pressed{
+        background-color:#9E9E9E;
+    }
+    
+    """
 
+def estilos_barritas_gucci():
+    return """
+    QScrollBar:vertical{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+        width:14px;
+    }
+    
+    QScrollBar::handle:vertical{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
+    }
+    QScrollBar::handle:vertical:hover{
+        background-color:#BDBDBD;
+    }
+    
+    QScrollBar::handle:vertical:pressed{
+        background-color:#9E9E9E;
+    }
     """
 
 
+def estilos_barritas_gucci_scroll_area():
+    return """
+    QWidget{
+        background-color:white;
+    }
+    
+    QScrollBar:horizontal{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+    }
+
+    QScrollBar::handle:horizontal{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
+    }
+    QScrollBar::handle:horizontal:hover{
+        background-color:#BDBDBD;
+    }
+
+    QScrollBar::handle:horizontal:pressed{
+        background-color:#9E9E9E;
+    }
+    
+    QScrollBar:vertical{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+        width:14px;
+    }
+
+    QScrollBar::handle:vertical{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
+    }
+    QScrollBar::handle:vertical:hover{
+        background-color:#BDBDBD;
+    }
+
+    QScrollBar::handle:vertical:pressed{
+        background-color:#9E9E9E;
+    }
+    
+    """
+
 def estilos_tree_widget_importar_directorios():
     return """
+    QScrollBar:vertical{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+        width:14px;
+    }
+    
+    QScrollBar::handle:vertical{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
+    }
+    QScrollBar::handle:vertical:hover{
+        background-color:#BDBDBD;
+    }
+    
+    QScrollBar::handle:vertical:pressed{
+        background-color:#9E9E9E;
+    }
     
     QTreeWidget{
         border:1px solid black;
@@ -36,15 +136,7 @@ def estilos_tree_widget_importar_directorios():
     QTreeWidget::branch:has-siblings:!adjoins-item {
         border-image: url(:/Static/img/vline.png) 0;    
     }
-    
-    
-    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
-        border-image: url(:/Static/img/branch-more.png) 0;
-    }
-
-    QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(:/Static/img/branch-end.png) 0;
-    }
+        
     """
 
 
@@ -123,8 +215,6 @@ def estilos_widget_inicio():
     QWidget{
         border:2px solid #FAFAFA;
     }
-
-
     """
 
 
