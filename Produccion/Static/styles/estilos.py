@@ -215,8 +215,6 @@ def estilos_widget_inicio():
     QWidget{
         border:2px solid #FAFAFA;
     }
-
-
     """
 
 

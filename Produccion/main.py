@@ -626,7 +626,7 @@ class ventana_principal(QWidget):
         continuar = not chequearSiEstaRecortando(self)
         if continuar:
             options = QFileDialog.Options()
-            filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "",config.FILES_CSV, options=options)
+            filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "", filter = f"{config.FILES_CSV}", options=options)
 
             # Si se cancela la ventana emergente al seleccionar un archivo .csv
             if not filepath[0]:

@@ -1,4 +1,6 @@
 import config
+import os.path
+import platform
 
 def listar_emg_especifica(emg_seleccionada, archivo_csv):
     """
