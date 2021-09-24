@@ -3,6 +3,7 @@ from scipy.signal import filtfilt
 import scipy
 import numpy as np
 from Modelo.Filtro import Filtro
+from Modelo.Filtro_FFT import Filtro_FFT
 import pandas as pd
 
 
@@ -10,22 +11,27 @@ import pandas as pd
 def butterFilter(signal, datosFiltrado: Filtro):
     if datosFiltrado is not None:
         signal = np.nan_to_num(signal, copy=False)
-        b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A(),
-                                                               datosFiltrado.get_array_B()], datosFiltrado.get_type(),
-                                   analog=datosFiltrado.get_analog())
+        if datosFiltrado.get_type() == 'lowpass' or datosFiltrado.get_type() == 'highpass':
+            b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A()],
+                                       datosFiltrado.get_type(),
+                                       analog=datosFiltrado.get_analog())
+        else:
+            b, a = scipy.signal.butter(datosFiltrado.get_order(), [datosFiltrado.get_array_A(),
+                                                                   datosFiltrado.get_array_B()], datosFiltrado.get_type(),
+                                       analog=datosFiltrado.get_analog())
+
         y = scipy.signal.filtfilt(a, b, signal, axis=0)
         # ret = abs(y)
         return y
     return signal
 
 
-def fft(signal, datosFiltrado: Filtro):
-    #if datosFiltrado is not None:
-    signal = np.nan_to_num(signal, copy=False)
-    y = numpy.fft.fft(signal)
-    # ret = abs(y)
-    return y
-    #return signal
+def fft(signal, datosFFT: Filtro_FFT):
+    if datosFFT is not None:
+        #signal = np.nan_to_num(signal, copy=False)
+        y = numpy.fft.fft(signal)
+        return y
+    return signal
 
 
 def butterFilterDos(signal):

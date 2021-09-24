@@ -11,6 +11,9 @@ __pycache__
 ./Produccion/.idea
 ./Produccion/__pycache__
 ./Produccion/main.spec
+./Produccion/dist
+./Produccion/build
+./Produccion/output
 
 
 

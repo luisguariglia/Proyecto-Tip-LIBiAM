@@ -9,6 +9,7 @@ from BD.Queries import Conexion
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
+from Modelo.Filtro_FFT import Filtro_FFT
 from Modelo.Pico import Pico
 from PyQt5.QtWidgets import QMessageBox
 import numpy as np
@@ -308,11 +309,28 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_analog.layout().addWidget(wid_label_analog, 5)
         wid_analog.layout().addWidget(wid_combobox_analog, 5)
 
+        #CHECKBOX RANCIO.
+        wid_checkbox_butter = QtWidgets.QWidget()
+        wid_checkbox_butter.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_butter.layout().setContentsMargins(8, 5, 0, 0)
+        wid_checkbox_butter.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_butter.layout().setSpacing(0)
+
+        label_checkbox = QtWidgets.QLabel("Aplicar Filtro Butterworth")
+        label_checkbox.setFont(font)
+        label_checkbox.setStyleSheet("margin:0px;")
+
+        self.checkbox_butter = QtWidgets.QCheckBox()
+
+        wid_checkbox_butter.layout().addWidget(self.checkbox_butter)
+        wid_checkbox_butter.layout().addWidget(label_checkbox)
+
         # SE AGREGA CADA CONFIGURACIÓN EN ESTE ORDEN A LA VISTA
         widget_butter.layout().addWidget(wid_order)
         widget_butter.layout().addWidget(wid_array_like)
         widget_butter.layout().addWidget(wid_btype)
         widget_butter.layout().addWidget(wid_analog)
+        widget_butter.layout().addWidget(wid_checkbox_butter)
 
         # BOTÓN APLICAR FILTROS
         wid_btn_aplicar = QtWidgets.QWidget()
@@ -402,14 +420,37 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_label_and_tooltip_valor2.layout().addWidget(self.btn_tooltip_valor2)
         wid_label_and_tooltip_valor2.layout().addWidget(label_valor2)
 
-        self.spin_box_valor2 = QtWidgets.QDoubleSpinBox()
-        self.spin_box_valor2.setValue(0.002)
-        self.spin_box_valor2.setMinimum(0)
-        self.spin_box_valor2.setMaximum(100000)
-        self.spin_box_valor2.setDecimals(4)
-        self.spin_box_valor2.setMaximumWidth(90)
-        self.spin_box_valor2.setStyleSheet(estilos.estilos_double_spinbox_filtros())
-        wid_spiner_valor2.layout().addWidget(self.spin_box_valor2)
+        self.combobox_normtype = QtWidgets.QComboBox()
+        self.combobox_normtype.setFixedWidth(150)
+        self.combobox_normtype.addItem("forward")
+        self.combobox_normtype.addItem("ortho")
+        self.combobox_normtype.addItem("backward")
+        self.combobox_normtype.setCurrentIndex(2)
+        self.combobox_normtype.setStyleSheet(estilos.estilos_combobox_filtro())
+
+        wid_combobox_btype = QtWidgets.QWidget()
+        wid_combobox_btype.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_btype.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_btype.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_btype.layout().addWidget(self.combobox_normtype)
+
+        wid_spiner_valor2.layout().addWidget(self.combobox_normtype)
+
+        #CHECKBOX RANCIO 2.
+        wid_checkbox_fft = QtWidgets.QWidget()
+        wid_checkbox_fft.setLayout(QtWidgets.QHBoxLayout())
+        wid_checkbox_fft.layout().setContentsMargins(8, 5, 0, 0)
+        wid_checkbox_fft.layout().setAlignment(Qt.AlignLeft)
+        wid_checkbox_fft.layout().setSpacing(0)
+
+        label_checkbox_fft = QtWidgets.QLabel("Aplicar Filtro FFT")
+        label_checkbox_fft.setFont(font)
+        label_checkbox_fft.setStyleSheet("margin:0px;")
+
+        self.checkbox_fft= QtWidgets.QCheckBox()
+
+        wid_checkbox_fft.layout().addWidget(self.checkbox_fft)
+        wid_checkbox_fft.layout().addWidget(label_checkbox_fft)
 
         wid_valor2 = QtWidgets.QWidget()
         wid_valor2.setLayout(QtWidgets.QHBoxLayout())
@@ -418,6 +459,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_valor2.layout().addWidget(wid_spiner_valor2, 5)
 
         widget_fft.layout().addWidget(wid_valor2)
+        widget_fft.layout().addWidget(wid_checkbox_fft)
 
         # PARA CAPTURAR EL EVENTO HOVER Y LANZAR UN TOOLTIP MÁS RÁPIDO QUE LOS QUE OFRECE QPushButton
         self.btn_tooltip_order.installEventFilter(self)
@@ -437,20 +479,27 @@ class ventana_filtro(QtWidgets.QDialog):
                                         self.btn_tooltip_arrayl)
             return True
         elif source == self.btn_tooltip_filtro and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(),
-                                        """Filtro el cual será aplicado a las gráficas\nseleccionadas. El valor predeterminado\nes Butterworth.""",
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Filtro el cual será aplicado a las "
+                                                    "gráficas\nseleccionadas. El valor predeterminado\nes bandpass.",
                                         self.btn_tooltip_filtro)
             return True
         elif source == self.btn_tooltip_analog and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(),
-                                        "Si el valor seleccionado es True, se aplica\nun filtro analógico; si es False, se aplica un\nfiltro digital.",
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Si el valor seleccionado es True, se aplica\nun filtro "
+                                                             "analógico; si es False, se aplica un\nfiltro digital.",
                                         self.btn_tooltip_analog)
             return True
         elif source == self.btn_tooltip_valor1 and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Tooltip valor1.", self.btn_tooltip_valor1)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Longitud del eje transformado de la salida.\n Si n es "
+                                                             "menor que la longitud de la entrada, la entrada se "
+                                                             "recorta.\n Si es mayor, la entrada se rellena con "
+                                                             "ceros.",
+                                        self.btn_tooltip_valor1)
             return True
         elif source == self.btn_tooltip_valor2 and event.type() == event.HoverEnter:
-            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "Tooltip valor2 .", self.btn_tooltip_valor2)
+            QtWidgets.QToolTip.showText(QtGui.QCursor.pos(), "El valor predeterminado es backward.\n Indica qué "
+                                                             "dirección del par de transformadas forward / backward\n "
+                                                             "se escala y con qué factor de normalización.",
+                                        self.btn_tooltip_valor2)
             return True
 
         return super().eventFilter(source, event)
@@ -464,6 +513,7 @@ class ventana_filtro(QtWidgets.QDialog):
                     hijo.setCheckState(0, Qt.Checked)
 
     def aplicar_valores_filtro(self):
+        # * -------- Filtro Butterworth------------------* #
         hay_almenos_un_check = False
         order = self.spin_box.value()
         array_a = int(self.spiner_array_a.value()) * 0.001
@@ -471,6 +521,13 @@ class ventana_filtro(QtWidgets.QDialog):
         btype = self.combobox_btype.currentText()
         analog = None
         seguir = True
+        # *-----------------------------------------------* #
+
+        # * ------------- Filtro FFT * -------------------* #
+        norm = self.combobox_normtype.currentText()
+        n = self.spin_box_valor1.value()
+        # * ------------- Filtro FFT * -------------------* #
+
 
         # *--------------------------------------------- CONTROLES --------------------------------------------------* #
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -497,6 +554,9 @@ class ventana_filtro(QtWidgets.QDialog):
         else:
             analog = False
 
+        mostrarButter = self.checkbox_butter.isChecked()
+        mostrarFFT = self.checkbox_fft.isChecked()
+
         if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
@@ -505,7 +565,10 @@ class ventana_filtro(QtWidgets.QDialog):
                     if hijo.checkState(0):
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
-                            grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+                            if mostrarButter:
+                                grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+                            if mostrarFFT:
+                                grafica.set_fastfouriertransform(Filtro_FFT(n, norm))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
