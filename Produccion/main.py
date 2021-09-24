@@ -626,14 +626,13 @@ class ventana_principal(QWidget):
         continuar = not chequearSiEstaRecortando(self)
         if continuar:
             options = QFileDialog.Options()
-            filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "",config.FILES_CSV, options=options)
+            filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "", filter = f"{config.FILES_CSV}", options=options)
 
             # Si se cancela la ventana emergente al seleccionar un archivo .csv
             if not filepath[0]:
                 return
 
             try:
-
                 frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
             except Exception as e:
                 QMessageBox.about(self, "Error", "No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
@@ -962,7 +961,7 @@ class ventana_principal(QWidget):
 
                     if graficas[0].get_fastfouriertransform() is not None:
                         line, = axes.plot(tiempoRecortado,
-                                  y, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
+                                 y, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
 
                         line, = axes.plot(tiempoRecortado,
                                           x, linewidth=0.3, label=f"{graficas[0].get_nombre_columna_grafica_vista()}")
@@ -1002,7 +1001,6 @@ class ventana_principal(QWidget):
                     # ------------------------------------- Aspecto
                     # si no esta recortado
                     if graficas[0].get_recorte()[0] == 0 and graficas[0].get_recorte()[1] == 0:
-
                         axes.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
                         axes.xaxis.set_minor_locator(MultipleLocator(0.5))
                         axes.xaxis.set_major_locator(MultipleLocator(1))
