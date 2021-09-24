@@ -11,14 +11,6 @@ def estilos_tree_widget_graficas():
         border-image: url(:/Static/img/vline.png) 0;    
     }
     
-    
-    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
-        border-image: url(:/Static/img/branch-more.png) 0;
-    }
-
-    QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(:/Static/img/branch-end.png) 0;
-    }
 
     """
 
@@ -37,14 +29,6 @@ def estilos_tree_widget_importar_directorios():
         border-image: url(:/Static/img/vline.png) 0;    
     }
     
-    
-    QTreeWidget::branch:has-siblings:!has-children:adjoins-item {
-        border-image: url(:/Static/img/branch-more.png) 0;
-    }
-
-    QTreeWidget::branch:!has-children:!has-siblings:adjoins-item {
-        border-image: url(:/Static/img/branch-end.png) 0;
-    }
     """
 
 
