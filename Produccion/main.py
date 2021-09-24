@@ -1426,7 +1426,7 @@ class ventana_principal(QWidget):
         if continuar:
             vista = None
             widget = QWidget()
-            widget.setStyleSheet("background-color:white;")
+            widget.setStyleSheet(estilos.estilos_barritas_gucci_scroll_area())
             widget.setLayout(QVBoxLayout())
             widget.layout().setContentsMargins(5, 5, 5, 20)
             widget.layout().setSpacing(20)

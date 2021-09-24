@@ -85,6 +85,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -621,6 +622,7 @@ class ventana_comparar(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -1010,6 +1012,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -1186,6 +1189,7 @@ class ventana_cortar(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -1512,6 +1516,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -1811,6 +1816,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -2040,6 +2046,7 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
@@ -2683,6 +2690,7 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         # GRAFICAS
         self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
         self.tree_graficas.setFixedWidth(300)
         self.tree_graficas.setHeaderHidden(True)
 
