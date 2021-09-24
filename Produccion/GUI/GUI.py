@@ -1098,6 +1098,47 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                                     "Seleccione que datos desea mostrar haciendo click en el checkbox de: \n - mostrarPicos\n - mostrarIntegral \n - mostrarRMS")
             seguir = False
 
+        #controles de tiempo
+        if self.graficas is not None and seguir:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            errorIntegral=False
+                            errorRMS=False
+                            limiteInicio = grafica.getLimitesTiempo()[0]
+                            limiteFin = grafica.getLimitesTiempo()[1]
+
+                            if mostrarIntegral:
+                                if inicio < limiteInicio or inicio > limiteFin:
+                                    seguir = False
+                                    errorIntegral =True
+                                elif fin < limiteInicio or fin > limiteFin:
+                                    seguir = False
+                                    errorIntegral =True
+
+                            if mostrarRMS:
+                                if inicioRMS < limiteInicio or inicioRMS > limiteFin:
+                                    seguir = False
+                                    errorRMS =True
+                                elif finRMS < limiteInicio or finRMS > limiteFin:
+                                    seguir = False
+                                    errorRMS =True
+
+                            if errorRMS or errorIntegral:
+                                if errorRMS and not errorIntegral:
+                                    mensaje="Los valores de tiempo de la ventana RMS sobrepasan los limites del grafico "
+                                elif errorIntegral and not errorRMS:
+                                    mensaje="Los valores de tiempo de la ventana calcular Integral sobrepasan los limites del grafico "
+                                else:
+                                    mensaje="Los valores de tiempo de las ventanas RMS e Integral sobrepasan los limites del grafico "
+                                mensaje = mensaje + str(hijo.get_id()+1)
+                                QMessageBox.information(self, "Advertencia",mensaje)
+
         # *------------------------------------controles------------------------------------
         if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -1436,6 +1477,31 @@ class ventana_cortar(QtWidgets.QDialog):
                     grafica.borrarIntegralYRMS()
             else:
                 seguir = False
+        # controles de tiempo
+        if self.graficas is not None and seguir:
+            cant_hijos = self.tree_graficas.topLevelItemCount()
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        hay_almenos_un_check = True
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            errorLimites = False
+                            limiteInicio = grafica.getLimitesTiempo()[0]
+                            limiteFin = grafica.getLimitesTiempo()[1]
+
+                            if desde < limiteInicio or desde > limiteFin:
+                                seguir = False
+                                errorLimites = True
+                            elif hasta < limiteInicio or hasta > limiteFin:
+                                seguir = False
+                                errorLimites = True
+
+                            if errorLimites:
+                                mensaje = "Los valores de tiempo sobrepasan los limites del grafico "
+                                mensaje = mensaje + str(hijo.get_id() + 1)
+                                QMessageBox.information(self, "Advertencia", mensaje)
         # *------------------------------------FIN DE CONTROLES------------------------------------
 
         if self.graficas is not None and seguir:

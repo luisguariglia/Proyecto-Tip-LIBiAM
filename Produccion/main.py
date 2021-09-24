@@ -972,10 +972,6 @@ class ventana_principal(QWidget):
 
                     linebuilder = LineBuilder(line,axes,graficas[0],self)
 
-                    # print("hola aca")
-                    # print(graficas[0].getlimitesTiempo()[0])
-                    # print(graficas[0].getlimitesTiempo()[1])
-
                     plt.tight_layout()
 
                     exponent = axes.yaxis.get_offset_text().get_text()
