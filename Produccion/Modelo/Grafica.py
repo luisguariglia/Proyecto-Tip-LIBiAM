@@ -25,6 +25,7 @@ class Grafica:
         self.__recortandoConClick = 0
         self.__fastfouriertransform = fft
 
+
     def get_nombre_columna_grafica(self):
         return self.__nombre_columna_grafica
 
@@ -155,3 +156,11 @@ class Grafica:
         self.__integral = [0, 0, False]
         self.__rms = None
         self.__rmsLimites = [0, 0, False]
+
+    def getlimitesTiempo(self):
+        if self.__recorte != [0, 0]:
+            return self.__recorte
+        else:
+            return [0,self.__nombre_columna_tiempo.iloc[-1]] #ultimo elemento
+
+
