@@ -1321,7 +1321,7 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_valoresEnBruto(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
                 QMessageBox.information(self, "Advertencia",
                                         "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
@@ -1345,7 +1345,7 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_cortar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
                 QMessageBox.information(self, "Advertencia",
                                         "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
