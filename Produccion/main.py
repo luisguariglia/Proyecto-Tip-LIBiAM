@@ -2,7 +2,7 @@ import numpy
 from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
-from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
+from PyQt5.QtCore import QSize, QEvent,QEventLoop,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QMessageBox
@@ -136,41 +136,41 @@ class ventana_principal(QWidget):
         Abrir.setEnabled(False)
         actionFile.addAction(Abrir)
 
-        Guardar = QAction("Guardar", self)
+        # Guardar = QAction("Guardar", self)
         # Nuevo.triggered.connect(quit)
-        Guardar.setEnabled(False)
-        actionFile.addAction(Guardar)
+        #Guardar.setEnabled(False)
+        #actionFile.addAction(Guardar)
 
         actionFile.addSeparator()
         Salir = QAction("Salir", self)
         Salir.triggered.connect(self.cerrar)
         actionFile.addAction(Salir)
 
-        editarMenu=menubar.addMenu("Editar")
+        #editarMenu=menubar.addMenu("Editar")
         # editarMenu.addAction("")
 
-        filtradoMenu = menubar.addMenu("Filtrado")
+        #filtradoMenu = menubar.addMenu("Filtrado")
 
-        Config = QAction("Configuracion", self)
+        #Config = QAction("Configuracion", self)
         # Nuevo.triggered.connect(quit)
-        Config.setEnabled(False)
-        filtradoMenu.addAction(Config)
+        #Config.setEnabled(False)
+        #filtradoMenu.addAction(Config)
 
-        vista=menubar.addMenu("Vista")
-        nuevaV = QAction("Nueva Vista", self)
-        nuevaV.triggered.connect(self.nueva_vista)
-        vista.addAction(nuevaV)
+        #vista=menubar.addMenu("Vista")
+        #nuevaV = QAction("Nueva Vista", self)
+        #nuevaV.triggered.connect(self.nueva_vista)
+        #vista.addAction(nuevaV)"""
 
-        ayudaMenu=menubar.addMenu("Ayuda")
-        Doc = QAction("Documentacion", self)
+        #ayudaMenu=menubar.addMenu("Ayuda")
+        #Doc = QAction("Documentacion", self)
         # Nuevo.triggered.connect(quit)
-        Doc.setEnabled(False)
-        ayudaMenu.addAction(Doc)
+        #Doc.setEnabled(False)
+        #ayudaMenu.addAction(Doc)"""
 
-        Sobre = QAction("Sobre Nosotros", self)
-        Sobre.triggered.connect(self.ventana_inicio)
-        Sobre.setEnabled(False)
-        ayudaMenu.addAction(Sobre)
+        #Sobre = QAction("Sobre Nosotros", self)
+        #Sobre.triggered.connect(self.ventana_inicio)
+        #Sobre.setEnabled(False)
+        #ayudaMenu.addAction(Sobre)
 
         confMenu = menubar.addMenu("Configuracion")
         confArchivos = QAction("Archivos", self)
@@ -414,7 +414,7 @@ class ventana_principal(QWidget):
         widget_header = QWidget()
         widget_header.setLayout(QHBoxLayout())
         widget_header.layout().setSpacing(50)
-        widget_header.layout().setAlignment(Qt.AlignLeft)
+        widget_header.layout().setAlignment(Qt.AlignHCenter)
         widget_header.setStyleSheet(estilos.estilos_widget_header_inicio())
 
         widget_contenido = QWidget()
@@ -433,9 +433,9 @@ class ventana_principal(QWidget):
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
 
-        img_UDELAR = QPixmap(':/Static/img/udelar2.png')
+        img_UDELAR = QPixmap('Static/img/cenur.jpg')
         lab_UDELAR = QLabel()
-        lab_UDELAR.setFixedWidth(img_UDELAR.width())
+        lab_UDELAR.setFixedWidth(int(img_UDELAR.width()))
         lab_UDELAR.setPixmap(img_UDELAR)
 
         img_UTEC = QPixmap(':/Static/img/utec.png')
@@ -1714,7 +1714,7 @@ def main():
     pixmap = QPixmap(":/Static/img/splashscreenLibiam.jpg")
     splash = QSplashScreen(pixmap)
     splash.show()
-    app.processEvents()
+    app.processEvents(QEventLoop.AllEvents)
     #cargando modulos
 
     ex = ventana_principal()
