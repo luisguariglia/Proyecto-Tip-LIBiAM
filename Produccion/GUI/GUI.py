@@ -1155,14 +1155,16 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
                         if grafica is not None:
                             if mostrarPicos:
                                 grafica.set_valores_picos(Pico(min_height, treshold, distance))
-                            grafica.set_integral(([inicio, fin, mostrarIntegral]))
-                            grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
-                    else:
-                        QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
+                            if mostrarIntegral:
+                                grafica.set_integral(([inicio, fin, mostrarIntegral]))
+                            if mostrarRMS:
+                                grafica.set_rmsLimites(([inicioRMS, finRMS, mostrarRMS]))
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
                 self.close()
+            else:
+                QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
