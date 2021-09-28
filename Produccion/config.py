@@ -4,7 +4,7 @@ from BD.Queries import Conexion
 DB_FILE = str(Path.home()) + '/abs.db'
 Conexion.crear_bd_si_no_existe()
 
-EMG = "EMG"
+EMG = "xD"
 ROW_COLUMNS = Conexion.get_row_columns()
 ENCODING = 'cp1252'
 FILES_CSV = 'Archivos CSV (*.csv)'

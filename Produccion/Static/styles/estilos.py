@@ -251,6 +251,7 @@ def nuevaVista():
                 background-color:#5cb85c;
                 border-radius: 2px;
                 padding:6px;
+                margin-left:8px;
             }
 
             QPushButton:hover{

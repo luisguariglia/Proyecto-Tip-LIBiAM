@@ -433,7 +433,7 @@ class ventana_principal(QWidget):
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
 
-        img_UDELAR = QPixmap('Static/img/cenur.jpg')
+        img_UDELAR = QPixmap(':/Static/img/cenur.jpg')
         lab_UDELAR = QLabel()
         lab_UDELAR.setFixedWidth(int(img_UDELAR.width()))
         lab_UDELAR.setPixmap(img_UDELAR)

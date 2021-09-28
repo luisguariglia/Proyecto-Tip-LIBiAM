@@ -784,7 +784,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_AM = QtWidgets.QPushButton()
         self.btn_tooltip_AM.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_AM.setFixedWidth(13)
-        self.btn_tooltip_AM.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_AM.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_AM.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_AM.layout().addWidget(self.btn_tooltip_AM)
@@ -821,7 +821,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_umbral = QtWidgets.QPushButton()
         self.btn_tooltip_umbral.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_umbral.setFixedWidth(13)
-        self.btn_tooltip_umbral.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_umbral.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_umbral.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_U.layout().addWidget(self.btn_tooltip_umbral)
@@ -858,7 +858,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_distancia = QtWidgets.QPushButton()
         self.btn_tooltip_distancia.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_distancia.setFixedWidth(13)
-        self.btn_tooltip_distancia.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_distancia.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_distancia.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_D.layout().addWidget(self.btn_tooltip_distancia)
@@ -1800,7 +1800,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 class ventana_conf_vistas(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ventana_conf_vistas, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Configurar limite de gráficas")
         self.setFixedSize(290, 150)
