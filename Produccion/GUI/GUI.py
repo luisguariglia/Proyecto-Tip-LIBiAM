@@ -1830,6 +1830,9 @@ class ventana_rectificar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
 
     def aplicar_cambios(self):
