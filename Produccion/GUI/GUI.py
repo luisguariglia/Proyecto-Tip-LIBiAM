@@ -1378,10 +1378,10 @@ class ventana_cortar(QtWidgets.QDialog):
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
             self.parent.setCortandoGrafico(True, False, self)
         else:
-            self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
-            self.parent.setCortandoGrafico(True, True, self)
+            QMessageBox.information(self, "Info", "Luis: estoy haciendo esto, por ahora no anda")
+            #self.hide()
+            #QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            #self.parent.setCortandoGrafico(True, True, self)
 
     def mostrar(self):
         self.show()
