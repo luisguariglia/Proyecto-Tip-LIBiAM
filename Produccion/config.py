@@ -1,7 +1,7 @@
 from pathlib import Path
 from BD.Queries import Conexion
 
-DB_FILE = str(Path.home()) + '\\abs.db'
+DB_FILE = str(Path.home()) + '/abs.db'
 Conexion.crear_bd_si_no_existe()
 
 EMG = "EMG"

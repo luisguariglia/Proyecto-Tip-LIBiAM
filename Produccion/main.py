@@ -2,7 +2,7 @@ import numpy
 from PyQt5 import QtWidgets, QtCore, uic
 from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
-from PyQt5.QtCore import QSize, QEvent,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
+from PyQt5.QtCore import QSize, QEvent,QEventLoop,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QMessageBox
@@ -136,41 +136,41 @@ class ventana_principal(QWidget):
         Abrir.setEnabled(False)
         actionFile.addAction(Abrir)
 
-        Guardar = QAction("Guardar", self)
+        # Guardar = QAction("Guardar", self)
         # Nuevo.triggered.connect(quit)
-        Guardar.setEnabled(False)
-        actionFile.addAction(Guardar)
+        #Guardar.setEnabled(False)
+        #actionFile.addAction(Guardar)
 
         actionFile.addSeparator()
         Salir = QAction("Salir", self)
         Salir.triggered.connect(self.cerrar)
         actionFile.addAction(Salir)
 
-        editarMenu=menubar.addMenu("Editar")
+        #editarMenu=menubar.addMenu("Editar")
         # editarMenu.addAction("")
 
-        filtradoMenu = menubar.addMenu("Filtrado")
+        #filtradoMenu = menubar.addMenu("Filtrado")
 
-        Config = QAction("Configuracion", self)
+        #Config = QAction("Configuracion", self)
         # Nuevo.triggered.connect(quit)
-        Config.setEnabled(False)
-        filtradoMenu.addAction(Config)
+        #Config.setEnabled(False)
+        #filtradoMenu.addAction(Config)
 
-        vista=menubar.addMenu("Vista")
-        nuevaV = QAction("Nueva Vista", self)
-        nuevaV.triggered.connect(self.nueva_vista)
-        vista.addAction(nuevaV)
+        #vista=menubar.addMenu("Vista")
+        #nuevaV = QAction("Nueva Vista", self)
+        #nuevaV.triggered.connect(self.nueva_vista)
+        #vista.addAction(nuevaV)"""
 
-        ayudaMenu=menubar.addMenu("Ayuda")
-        Doc = QAction("Documentacion", self)
+        #ayudaMenu=menubar.addMenu("Ayuda")
+        #Doc = QAction("Documentacion", self)
         # Nuevo.triggered.connect(quit)
-        Doc.setEnabled(False)
-        ayudaMenu.addAction(Doc)
+        #Doc.setEnabled(False)
+        #ayudaMenu.addAction(Doc)"""
 
-        Sobre = QAction("Sobre Nosotros", self)
-        Sobre.triggered.connect(self.ventana_inicio)
-        Sobre.setEnabled(False)
-        ayudaMenu.addAction(Sobre)
+        #Sobre = QAction("Sobre Nosotros", self)
+        #Sobre.triggered.connect(self.ventana_inicio)
+        #Sobre.setEnabled(False)
+        #ayudaMenu.addAction(Sobre)
 
         confMenu = menubar.addMenu("Configuracion")
         confArchivos = QAction("Archivos", self)
@@ -414,7 +414,7 @@ class ventana_principal(QWidget):
         widget_header = QWidget()
         widget_header.setLayout(QHBoxLayout())
         widget_header.layout().setSpacing(50)
-        widget_header.layout().setAlignment(Qt.AlignLeft)
+        widget_header.layout().setAlignment(Qt.AlignHCenter)
         widget_header.setStyleSheet(estilos.estilos_widget_header_inicio())
 
         widget_contenido = QWidget()
@@ -433,9 +433,9 @@ class ventana_principal(QWidget):
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
 
-        img_UDELAR = QPixmap(':/Static/img/udelar2.png')
+        img_UDELAR = QPixmap(':/Static/img/cenur.jpg')
         lab_UDELAR = QLabel()
-        lab_UDELAR.setFixedWidth(img_UDELAR.width())
+        lab_UDELAR.setFixedWidth(int(img_UDELAR.width()))
         lab_UDELAR.setPixmap(img_UDELAR)
 
         img_UTEC = QPixmap(':/Static/img/utec.png')
@@ -503,9 +503,9 @@ class ventana_principal(QWidget):
         widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
-        img1 = QPixmap(':/Static/img/img_content3.jpg')
-        img2 = QPixmap(':/Static/img/img_content2.jpg')
-        img3 = QPixmap(':/Static/img/img_content.jpg')
+        img1 = QPixmap(':/Static/img/imglib1.png').scaled(455, 305)
+        img2 = QPixmap(':/Static/img/imglib2.png').scaledToHeight(305)
+        img3 = QPixmap(':/Static/img/img_content.jpg').scaledToHeight(305).scaledToWidth(455)
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
@@ -551,7 +551,6 @@ class ventana_principal(QWidget):
         id = self.id_grafica
         self.id_grafica += 1
         return id
-
 
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
@@ -898,7 +897,7 @@ class ventana_principal(QWidget):
             axes.annotate("Valor RMS: " + numeroAMostrar, xy=((a + b) / 2, 0),
                           xytext=((a + b) / 2, resultado))
 
-        rectangulo = plt.Rectangle((a, resultado), b-a, resultado/5, color='grey')
+        rectangulo = plt.Rectangle((a, resultado), b-a, ((resultado/10)/((b-a)/2)), color='grey', alpha = 0.6) # esta mejorado,pero ponele el otro color
         axes.add_patch(rectangulo)
         grafica.set_rms(resultado)
 
@@ -1036,7 +1035,7 @@ class ventana_principal(QWidget):
                 elif cant_graficas > 1:
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
                     # cid = fig.canvas.mpl_connect('button_press_event', onclick())
-                    fig.canvas.mpl_connect('axes_enter_event', enter_axes)
+                    #fig.canvas.mpl_connect('axes_enter_event', enter_axes)
 
                     graficas = vista.get_graficas()
 
@@ -1298,7 +1297,7 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_rectificar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
                 QMessageBox.information(self, "Advertencia",
                                         "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
@@ -1641,7 +1640,11 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
         pintoUnGrafico = False
     elif not cortando and cortandoVarios:
         ventanaCortarInstance.setRecorte(min, max)
-        ventanaCortarInstance.mostrar()
+        ventanaCortarInstance.seleccionar_todas_las_graficas()
+        datosCorrectos = ventanaCortarInstance.aplicar_recorte()
+        if not datosCorrectos:
+            ventanaCortarInstance.show()
+        pintoUnGrafico = False
         pintoUnGrafico = False
 
 #control para que no se haga otra cosa mientras se esta recortando
@@ -1667,32 +1670,64 @@ class LineBuilder:
         self.annotations = None
     def __call__(self, event):
         global cont,min,max,cortandoVarios
-        if cortando:
-            if cont == 0 and self.grafica.get_recortandoConClick()==0:   #inicio de recorte
-                self.grafica.set_recortandoConClick(1)
-                min = event.xdata
-                cont += 1
-                self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
-                                   xytext=(event.xdata, 0))
-                circle1 = plt.Rectangle((event.xdata, 0), 0.015,99999, color='r')
-                self.axes.add_patch(circle1)
-                self.line.figure.canvas.draw()
-            elif cont == 1 and self.grafica.get_recortandoConClick()==1:     #fin del recorte
-                #chequeo que sea la misma grafica
-                max = event.xdata
-                self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
-                                   xytext=(event.xdata, 0))
-                circle1 = plt.Rectangle((event.xdata, 0), 0.015,99999, color='r')
-                self.axes.add_patch(circle1)
-                self.line.figure.canvas.draw()
-                self.line.figure.canvas.flush_events()
-                time.sleep(1)
-                cont = 0
-                self.grafica.set_recortandoConClick(0)
-                setCortandoGraficoMain(False,cortandoVarios)
-            elif not self.hayVarias:
-                QMessageBox.information(self.main, "Advertencia", "Termine de recortar la grafica Original")
 
+        if cortando:
+            if not cortandoVarios:
+                if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
+                    self.grafica.set_recortandoConClick(1)
+                    min = event.xdata
+                    cont += 1
+                    self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
+                                       xy=(event.xdata, event.ydata),
+                                       xytext=(event.xdata, 0))
+                    ancho = (self.grafica.getLimitesTiempo()[1]-self.grafica.getLimitesTiempo()[0])/1000
+                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 99999, color='r',alpha = 0.7)
+                    self.axes.add_patch(circle1)
+                    self.line.figure.canvas.draw()
+                elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
+                    max = event.xdata
+                    self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
+                                       xytext=(event.xdata, 0))
+                    ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
+                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 99999, color='r',alpha = 0.7)
+                    self.axes.add_patch(circle1)
+                    self.line.figure.canvas.draw()
+                    self.line.figure.canvas.flush_events()
+                    time.sleep(1)
+                    cont = 0
+                    self.grafica.set_recortandoConClick(0)
+                    setCortandoGraficoMain(False, cortandoVarios)
+            else:
+                print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+                      ('double' if event.dblclick else 'single', event.button,
+                       event.x, event.y, event.xdata, event.ydata))
+                if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
+                    print(self.grafica.get_id())
+                    print("------")
+                    self.grafica.set_recortandoConClick(1)
+                    min = event.xdata
+                    cont += 1
+                    self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
+                                       xy=(event.xdata, event.ydata),
+                                       xytext=(event.xdata, 0))
+                    circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                    self.axes.add_patch(circle1)
+                    self.line.figure.canvas.draw()
+                elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
+                    # chequeo que sea la misma grafica
+                    max = event.xdata
+                    self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
+                                       xytext=(event.xdata, 0))
+                    circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                    self.axes.add_patch(circle1)
+                    self.line.figure.canvas.draw()
+                    self.line.figure.canvas.flush_events()
+                    time.sleep(1)
+                    cont = 0
+                    self.grafica.set_recortandoConClick(0)
+                    setCortandoGraficoMain(False, cortandoVarios)
+                elif not self.hayVarias:
+                    QMessageBox.information(self.main, "Advertencia", "Termine de recortar la grafica Original")
             if event.inaxes!=self.line.axes: return
 
 #con esto se pinta de amarillo la grafica que se va a recortar
@@ -1709,7 +1744,7 @@ def main():
     pixmap = QPixmap(":/Static/img/splashscreenLibiam.jpg")
     splash = QSplashScreen(pixmap)
     splash.show()
-    app.processEvents()
+    app.processEvents(QEventLoop.AllEvents)
     #cargando modulos
 
     ex = ventana_principal()

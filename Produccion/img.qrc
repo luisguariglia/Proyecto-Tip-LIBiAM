@@ -36,5 +36,8 @@
     <file>Static/img/line-graph.svg</file>
     <file>Static/img/folder.svg</file>
     <file>Static/img/view.svg</file>
+    <file>Static/img/cenur.jpg</file>
+    <file>Static/img/imglib1.png</file>
+    <file>Static/img/imglib2.png</file>
   </qresource>
 </RCC>

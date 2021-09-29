@@ -470,6 +470,17 @@ class ventana_filtro(QtWidgets.QDialog):
         self.btn_tooltip_valor1.installEventFilter(self)
         self.btn_tooltip_valor2.installEventFilter(self)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Filtros aplicados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+    def showTime(self):
+        self.msgBox.close()
+
     def eventFilter(self, source, event):
 
         if source == self.btn_tooltip_order and event.type() == event.HoverEnter:
@@ -573,6 +584,9 @@ class ventana_filtro(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
 
     def get_grafica(self, id_grafica):
@@ -784,7 +798,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_AM = QtWidgets.QPushButton()
         self.btn_tooltip_AM.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_AM.setFixedWidth(13)
-        self.btn_tooltip_AM.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_AM.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_AM.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_AM.layout().addWidget(self.btn_tooltip_AM)
@@ -821,7 +835,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_umbral = QtWidgets.QPushButton()
         self.btn_tooltip_umbral.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_umbral.setFixedWidth(13)
-        self.btn_tooltip_umbral.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_umbral.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_umbral.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_U.layout().addWidget(self.btn_tooltip_umbral)
@@ -858,7 +872,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_distancia = QtWidgets.QPushButton()
         self.btn_tooltip_distancia.setStyleSheet("background-color:#114980;color:white;")
         self.btn_tooltip_distancia.setFixedWidth(13)
-        self.btn_tooltip_distancia.setIcon(QtGui.QIcon("Static/img/tooltip.png"))
+        self.btn_tooltip_distancia.setIcon(QtGui.QIcon(":/Static/img/tooltip.png"))
         self.btn_tooltip_distancia.setIconSize(QtCore.QSize(13, 13))
 
         wid_label_and_tooltip_D.layout().addWidget(self.btn_tooltip_distancia)
@@ -1048,6 +1062,14 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_AM.installEventFilter(self)
         self.btn_tooltip_distancia.installEventFilter(self)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores aplicados correctamente")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def eventFilter(self, source, event):
 
         if source == self.btn_tooltip_AM and event.type() == event.HoverEnter:
@@ -1162,9 +1184,15 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
             else:
                 QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
+
+    def showTime(self):
+        self.msgBox.close()
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -1371,6 +1399,14 @@ class ventana_cortar(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Gráfica recortada correctamente")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def RecortarHaciendoClick(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
@@ -1378,10 +1414,10 @@ class ventana_cortar(QtWidgets.QDialog):
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
             self.parent.setCortandoGrafico(True, False, self)
         else:
-            self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 click indicando la seccion que desea recortar \nImportante: Utilize el primer grafico")
-            self.parent.setCortandoGrafico(True, True, self)
+            QMessageBox.information(self, "Info", "Luis: estoy haciendo esto, por ahora no anda")
+            #self.hide()
+            #QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            #self.parent.setCortandoGrafico(True, True, self)
 
     def mostrar(self):
         self.show()
@@ -1522,12 +1558,19 @@ class ventana_cortar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
+                self.close()
 
         if self.graficas is not None and seguir:
             return True
         else:
             self.parent.listar_graficas(True)
             return False
+
+    def showTime(self):
+        self.msgBox.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1739,6 +1782,14 @@ class ventana_rectificar(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores rectificados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
@@ -1825,7 +1876,13 @@ class ventana_rectificar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
+
+    def showTime(self):
+        self.msgBox.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1840,7 +1897,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 class ventana_conf_vistas(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ventana_conf_vistas, self).__init__()
-        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Configurar limite de gráficas")
         self.setFixedSize(290, 150)
@@ -1878,14 +1935,27 @@ class ventana_conf_vistas(QtWidgets.QDialog):
 
         self.layout().addWidget(btn_aceptar)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Configuración guardada.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def guardar_conf(self):
         dato = self.spinbox_limite_vistas.value()
         dato_int = int(dato)
 
         config.LIMITE_GRAFICAS_POR_VISTA = dato_int
         Conexion.set_limite_graficas(dato_int)
+        self.hide()
+        self.timer.start(1550)
+        self.msgBox.exec_()
         self.close()
 
+    def showTime(self):
+        self.msgBox.close()
 
 class ventana_exportarVP(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -2839,6 +2909,18 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         self.layout().addWidget(wid_izquierda)
 
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores brutos aplicados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+    def showTime(self):
+        self.msgBox.close()
+
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
@@ -2883,6 +2965,9 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
 
     def get_grafica(self, id_grafica):
