@@ -103,7 +103,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -654,7 +654,6 @@ class ventana_comparar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -1044,7 +1043,6 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -1278,7 +1276,6 @@ class ventana_cortar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -1645,7 +1642,6 @@ class ventana_rectificar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -1973,7 +1969,6 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -2206,7 +2201,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -2852,8 +2846,6 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         # wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
