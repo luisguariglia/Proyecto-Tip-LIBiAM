@@ -897,7 +897,7 @@ class ventana_principal(QWidget):
             axes.annotate("Valor RMS: " + numeroAMostrar, xy=((a + b) / 2, 0),
                           xytext=((a + b) / 2, resultado))
 
-        rectangulo = plt.Rectangle((a, resultado), b-a, ((resultado/10)/((b-a)/2)), color='mediumblue',alpha = 0.6) # esta mejorado,pero ponele el otro color
+        rectangulo = plt.Rectangle((a, resultado), b-a, ((resultado/10)/((b-a)/2)), color='grey', alpha = 0.6) # esta mejorado,pero ponele el otro color
         axes.add_patch(rectangulo)
         grafica.set_rms(resultado)
 

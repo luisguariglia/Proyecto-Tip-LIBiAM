@@ -1648,6 +1648,11 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_btn.layout().setAlignment(Qt.AlignLeft)
         wid_btn.layout().addWidget(btn_aplicar_a_todas)
 
+        btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
+        btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
+        btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
+
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
@@ -1788,6 +1793,43 @@ class ventana_rectificar(QtWidgets.QDialog):
             if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
+
+    def rectificar_todas_las_graficas(self):
+        abs = self.qCheckBox.isChecked()
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        hay_almenos_un_check = False
+        seguir = True
+
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        if hay_almenos_un_check and seguir:
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            tiempo = grafica.getLimitesTiempo()
+                            desde = tiempo[0]
+                            hasta = tiempo[1]
+                            grafica.set_offset([desde, hasta, abs])
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
+                self.close()
 
     def aplicar_cambios(self):
         hay_almenos_un_check = False
