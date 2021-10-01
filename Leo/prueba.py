@@ -1,32 +1,39 @@
-from PyQt5 import QtCore, QtGui,QtWidgets
+import matplotlib.pyplot as plt
 
-class Window(QtWidgets.QWidget):
-    def __init__(self):
-        super(Window, self).__init__()
-        self.view = QtWidgets.QTreeView(self)
-        self.view.setMouseTracking(True)
-        self.view.entered.connect(self.handleItemEntered)
-        model = QtGui.QStandardItemModel(self)
-        for text in 'One Two Three Four Five'.split():
-            model.appendRow(QtGui.QStandardItem(text))
-        self.view.setModel(model)
-        layout = QtWidgets.QVBoxLayout(self)
-        layout.addWidget(self.view)
+def enter_axes(event):
+    print('enter_axes', event.inaxes)
+    event.inaxes.patch.set_facecolor('yellow')
+    event.canvas.draw()
 
-    def handleItemEntered(self, index):
-        if index.isValid():
-            QtWidgets.QToolTip.showText(
-                QtGui.QCursor.pos(),
-                index.data(),
-                self.view.viewport(),
-                self.view.visualRect(index)
-                )
+def leave_axes(event):
+    print('leave_axes', event.inaxes)
+    event.inaxes.patch.set_facecolor('white')
+    event.canvas.draw()
 
-if __name__ == '__main__':
+def enter_figure(event):
+    print('enter_figure', event.canvas.figure)
+    event.canvas.figure.patch.set_facecolor('red')
+    event.canvas.draw()
 
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    window = Window()
-    window.setGeometry(500, 300, 200, 200)
-    window.show()
-    sys.exit(app.exec_())
+def leave_figure(event):
+    print('leave_figure', event.canvas.figure)
+    event.canvas.figure.patch.set_facecolor('grey')
+    event.canvas.draw()
+
+fig1, axs = plt.subplots(2)
+fig1.suptitle('mouse hover over figure or axes to trigger events')
+
+fig1.canvas.mpl_connect('figure_enter_event', enter_figure)
+fig1.canvas.mpl_connect('figure_leave_event', leave_figure)
+fig1.canvas.mpl_connect('axes_enter_event', enter_axes)
+fig1.canvas.mpl_connect('axes_leave_event', leave_axes)
+
+fig2, axs = plt.subplots(2)
+fig2.suptitle('mouse hover over figure or axes to trigger events')
+
+fig2.canvas.mpl_connect('figure_enter_event', enter_figure)
+fig2.canvas.mpl_connect('figure_leave_event', leave_figure)
+fig2.canvas.mpl_connect('axes_enter_event', enter_axes)
+fig2.canvas.mpl_connect('axes_leave_event', leave_axes)
+
+plt.show()

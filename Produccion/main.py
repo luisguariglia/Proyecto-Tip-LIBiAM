@@ -504,9 +504,9 @@ class ventana_principal(QWidget):
         widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
-        img1 = QPixmap(':/Static/img/img_content3.jpg')
-        img2 = QPixmap(':/Static/img/img_content2.jpg')
-        img3 = QPixmap(':/Static/img/img_content.jpg')
+        img1 = QPixmap(':/Static/img/imglib1.png').scaled(455, 305)
+        img2 = QPixmap(':/Static/img/imglib2.png').scaledToHeight(305)
+        img3 = QPixmap(':/Static/img/img_content.jpg').scaledToHeight(305).scaledToWidth(455)
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
@@ -552,7 +552,6 @@ class ventana_principal(QWidget):
         id = self.id_grafica
         self.id_grafica += 1
         return id
-
 
     def animation(self):
         self.animation1.setTargetObject(self.lista_labels[self.contador])
@@ -899,7 +898,7 @@ class ventana_principal(QWidget):
             axes.annotate("Valor RMS: " + numeroAMostrar, xy=((a + b) / 2, 0),
                           xytext=((a + b) / 2, resultado))
 
-        rectangulo = plt.Rectangle((a, resultado), b-a, ((resultado/10)/((b-a)/2)), color='mediumblue',alpha = 0.6) # esta mejorado,pero ponele el otro color
+        rectangulo = plt.Rectangle((a, resultado), b-a, ((resultado/10)/((b-a)/2)), color='grey', alpha = 0.6) # esta mejorado,pero ponele el otro color
         axes.add_patch(rectangulo)
         grafica.set_rms(resultado)
 
@@ -1305,7 +1304,7 @@ class ventana_principal(QWidget):
                     graficas = vista.get_graficas()
                     ventana_rectificar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
                 else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
             else:
                 QMessageBox.information(self, "Advertencia",
                                         "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")

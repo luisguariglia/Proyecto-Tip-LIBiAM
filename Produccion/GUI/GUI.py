@@ -103,7 +103,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
+
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -470,6 +470,17 @@ class ventana_filtro(QtWidgets.QDialog):
         self.btn_tooltip_valor1.installEventFilter(self)
         self.btn_tooltip_valor2.installEventFilter(self)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Filtros aplicados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+    def showTime(self):
+        self.msgBox.close()
+
     def eventFilter(self, source, event):
 
         if source == self.btn_tooltip_order and event.type() == event.HoverEnter:
@@ -573,6 +584,9 @@ class ventana_filtro(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
 
     def get_grafica(self, id_grafica):
@@ -640,7 +654,6 @@ class ventana_comparar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -1030,7 +1043,6 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -1047,6 +1059,14 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.btn_tooltip_umbral.installEventFilter(self)
         self.btn_tooltip_AM.installEventFilter(self)
         self.btn_tooltip_distancia.installEventFilter(self)
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores aplicados correctamente")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
 
     def eventFilter(self, source, event):
 
@@ -1162,9 +1182,15 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(valores_pico=True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
             else:
                 QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
+
+    def showTime(self):
+        self.msgBox.close()
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -1250,7 +1276,6 @@ class ventana_cortar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
@@ -1370,6 +1395,14 @@ class ventana_cortar(QtWidgets.QDialog):
 
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Gráfica recortada correctamente")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
 
     def RecortarHaciendoClick(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -1539,12 +1572,19 @@ class ventana_cortar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
+                self.close()
 
         if self.graficas is not None and seguir:
             return True
         else:
             self.parent.listar_graficas(True)
             return False
+
+    def showTime(self):
+        self.msgBox.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1619,12 +1659,16 @@ class ventana_rectificar(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QVBoxLayout())
         wid_btn.layout().setAlignment(Qt.AlignLeft)
         wid_btn.layout().addWidget(btn_aplicar_a_todas)
+
+        btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
+        btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
+        btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
@@ -1751,6 +1795,14 @@ class ventana_rectificar(QtWidgets.QDialog):
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores rectificados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         for i in range(cant_hijos):
@@ -1758,6 +1810,43 @@ class ventana_rectificar(QtWidgets.QDialog):
             if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
+
+    def rectificar_todas_las_graficas(self):
+        abs = self.qCheckBox.isChecked()
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        hay_almenos_un_check = False
+        seguir = True
+
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if hijo.checkState(0):
+                    hay_almenos_un_check = True
+                    break
+
+        if not hay_almenos_un_check:
+            QMessageBox.information(self, "Advertencia",
+                                    "Seleccione al menos una gráfica")
+            seguir = False
+
+        if hay_almenos_un_check and seguir:
+            for i in range(cant_hijos):
+                hijo = self.tree_graficas.topLevelItem(i)
+                if isinstance(hijo, tree_widget_item_grafica):
+                    if hijo.checkState(0):
+                        grafica: Grafica = self.get_grafica(hijo.get_id())
+                        if grafica is not None:
+                            tiempo = grafica.getLimitesTiempo()
+                            desde = tiempo[0]
+                            hasta = tiempo[1]
+                            grafica.set_offset([desde, hasta, abs])
+
+            if hay_almenos_un_check:
+                self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
+                self.close()
 
     def aplicar_cambios(self):
         hay_almenos_un_check = False
@@ -1803,6 +1892,13 @@ class ventana_rectificar(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
+                self.close()
+
+    def showTime(self):
+        self.msgBox.close()
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1855,14 +1951,27 @@ class ventana_conf_vistas(QtWidgets.QDialog):
 
         self.layout().addWidget(btn_aceptar)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Configuración guardada.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
     def guardar_conf(self):
         dato = self.spinbox_limite_vistas.value()
         dato_int = int(dato)
 
         config.LIMITE_GRAFICAS_POR_VISTA = dato_int
         Conexion.set_limite_graficas(dato_int)
+        self.hide()
+        self.timer.start(1550)
+        self.msgBox.exec_()
         self.close()
 
+    def showTime(self):
+        self.msgBox.close()
 
 class ventana_exportarVP(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -1919,7 +2028,6 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -2152,7 +2260,6 @@ class ventana_conf_linea_archivo(QtWidgets.QDialog):
 
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
@@ -2799,8 +2906,6 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
         # CONTENEDOR BOTON,POR SI PINTA MOVERLO DE LUGAR
         wid_btn = QtWidgets.QWidget()
 
-        wid_btn.setStyleSheet("QWidget{margin-left:5px;")
-
         # wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
         wid_btn.layout().setAlignment(Qt.AlignLeft)
@@ -2815,6 +2920,18 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
         font = db.font("Open Sans", "Regular", 10)
 
         self.layout().addWidget(wid_izquierda)
+
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.showTime)
+
+        self.msgBox = QMessageBox(self)
+        self.msgBox.setText("Valores brutos aplicados correctamente.")
+        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+    def showTime(self):
+        self.msgBox.close()
 
     def seleccionar_todas_las_graficas(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -2860,6 +2977,9 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)
+                self.hide()
+                self.timer.start(1550)
+                self.msgBox.exec_()
                 self.close()
 
     def get_grafica(self, id_grafica):
