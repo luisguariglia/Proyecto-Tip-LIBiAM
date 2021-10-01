@@ -1378,10 +1378,9 @@ class ventana_cortar(QtWidgets.QDialog):
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
             self.parent.setCortandoGrafico(True, False, self)
         else:
-            QMessageBox.information(self, "Info", "Luis: estoy haciendo esto, por ahora no anda")
-            #self.hide()
-            #QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
-            #self.parent.setCortandoGrafico(True, True, self)
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            self.parent.setCortandoGrafico(True, True, self)
 
     def mostrar(self):
         self.show()
@@ -1402,7 +1401,24 @@ class ventana_cortar(QtWidgets.QDialog):
             if isinstance(hijo, tree_widget_item_grafica):
                 if not hijo.checkState(0):
                     hijo.setCheckState(0, Qt.Checked)
+    def seleccionar_grafica(self,num):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
 
+        #deselecciono todas
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if not hijo.checkState(0):
+                    hijo.setCheckState(0, Qt.Unchecked)
+
+        cont = 0
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if cont == num:
+                    if not hijo.checkState(0):
+                        hijo.setCheckState(0, Qt.Checked)
+            cont = cont + 1
     def aplicar_recorte(self):
         hay_almenos_un_check = False
         desde = self.spin_box.value()
@@ -1519,6 +1535,7 @@ class ventana_cortar(QtWidgets.QDialog):
                         grafica: Grafica = self.get_grafica(hijo.get_id())
                         if grafica is not None:
                             grafica.set_recorte([desde, hasta])
+
 
             if hay_almenos_un_check:
                 self.parent.listar_graficas(True)

@@ -43,8 +43,9 @@ min=0
 max=0
 cortando=False
 cortandoVarios=False
-pintoUnGrafico=False
 ventanaCortarInstance= None
+listaDeAxes = []
+graficaActual = None
 ##
 
 def load_fonts_from_dir(directory):
@@ -903,7 +904,7 @@ class ventana_principal(QWidget):
         grafica.set_rms(resultado)
 
     def listar_graficas(self, despues_de_filtro=False, valores_pico=False, widget_tab=None):
-
+        global listaDeAxes
         if widget_tab is None:
             widget_tab = self.widget_der.currentWidget()
 
@@ -1037,9 +1038,9 @@ class ventana_principal(QWidget):
                     fig, axes = plt.subplots(nrows=cant_graficas, ncols=1, figsize=(18, 4 * cant_graficas))
                     # cid = fig.canvas.mpl_connect('button_press_event', onclick())
                     #fig.canvas.mpl_connect('axes_enter_event', enter_axes)
-
+                    fig.canvas.mpl_connect('axes_enter_event', enter_axes)
+                    fig.canvas.mpl_connect('axes_leave_event', leave_axes)
                     graficas = vista.get_graficas()
-
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
@@ -1091,6 +1092,8 @@ class ventana_principal(QWidget):
                                               label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
 
                         linebuilder = LineBuilder(line, axes[x], graficas[x], self, True)
+
+
                         # ------------------------------------- Aspecto
                         # si no esta recortado
                         if graficas[x].get_recorte()[0] == 0 and graficas[x].get_recorte()[1] == 0:
@@ -1139,6 +1142,10 @@ class ventana_principal(QWidget):
 
                         if graficas[x].get_rmsLimites()[2]:
                             self.calcularYMostrar_RMS(axes[x], aux, tiempoRecortado, graficas[x])
+
+                    listaDeAxes = []
+                    for x in range(cant_graficas):
+                        listaDeAxes.append(sacarSegundoParametroAxesSubplot(str(axes[x])))
 
                     plt.close(fig)
                     #fig.tight_layout()
@@ -1627,7 +1634,7 @@ class ventana_principal(QWidget):
 
 #funcion principal para cortar haciendo click
 def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
-    global ventanaCortarInstance,cortando,min,max,cortandoVarios,pintoUnGrafico;
+    global ventanaCortarInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes;
     cortandoVarios = varios
     if ventanaRecortar is not None:
         ventanaCortarInstance=ventanaRecortar
@@ -1638,15 +1645,19 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
-        pintoUnGrafico = False
+
     elif not cortando and cortandoVarios:
         ventanaCortarInstance.setRecorte(min, max)
-        ventanaCortarInstance.seleccionar_todas_las_graficas()
+        num=0
+        for aux in listaDeAxes:
+            if aux == graficaActual:
+                ventanaCortarInstance.seleccionar_grafica(num)
+                break
+            num=num+1
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
-        pintoUnGrafico = False
-        pintoUnGrafico = False
+
 
 #control para que no se haga otra cosa mientras se esta recortando
 def chequearSiEstaRecortando(self):
@@ -1660,7 +1671,6 @@ def chequearSiEstaRecortando(self):
 class LineBuilder:
     def __init__(self, line, axes,grafica,main,hayVarias=False):
         self.hayVarias = hayVarias
-        #print(hayVarias)
         self.main = main
         self.grafica = grafica
         self.axes = axes
@@ -1670,10 +1680,10 @@ class LineBuilder:
         self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
         self.annotations = None
     def __call__(self, event):
-        global cont,min,max,cortandoVarios
+        global cont,min,max,cortandoVarios,graficaActual
 
         if cortando:
-            if not cortandoVarios:
+            if not cortandoVarios:   #recortando una grafica
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     self.grafica.set_recortandoConClick(1)
                     min = event.xdata
@@ -1698,46 +1708,52 @@ class LineBuilder:
                     cont = 0
                     self.grafica.set_recortandoConClick(0)
                     setCortandoGraficoMain(False, cortandoVarios)
-            else:
-                print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-                      ('double' if event.dblclick else 'single', event.button,
-                       event.x, event.y, event.xdata, event.ydata))
+            else:               #recortando varias graficas
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
-                    print(self.grafica.get_id())
-                    print("------")
-                    self.grafica.set_recortandoConClick(1)
-                    min = event.xdata
-                    cont += 1
-                    self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
-                                       xy=(event.xdata, event.ydata),
-                                       xytext=(event.xdata, 0))
-                    circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
-                    self.axes.add_patch(circle1)
-                    self.line.figure.canvas.draw()
+                    if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
+                        self.grafica.set_recortandoConClick(1)
+                        min = event.xdata
+                        cont += 1
+                        self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
+                                           xy=(event.xdata, event.ydata),
+                                           xytext=(event.xdata, 0))
+                        circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                        self.axes.add_patch(circle1)
+                        self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
-                    # chequeo que sea la misma grafica
-                    max = event.xdata
-                    self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
-                                       xytext=(event.xdata, 0))
-                    circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
-                    self.axes.add_patch(circle1)
-                    self.line.figure.canvas.draw()
-                    self.line.figure.canvas.flush_events()
-                    time.sleep(1)
-                    cont = 0
-                    self.grafica.set_recortandoConClick(0)
-                    setCortandoGraficoMain(False, cortandoVarios)
+                    if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
+                        max = event.xdata
+                        self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
+                                           xytext=(event.xdata, 0))
+                        circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                        self.axes.add_patch(circle1)
+                        self.line.figure.canvas.draw()
+                        self.line.figure.canvas.flush_events()
+                        time.sleep(1)
+                        cont = 0
+                        self.grafica.set_recortandoConClick(0)
+                        setCortandoGraficoMain(False, cortandoVarios)
                 elif not self.hayVarias:
                     QMessageBox.information(self.main, "Advertencia", "Termine de recortar la grafica Original")
             if event.inaxes!=self.line.axes: return
 
-#con esto se pinta de amarillo la grafica que se va a recortar
+
+
 def enter_axes(event):
-    global cortando,pintoUnGrafico;
-    if cortando and not pintoUnGrafico:
-        event.inaxes.patch.set_facecolor('gold')
+    global cortandoVarios,graficaActual
+    if cortandoVarios:
+        graficaActual=sacarSegundoParametroAxesSubplot(str(event.inaxes))
         event.canvas.draw()
-        pintoUnGrafico = True
+    else:
+        event.canvas.draw()
+
+def leave_axes(event):
+    global graficaActual
+    graficaActual= None
+
+def sacarSegundoParametroAxesSubplot(texto):
+    aux = texto.split(",")
+    return aux[1].split(";")[0]
 
 def main():
     app = QApplication(sys.argv)
