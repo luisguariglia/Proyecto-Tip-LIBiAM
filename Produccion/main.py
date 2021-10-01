@@ -1755,11 +1755,13 @@ def sacarSegundoParametroAxesSubplot(texto):
     return aux[1].split(";")[0]
 
 def main():
-    app = QApplication(sys.argv)
 
+    app = QApplication(sys.argv)
     pixmap = QPixmap(":/Static/img/splashscreenLibiam.jpg")
     splash = QSplashScreen(pixmap)
     splash.show()
+
+    time.sleep(2)
     app.processEvents(QEventLoop.AllEvents)
     #cargando modulos
 
