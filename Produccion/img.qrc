@@ -39,5 +39,10 @@
     <file>Static/img/cenur.jpg</file>
     <file>Static/img/imglib1.png</file>
     <file>Static/img/imglib2.png</file>
+    <file>Static/img/paso1.png</file>
+    <file>Static/img/paso2.png</file>
+    <file>Static/img/paso3.png</file>
+    <file>Static/img/paso4.png</file>
+    <file>Static/img/paso5.png</file>
   </qresource>
 </RCC>

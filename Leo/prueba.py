@@ -1,39 +1,28 @@
-import matplotlib.pyplot as plt
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+import sys
+#"C:/Users/Leo/Downloads/leoxdd.avi"
+class VideoPlayer:
 
-def enter_axes(event):
-    print('enter_axes', event.inaxes)
-    event.inaxes.patch.set_facecolor('yellow')
-    event.canvas.draw()
+    def __init__(self, path_video):
+        self.video = QVideoWidget()
+        self.video.resize(300, 300)
+        self.video.move(0, 0)
+        self.player = QMediaPlayer()
+        self.player.setVideoOutput(self.video)
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(path_video)))
 
-def leave_axes(event):
-    print('leave_axes', event.inaxes)
-    event.inaxes.patch.set_facecolor('white')
-    event.canvas.draw()
+    def callback(self):
+        self.player.setPosition(0) # to start at the beginning of the video every time
+        self.video.show()
+        self.player.play()
 
-def enter_figure(event):
-    print('enter_figure', event.canvas.figure)
-    event.canvas.figure.patch.set_facecolor('red')
-    event.canvas.draw()
-
-def leave_figure(event):
-    print('leave_figure', event.canvas.figure)
-    event.canvas.figure.patch.set_facecolor('grey')
-    event.canvas.draw()
-
-fig1, axs = plt.subplots(2)
-fig1.suptitle('mouse hover over figure or axes to trigger events')
-
-fig1.canvas.mpl_connect('figure_enter_event', enter_figure)
-fig1.canvas.mpl_connect('figure_leave_event', leave_figure)
-fig1.canvas.mpl_connect('axes_enter_event', enter_axes)
-fig1.canvas.mpl_connect('axes_leave_event', leave_axes)
-
-fig2, axs = plt.subplots(2)
-fig2.suptitle('mouse hover over figure or axes to trigger events')
-
-fig2.canvas.mpl_connect('figure_enter_event', enter_figure)
-fig2.canvas.mpl_connect('figure_leave_event', leave_figure)
-fig2.canvas.mpl_connect('axes_enter_event', enter_axes)
-fig2.canvas.mpl_connect('axes_leave_event', leave_axes)
-
-plt.show()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    v = VideoPlayer()
+    b = QPushButton('start')
+    b.clicked.connect(v.callback)
+    b.show()
+    sys.exit(app.exec_())
