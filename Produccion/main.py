@@ -645,7 +645,7 @@ class ventana_principal(QWidget):
 
                 msg = QMessageBox(self)
                 msg.setWindowTitle("Error")
-                msg.setText("No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
+                msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración opción Archivos.')
                 yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
                 #yes_button.clicked.disconnect()
                 #yes_button.clicked.connect(self.show_graph)
