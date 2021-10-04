@@ -1,7 +1,7 @@
 import numpy
 from PyQt5 import QtWidgets, QtCore, uic
-from PyQt5.QtWidgets import (QLabel, QMessageBox, QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
-from PyQt5.QtGui import QIcon, QFont, QFontDatabase, QPixmap
+from PyQt5.QtWidgets import (QLabel, QMessageBox, QDesktopWidget,QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase,QGuiApplication, QPixmap, QScreen
 from PyQt5.QtCore import QSize, QEvent,QEventLoop,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
@@ -26,7 +26,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_valoresEnBruto,ventana_filtro, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
+from GUI.GUI import ventana_valoresEnBruto,ventana_filtro,ventana_verayuda_antes_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -88,15 +88,20 @@ class ventana_principal(QWidget):
         super(ventana_principal,self).__init__(parent=parent)
         self.initUI()
 
-
     def initUI(self):
         self.setWindowState(QtCore.Qt.WindowMaximized)
-        self.setWindowTitle("LIBiAM")
+        self.setWindowTitle("ABS")
         self.setWindowIcon(QIcon(":/Static/img/LIBiAM.jpg"))
         self.resize(700, 500)
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.archivos_csv = []
+
+        # OBTENER TAMAÑO Y ANCHO DE LA PANTALLA SIN LA BARRA DE TAREAS
+        widget_xdd = QDesktopWidget()
+        rec = widget_xdd.availableGeometry(widget_xdd.primaryScreen())
+        self.setGeometry(rec.x(), rec.y(), rec.width(), rec.height())
+
         #IDENTIFICADOR ARCHIVOS
         self.id_archivo = 1
 
@@ -173,11 +178,11 @@ class ventana_principal(QWidget):
         #Sobre.setEnabled(False)
         #ayudaMenu.addAction(Sobre)
 
-        confMenu = menubar.addMenu("Configuracion")
+        confMenu = menubar.addMenu("Configuración")
         confArchivos = QAction("Archivos", self)
         confArchivos.triggered.connect(self.ventana_conf_archivos)
 
-        confVistas = QAction("Limite gráficas", self)
+        confVistas = QAction("Límite gráficas", self)
         confVistas.triggered.connect(self.ventana_conf_vistas)
 
         confMenu.addAction(confArchivos)
@@ -259,8 +264,8 @@ class ventana_principal(QWidget):
         self.widget_content.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.widget_content, 9)
 
-        self.width = self.widget_content.screen().geometry().width()
-        self.height = self.widget_content.screen().geometry().height()
+        self.width = rec.width()
+        self.height = rec.height()
 
         # CONTENEDOR DE TREE GRÁFICAS
         self.widget_izq = QWidget(self.widget_content)
@@ -394,12 +399,11 @@ class ventana_principal(QWidget):
     def cerrar(self):
         sys.exit()
 
+    def ventana_conf_archivos(self):
+        ventana_conf_archivos(self).exec_()
+
     def ventana_conf_vistas(self):
         ventana_conf_vistas(self).exec_()
-
-    def ventana_conf_archivos(self):
-
-        ventana_conf_archivos(self).exec_()
 
     def ventana_inicio(self):
 
@@ -587,13 +591,13 @@ class ventana_principal(QWidget):
             #aplicar_valor_picos.triggered.connect(lambda checked, item=item: self.aplicar_valores_picos())
 
             menu.addAction(remover_grafiaca)
-            menu.addAction(remover_filtro)
-            menu.addAction(aplicar_filtro)
-            menu.addAction(aplicar_valor_picos)
+            #menu.addAction(remover_filtro)
+            #menu.addAction(aplicar_filtro)
+            #menu.addAction(aplicar_valor_picos)
         elif item.parent() is None:
             print_burro = QAction("Print Burro")
             print_burro.triggered.connect(lambda checked, item=item: self.print_burro())
-            menu.addAction(print_burro)
+            #menu.addAction(print_burro)
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
 
     def remover_grafica(self, item : tree_widget_item_vista):
@@ -617,6 +621,9 @@ class ventana_principal(QWidget):
     def print_burro(self):
         print("no")
 
+    def show_graph(self, father : QMessageBox):
+        print('Show Graph')
+        self.msgbox_abrir_csv_antes_columnas.close()
 
     def agregar_csv(self):
         """
@@ -635,7 +642,23 @@ class ventana_principal(QWidget):
             try:
                 frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
             except Exception as e:
-                QMessageBox.about(self, "Error", "No se pudo encontrar para este archivo las columnas\nde la información en el número de linea que especificó\nen Configuración -> Archivos.")
+
+                msg = QMessageBox(self)
+                msg.setWindowTitle("Error")
+                msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración opción Archivos.')
+                yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
+                #yes_button.clicked.disconnect()
+                #yes_button.clicked.connect(self.show_graph)
+                #msg.setStyleSheet("background-color:red;")
+                msg.addButton(QMessageBox.Ok)
+                msg.exec_()
+
+                if msg.clickedButton() == yes_button:
+                    ventana_verayuda_antes_columnas(self).exec_()
+
+
+                #QMessageBox.about(self, "Error", "")
+                ventana_conf_archivos(self).exec_()
                 return
 
             nombre_archivo = funciones.get_nombre_csv(filepath[0])

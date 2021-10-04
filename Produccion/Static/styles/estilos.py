@@ -33,6 +33,36 @@ def estilos_tree_widget_graficas():
     
     """
 
+
+def estilos_sroll_area():
+    return """
+    QWidget{
+     border:none;
+        
+    }
+
+    QScrollBar:vertical{
+        border:none;
+        background-color:white;
+        border-radius:0px;
+    }
+
+    QScrollBar::handle:vertical{
+        background-color:#E0E0E0;
+        min-height: 30px;
+        border-radius: 0px;
+    }
+    QScrollBar::handle:vertical:hover{
+        background-color:#BDBDBD;
+    }
+
+    QScrollBar::handle:vertical:pressed{
+        background-color:#9E9E9E;
+    }
+
+    """
+
+
 def estilos_barritas_gucci():
     return """
     QScrollBar:vertical{

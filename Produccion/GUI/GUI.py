@@ -1,17 +1,18 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QHBoxLayout
-from PyQt5.QtCore import QVariant
+from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QMessageBox
+from PyQt5.QtCore import QVariant, QUrl, QDir
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from matplotlib import pyplot as plt
-
 import config
+import os
 from BD.Queries import Conexion
 from Static.styles import estilos
 from Modelo.Grafica import Grafica
 from Modelo.Filtro import Filtro
 from Modelo.Filtro_FFT import Filtro_FFT
 from Modelo.Pico import Pico
-from PyQt5.QtWidgets import QMessageBox
 import numpy as np
 
 cont = 0
@@ -1921,7 +1922,7 @@ class ventana_conf_vistas(QtWidgets.QDialog):
         self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setSpacing(10)
 
-        # PARAMETROS
+        #PARAMETROS
         self.parent = parent
 
         wid_limite_vistas = QtWidgets.QWidget()
@@ -2132,7 +2133,7 @@ class ventana_conf_archivos(QtWidgets.QDialog):
 
         db = QtGui.QFontDatabase()
         font = db.font("Open Sans", "Regular", 10)
-        label_limite_vistas = QtWidgets.QLabel("Nro. Linea de columnas:")
+        label_limite_vistas = QtWidgets.QLabel("Nro. fila de columnas:")
         label_limite_vistas.setFont(font)
 
         self.spinbox_row_column = QtWidgets.QSpinBox()
@@ -2990,3 +2991,168 @@ class ventana_valoresEnBruto(QtWidgets.QDialog):
                 break
 
         return grafica_aux
+
+
+class ventana_verayuda_antes_columnas(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(ventana_verayuda_antes_columnas, self).__init__()
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Ayuda - Abrir archivo csv")
+        self.setFixedSize(900, 600)
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setAlignment(Qt.AlignTop)
+        self.setStyleSheet("background-color:white;")
+        self.layout().setContentsMargins(8,8,0,0)
+        shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=10, xOffset=1, yOffset=1)
+
+        layout_scroll = QtWidgets.QVBoxLayout()
+        layout_scroll.setAlignment(Qt.AlignTop)
+        layout_scroll.setContentsMargins(4, 4, 4, 4)
+        layout_scroll.setSpacing(16)
+
+        widget_scroll = QtWidgets.QWidget()
+        widget_scroll.setLayout(layout_scroll)
+
+        #SCROLL AREA
+        scroll_area = QtWidgets.QScrollArea()
+        scroll_area.setStyleSheet(estilos.estilos_sroll_area())
+        #scroll_area.setGraphicsEffect(shadow)
+
+
+        widget_paso_1 = QtWidgets.QWidget()
+        widget_paso_1.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_1.layout().setAlignment(Qt.AlignTop)
+        widget_paso_1.layout().setSpacing(8)
+
+        label_paso_1_titulo = QtWidgets.QLabel("Paso 1:")
+        label_paso_1_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_1_instruccion = QtWidgets.QLabel(
+            "Abrir el archivo csv que desea importar al software con un programa de hoja de cálculo, por ejemplo Excel.")
+        label_paso_1_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_1 = QtGui.QPixmap(':/Static/img/paso1.png')
+        lab1 = QtWidgets.QLabel()
+        lab1.setPixmap(img_paso_1)
+
+        widget_paso_1.layout().addWidget(label_paso_1_titulo)
+        widget_paso_1.layout().addWidget(label_paso_1_instruccion)
+        widget_paso_1.layout().addWidget(lab1)
+
+        #PASO 2
+        widget_paso_2 = QtWidgets.QWidget()
+        widget_paso_2.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_2.layout().setAlignment(Qt.AlignTop)
+        widget_paso_2.layout().setSpacing(8)
+
+        label_paso_2_titulo = QtWidgets.QLabel("Paso 2:")
+        label_paso_2_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_2_instruccion = QtWidgets.QLabel(
+            "Identificar el número de la fila donde se encuentran las columnas con la información obtenida por los sensores. En este ejemplo como se\npuede apreciar en la siguiente imagen las columnas se encuentran en la fila 789.")
+        label_paso_2_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_2 = QtGui.QPixmap(':/Static/img/paso2.png')
+        lab2 = QtWidgets.QLabel()
+        lab2.setPixmap(img_paso_2)
+
+        widget_paso_2.layout().addWidget(label_paso_2_titulo)
+        widget_paso_2.layout().addWidget(label_paso_2_instruccion)
+        widget_paso_2.layout().addWidget(lab2)
+
+        #PASO 3
+        widget_paso_3 = QtWidgets.QWidget()
+        widget_paso_3.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_3.layout().setAlignment(Qt.AlignTop)
+        widget_paso_3.layout().setSpacing(8)
+
+        label_paso_3_titulo = QtWidgets.QLabel("Paso 3:")
+        label_paso_3_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_3_instruccion = QtWidgets.QLabel(
+            'Hacer click en el menú "Configuración" que se encuentra en la esquina superior izquiera y seleccionar la opción "Archivos".')
+        label_paso_3_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_3 = QtGui.QPixmap(':/Static/img/paso3.png')
+        lab3 = QtWidgets.QLabel()
+        lab3.setPixmap(img_paso_3)
+
+        widget_paso_3.layout().addWidget(label_paso_3_titulo)
+        widget_paso_3.layout().addWidget(label_paso_3_instruccion)
+        widget_paso_3.layout().addWidget(lab3)
+
+        #PASO 4
+        widget_paso_4 = QtWidgets.QWidget()
+        widget_paso_4.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_4.layout().setAlignment(Qt.AlignTop)
+        widget_paso_4.layout().setSpacing(8)
+
+        label_paso_4_titulo = QtWidgets.QLabel("Paso 4:")
+        label_paso_4_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_4_instruccion = QtWidgets.QLabel(
+            'Al finalizar el Paso 3 se abrirá a continuación una ventana que contiene el campo "Nro. fila de columnas" con un número configurado\npor defecto, este indica al software en que fila comienzan las columnas con la información dentros de los archivos csv. En este ejemplo\nlas columnas se ubican en la fila número 789 (Paso 2), por lo tanto ingresamos este número en el campo y hacemos click en el botón\n"Aplicar".')
+        label_paso_4_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_4 = QtGui.QPixmap(':/Static/img/paso4.png')
+        lab4 = QtWidgets.QLabel()
+        lab4.setPixmap(img_paso_4)
+
+        widget_paso_4.layout().addWidget(label_paso_4_titulo)
+        widget_paso_4.layout().addWidget(label_paso_4_instruccion)
+        widget_paso_4.layout().addWidget(lab4)
+
+        #PASO 5
+        widget_paso_5 = QtWidgets.QWidget()
+        widget_paso_5.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_5.layout().setAlignment(Qt.AlignTop)
+        widget_paso_5.layout().setSpacing(8)
+
+        label_paso_5_titulo = QtWidgets.QLabel("Paso 5:")
+        label_paso_5_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_5_instruccion = QtWidgets.QLabel(
+            'Como resultado final se debe de obtener una lista de directorios en la sección izquierda del software, cada uno de estos contiene las señales\ncorrespondientes a cada EMG.')
+        label_paso_5_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_5 = QtGui.QPixmap(':/Static/img/paso5.png')
+        lab5 = QtWidgets.QLabel()
+        lab5.setPixmap(img_paso_5)
+
+        widget_paso_5.layout().addWidget(label_paso_5_titulo)
+        widget_paso_5.layout().addWidget(label_paso_5_instruccion)
+        widget_paso_5.layout().addWidget(lab5)
+
+
+
+        layout_scroll.addWidget(widget_paso_1)
+        layout_scroll.addWidget(widget_paso_2)
+        layout_scroll.addWidget(widget_paso_3)
+        layout_scroll.addWidget(widget_paso_4)
+        layout_scroll.addWidget(widget_paso_5)
+
+
+        scroll_area.setWidget(widget_scroll)
+        self.layout().addWidget(scroll_area, 10)
+
+
+
+        #VideoPlayer("C:/Users/Leo/Downloads/leoxdd.avi", self)
+        #self.video = QVideoWidget(self)
+        #self.video.resize(500, 500)
+        #self.video.move(0, 0)
+        #self.player = QMediaPlayer(self)
+        #self.player.setVideoOutput(self.video)
+        #self.player.setMedia(QMediaContent(QUrl.fromLocalFile("C:/Users/Leo/Downloads/leoxdd.avi")))
+        #self.player.setPosition(0)  # to start at the beginning of the video every time
+        #self.video.show()
+        #self.player.play()
+
+
+def load_fonts_from_dir(directory):
+    families = set()
+    for fi in QDir(directory).entryInfoList(["*.ttf"]):
+        _id = QtGui.QFontDatabase.addApplicationFont(fi.absoluteFilePath())
+        families |= set(QtGui.QFontDatabase.applicationFontFamilies(_id))
+    return families
