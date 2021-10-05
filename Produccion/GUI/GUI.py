@@ -318,7 +318,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_checkbox_butter.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox_butter.layout().setSpacing(0)
 
-        label_checkbox = QtWidgets.QLabel("Aplicar Filtro Butterworth")
+        label_checkbox = QtWidgets.QLabel("Aplicar Filtro en la grafica")
         label_checkbox.setFont(font)
         label_checkbox.setStyleSheet("margin:0px;")
 
@@ -476,8 +476,13 @@ class ventana_filtro(QtWidgets.QDialog):
 
         self.msgBox = QMessageBox(self)
         self.msgBox.setText("Filtros aplicados correctamente.")
-        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setWindowTitle("Filtrado")
         self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+        self.msgBox2 = QMessageBox(self)
+        self.msgBox2.setText("Error al aplicar filtro, puede que algun parametro este mal.")
+        self.msgBox2.setWindowTitle("Error")
+        self.msgBox2.setStandardButtons(QMessageBox.Ok)
 
     def showTime(self):
         self.msgBox.close()
@@ -569,7 +574,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         mostrarButter = self.checkbox_butter.isChecked()
         mostrarFFT = self.checkbox_fft.isChecked()
-
+        errorEnFiltro = False
         if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
@@ -580,6 +585,7 @@ class ventana_filtro(QtWidgets.QDialog):
                         if grafica is not None:
                             if mostrarButter:
                                 grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+                                errorEnFiltro = grafica.chequearErrorEnFiltro()
                             if mostrarFFT:
                                 grafica.set_fastfouriertransform(Filtro_FFT(n, norm))
 
@@ -587,8 +593,12 @@ class ventana_filtro(QtWidgets.QDialog):
                 self.parent.listar_graficas(True)
                 self.hide()
                 self.timer.start(1550)
-                self.msgBox.exec_()
-                self.close()
+                if not errorEnFiltro:
+                    self.msgBox.exec_()
+                    self.close()
+                else:
+                    self.msgBox2.exec_()
+
 
     def get_grafica(self, id_grafica):
         grafica_aux = None

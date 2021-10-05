@@ -1,3 +1,4 @@
+from Helpers import filtersHelper
 from Modelo.Filtro import Filtro
 import math
 
@@ -68,6 +69,12 @@ class Grafica:
 
     def set_filtro(self, filtro):
         self.__filtro = filtro
+    def chequearErrorEnFiltro(self):
+        filter_signal = filtersHelper.butterFilter(self.__archivo[self.get_nombre_columna_grafica()], self.__filtro)
+        if filter_signal[1] == "error":
+            return True
+        else:
+            return False
 
     def get_recorte(self):
         return self.__recorte
