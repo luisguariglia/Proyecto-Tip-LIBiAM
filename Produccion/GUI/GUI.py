@@ -1666,10 +1666,10 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_btn.layout().setAlignment(Qt.AlignLeft)
         wid_btn.layout().addWidget(btn_aplicar_a_todas)
 
-        btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
-        btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
-        btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
-        wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
+        #btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
+        #btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
+        #btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        #wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
@@ -1764,7 +1764,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 
         #   infooo
         label_info = QtWidgets.QLabel("<br>"
-                                      "Se toman los valores de voltaje desde inicio hasta fin y se hace un promedio para poner la grafica lo mas cerca del 0 posible"
+                                      "Se toman los valores de voltaje desde inicio hasta fin y se hace un promedio para poner toda la grafica lo mas cerca del 0 posible"
                                       "<br>"
                                       "Para dejar la grafica original se deben de poner los valores de inicio y fin en 0"
                                       "<br>")
@@ -1783,9 +1783,9 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
         wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
 
-        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
         btn_aplicar.clicked.connect(self.aplicar_cambios)
-        btn_aplicar.setFixedWidth(80)
+        btn_aplicar.setFixedWidth(180)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)

@@ -1671,11 +1671,15 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
     elif not cortando and cortandoVarios:
         ventanaCortarInstance.setRecorte(min, max)
         num=0
+        seleccionoAlguna = False
         for aux in listaDeAxes:
             if aux == graficaActual:
                 ventanaCortarInstance.seleccionar_grafica(num)
+                seleccionoAlguna=True
                 break
             num=num+1
+        if not seleccionoAlguna:
+                ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
