@@ -318,7 +318,7 @@ class ventana_filtro(QtWidgets.QDialog):
         wid_checkbox_butter.layout().setAlignment(Qt.AlignLeft)
         wid_checkbox_butter.layout().setSpacing(0)
 
-        label_checkbox = QtWidgets.QLabel("Aplicar Filtro Butterworth")
+        label_checkbox = QtWidgets.QLabel("Aplicar Filtro en la grafica")
         label_checkbox.setFont(font)
         label_checkbox.setStyleSheet("margin:0px;")
 
@@ -476,8 +476,13 @@ class ventana_filtro(QtWidgets.QDialog):
 
         self.msgBox = QMessageBox(self)
         self.msgBox.setText("Filtros aplicados correctamente.")
-        self.msgBox.setWindowTitle("ABS")
+        self.msgBox.setWindowTitle("Filtrado")
         self.msgBox.setStandardButtons(QMessageBox.Ok)
+
+        self.msgBox2 = QMessageBox(self)
+        self.msgBox2.setText("Error al aplicar filtro, puede que algun parametro este mal.")
+        self.msgBox2.setWindowTitle("Error")
+        self.msgBox2.setStandardButtons(QMessageBox.Ok)
 
     def showTime(self):
         self.msgBox.close()
@@ -569,7 +574,7 @@ class ventana_filtro(QtWidgets.QDialog):
 
         mostrarButter = self.checkbox_butter.isChecked()
         mostrarFFT = self.checkbox_fft.isChecked()
-
+        errorEnFiltro = False
         if self.graficas is not None and seguir:
             cant_hijos = self.tree_graficas.topLevelItemCount()
             for i in range(cant_hijos):
@@ -580,6 +585,7 @@ class ventana_filtro(QtWidgets.QDialog):
                         if grafica is not None:
                             if mostrarButter:
                                 grafica.set_filtro(Filtro(order, array_a, array_b, btype, analog))
+                                errorEnFiltro = grafica.chequearErrorEnFiltro()
                             if mostrarFFT:
                                 grafica.set_fastfouriertransform(Filtro_FFT(n, norm))
 
@@ -587,8 +593,12 @@ class ventana_filtro(QtWidgets.QDialog):
                 self.parent.listar_graficas(True)
                 self.hide()
                 self.timer.start(1550)
-                self.msgBox.exec_()
-                self.close()
+                if not errorEnFiltro:
+                    self.msgBox.exec_()
+                    self.close()
+                else:
+                    self.msgBox2.exec_()
+
 
     def get_grafica(self, id_grafica):
         grafica_aux = None
@@ -1666,10 +1676,10 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_btn.layout().setAlignment(Qt.AlignLeft)
         wid_btn.layout().addWidget(btn_aplicar_a_todas)
 
-        btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
-        btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
-        btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
-        wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
+        #btn_rectificar_todas_las_graficas = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
+        #btn_rectificar_todas_las_graficas.clicked.connect(self.rectificar_todas_las_graficas)
+        #btn_rectificar_todas_las_graficas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        #wid_btn.layout().addWidget(btn_rectificar_todas_las_graficas)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
         wid_izquierda.layout().addWidget(wid_btn, 1)
@@ -1764,7 +1774,7 @@ class ventana_rectificar(QtWidgets.QDialog):
 
         #   infooo
         label_info = QtWidgets.QLabel("<br>"
-                                      "Se toman los valores de voltaje desde inicio hasta fin y se hace un promedio para poner la grafica lo mas cerca del 0 posible"
+                                      "Se toman los valores de voltaje desde inicio hasta fin y se hace un promedio para poner toda la grafica lo mas cerca del 0 posible"
                                       "<br>"
                                       "Para dejar la grafica original se deben de poner los valores de inicio y fin en 0"
                                       "<br>")
@@ -1783,9 +1793,9 @@ class ventana_rectificar(QtWidgets.QDialog):
         wid_btn_aplicar.layout().setContentsMargins(0, 0, 0, 0)
         wid_btn_aplicar.layout().setAlignment(Qt.AlignRight)
 
-        btn_aplicar = QtWidgets.QPushButton("APLICAR")
+        btn_aplicar = QtWidgets.QPushButton("RECTIFICAR TODA LA GRÁFICA")
         btn_aplicar.clicked.connect(self.aplicar_cambios)
-        btn_aplicar.setFixedWidth(80)
+        btn_aplicar.setFixedWidth(180)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
         wid_btn_aplicar.layout().addWidget(btn_aplicar)

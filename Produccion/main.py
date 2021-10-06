@@ -775,11 +775,14 @@ class ventana_principal(QWidget):
 
     def setFiltros(self, datos, datosFiltrado, datosFFT):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
+        if filter_signal[1] == "error":  #caso que el fitro dio error en el try
+            filter_signal=datos
+        else:
+            filter_signal = filter_signal[0]
+
         #Chequeo si está el fft para aplicarlo también.
         filter_signal = filtersHelper.fft(filter_signal, datosFFT)
-        #filter_signal = filtersHelper.fft(filter_signal, datosFiltrado)
-        #filter_signal = filtersHelper.butterFilterDos(filter_signal)
-        #filter_signal = filtersHelper.RMS(filter_signal)
+
         return filter_signal
 
     def recortarGraficos(self, datos, tiempo, datosRecorte):
@@ -1671,11 +1674,15 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
     elif not cortando and cortandoVarios:
         ventanaCortarInstance.setRecorte(min, max)
         num=0
+        seleccionoAlguna = False
         for aux in listaDeAxes:
             if aux == graficaActual:
                 ventanaCortarInstance.seleccionar_grafica(num)
+                seleccionoAlguna=True
                 break
             num=num+1
+        if not seleccionoAlguna:
+                ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
