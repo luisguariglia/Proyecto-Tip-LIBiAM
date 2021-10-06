@@ -1617,7 +1617,7 @@ class ventana_principal(QWidget):
 
     def saveFileDialog(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+
         fileName, _ = QFileDialog.getSaveFileName(self, "Guardar .csv", "ejemplo.csv",
                                                   "*", options=options)
         if fileName:
