@@ -645,7 +645,7 @@ class ventana_principal(QWidget):
 
                 msg = QMessageBox(self)
                 msg.setWindowTitle("Error")
-                msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración opción Archivos.')
+                msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración -> Archivos.')
                 yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
                 #yes_button.clicked.disconnect()
                 #yes_button.clicked.connect(self.show_graph)
@@ -668,7 +668,7 @@ class ventana_principal(QWidget):
             self.archivito.agregar_electromiografias(frame_archivo)
 
             if len(self.archivito.get_electromiografias()) == 0:
-                QMessageBox.about(self, "Error", "Al pareceer el número de línea que especificó no es correcto")
+                QMessageBox.about(self, "Error", "Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto")
                 ventana_conf_linea_archivo(self).exec_()
                 if not self.seguir_proceso:
                     return
