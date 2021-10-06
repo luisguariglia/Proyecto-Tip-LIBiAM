@@ -2006,7 +2006,8 @@ class ventana_exportarVP(QtWidgets.QDialog):
         shadow = QtWidgets.QGraphicsDropShadowEffect(blurRadius=15, xOffset=1, yOffset=1)
         wid_izquierda.setGraphicsEffect(shadow)
 
-        # ESTILOS
+        # ESTILOSjgkkjg
+        #asd
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
 
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
