@@ -6,6 +6,7 @@ from PyQt5.QtCore import QSize, QEvent,QEventLoop,Qt,pyqtSignal,QPoint,QEasingCu
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QMessageBox
+import shutil
 import numpy as np
 import pandas
 import os
@@ -188,6 +189,14 @@ class ventana_principal(QWidget):
         confMenu.addAction(confArchivos)
         confMenu.addAction(confVistas)
 
+        confMenuAyuda = menubar.addMenu("Ayuda")
+
+        confManual = QAction("Descargar manual de usuario", self)
+        confManual.triggered.connect(self.descargar_manual)
+        confAcercaDe = QAction("Acerca de", self)
+
+        confMenuAyuda.addAction(confManual)
+        confMenuAyuda.addAction(confAcercaDe)
 
         #TOOLBAR
         self.widget_toolbar = QWidget()
@@ -373,6 +382,14 @@ class ventana_principal(QWidget):
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
+
+    def descargar_manual(self):
+        path = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+
+        if len(path) == 0:
+            return
+
+        shutil.copy2('./ManualPrueba.pdf', path)  # complete target filename given
 
     def eventFilter(self, source, event):
         if source == self.widget_der.tabBar() and \
