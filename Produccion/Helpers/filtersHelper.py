@@ -1,4 +1,5 @@
 import numpy.fft
+from PyQt5.QtWidgets import QMessageBox
 from scipy.signal import filtfilt
 import scipy
 import numpy as np
@@ -20,9 +21,15 @@ def butterFilter(signal, datosFiltrado: Filtro):
                                                                    datosFiltrado.get_array_B()], datosFiltrado.get_type(),
                                        analog=datosFiltrado.get_analog())
 
+        try:
+            scipy.signal.filtfilt(a, b, signal, axis=0)
+        except:
+            #print("error en aplicar filtro")
+            return [signal,"error"]
+
+        # si paso el try aplica el filtro a la variable y
         y = scipy.signal.filtfilt(a, b, signal, axis=0)
-        # ret = abs(y)
-        return y
+        return [y,""]
     return signal
 
 
