@@ -388,12 +388,15 @@ class ventana_principal(QWidget):
         self.widget_izq.layout().addWidget(self.treeView2, 4)
 
     def descargar_manual(self):
-        path = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        try:
+            path = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
 
-        if len(path) == 0:
-            return
+            if len(path) == 0:
+                return
 
-        shutil.copy2('./ManualPrueba.pdf', path)  # complete target filename given
+            shutil.copy2('./ManualPrueba.pdf', path)  # complete target filename given
+        except Exception as e:
+            QMessageBox.about(self,"Error", "No se encontró el manual de usuario en los archivos del programa")
 
     def eventFilter(self, source, event):
         if source == self.widget_der.tabBar() and \
