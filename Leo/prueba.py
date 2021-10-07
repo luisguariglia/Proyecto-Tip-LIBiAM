@@ -1,28 +1,39 @@
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication, QPushButton
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtWidgets import QWidget, QApplication, QPushButton, QLabel, QProgressBar, QLineEdit, QFileDialog
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QCursor
 import sys
-#"C:/Users/Leo/Downloads/leoxdd.avi"
-class VideoPlayer:
+class Window(QWidget):
+    def __init__(self):
+        super().__init__()
 
-    def __init__(self, path_video):
-        self.video = QVideoWidget()
-        self.video.resize(300, 300)
-        self.video.move(0, 0)
-        self.player = QMediaPlayer()
-        self.player.setVideoOutput(self.video)
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(path_video)))
+        self.title = "your_title"
 
-    def callback(self):
-        self.player.setPosition(0) # to start at the beginning of the video every time
-        self.video.show()
-        self.player.play()
+        self.screen_dim = (1600, 900)
+
+        self.width = 650
+        self.height = 400
+
+        self.left = int(self.screen_dim[0]/2 - self.width/2)
+        self.top = int(self.screen_dim[1]/2 - self.height/2)
+
+        self.init_window()
+
+    def init_window(self):
+        self.setWindowIcon(QtGui.QIcon('path_to_icon.png'))
+        self.setWindowTitle(self.title)
+        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setStyleSheet('background-color: rgb(52, 50, 51);')
+
+        self.create_layout()
+
+        self.show()
+
+    def create_layout(self):
+        self.button = QPushButton('Click Me', self)
+        self.button.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    v = VideoPlayer()
-    b = QPushButton('start')
-    b.clicked.connect(v.callback)
-    b.show()
-    sys.exit(app.exec_())
+
+    App = QApplication(sys.argv)
+    window = Window()
+    sys.exit(App.exec())

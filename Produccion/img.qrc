@@ -44,5 +44,17 @@
     <file>Static/img/paso3.png</file>
     <file>Static/img/paso4.png</file>
     <file>Static/img/paso5.png</file>
+    <file>Static/img/observacion_dsp.png</file>
+    <file>Static/img/paso1_dsp.png</file>
+    <file>Static/img/paso1_dsp_b.png</file>
+    <file>Static/img/paso1_dsp_c.png</file>
+    <file>Static/img/paso1_dsp_d.png</file>
+    <file>Static/img/paso1_dsp_f.png</file>
+    <file>Static/img/paso1_dsp_g.png</file>
+    <file>Static/img/paso1_dsp_h.png</file>
+    <file>Static/img/paso1_dsp_i.png</file>
+    <file>Static/img/paso1_dsp_j.png</file>
+    <file>Static/img/paso1_dsp_k.png</file>
+    <file>Static/img/paso1_dsp_l.png</file>
   </qresource>
 </RCC>

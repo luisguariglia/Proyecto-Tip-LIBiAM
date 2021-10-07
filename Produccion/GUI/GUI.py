@@ -3148,7 +3148,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(ventana_verayuda_despues_columnas, self).__init__()
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
-        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Ayuda - Abrir archivo csv")
         self.setFixedSize(900, 600)
         self.setLayout(QtWidgets.QVBoxLayout())
@@ -3170,19 +3170,70 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         scroll_area.setStyleSheet(estilos.estilos_sroll_area())
         # scroll_area.setGraphicsEffect(shadow)
 
+        #OBSERVACIÓN
+        widget_observacion = QtWidgets.QWidget()
+        widget_observacion.setLayout(QtWidgets.QVBoxLayout())
+        widget_observacion.layout().setAlignment(Qt.AlignTop)
+        widget_observacion.layout().setSpacing(8)
+
+        label_observacion = QtWidgets.QLabel("Observación:")
+        label_observacion.setStyleSheet("font: bold 13px;")
+
+        widget_label_instruccion = QtWidgets.QWidget()
+        widget_label_instruccion.setLayout(QtWidgets.QVBoxLayout())
+        widget_label_instruccion.layout().setAlignment(Qt.AlignTop)
+        widget_label_instruccion.layout().setContentsMargins(0, 0, 0, 0)
+        widget_label_instruccion.layout().setSpacing(1)
+
+        label_paso_1_instruccion_a = QtWidgets.QLabel(
+            'Si al abrirse la ventana de "Configuraciones de columnas de información" las columnas contienen números en su nombres como se puede')
+        label_paso_1_instruccion_a.setStyleSheet("font-size: 13px;")
+
+        widget_label_instruccion_b = QtWidgets.QWidget()
+        widget_label_instruccion_b.setLayout(QtWidgets.QHBoxLayout())
+        widget_label_instruccion_b.layout().setAlignment(Qt.AlignLeft)
+        widget_label_instruccion_b.layout().setContentsMargins(0, 0, 0, 0)
+        widget_label_instruccion_b.layout().setSpacing(8)
+
+        label_paso_1_instruccion_b = QtWidgets.QLabel(
+            'apreciar en la siguiente imagen, significa que el número de fila no se configuró correctamente, consulte la siguiente guía.')
+        label_paso_1_instruccion_b.setStyleSheet("font-size: 13px;")
+
+        btn_ver_guia = QtWidgets.QPushButton()
+        btn_ver_guia.setText("Consultar guía")
+        btn_ver_guia.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_ver_guia.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_ver_guia.clicked.connect(self.xdd)
+
+        widget_label_instruccion_b.layout().addWidget(label_paso_1_instruccion_b)
+        widget_label_instruccion_b.layout().addWidget(btn_ver_guia)
+
+        widget_label_instruccion.layout().addWidget(label_paso_1_instruccion_a)
+        widget_label_instruccion.layout().addWidget(widget_label_instruccion_b)
+
+        img_observacion = QtGui.QPixmap('Static/img/observacion_dsp.png')
+        lab_img_obs = QtWidgets.QLabel()
+        lab_img_obs.setPixmap(img_observacion)
+
+        widget_observacion.layout().addWidget(label_observacion)
+        widget_observacion.layout().addWidget(widget_label_instruccion)
+        widget_observacion.layout().addWidget(lab_img_obs)
+
+
+        #PASO 1
         widget_paso_1 = QtWidgets.QWidget()
         widget_paso_1.setLayout(QtWidgets.QVBoxLayout())
         widget_paso_1.layout().setAlignment(Qt.AlignTop)
         widget_paso_1.layout().setSpacing(8)
 
-        label_paso_1_titulo = QtWidgets.QLabel("Paso 1:")
+        label_paso_1_titulo = QtWidgets.QLabel("Instrucciones:")
         label_paso_1_titulo.setStyleSheet("font: bold 13px;")
 
         label_paso_1_instruccion = QtWidgets.QLabel(
-            "Abrir el archivo csv que desea importar al software con un programa de hoja de cálculo, por ejemplo Excel.")
+            ' Al importar un archivo ".csv" diferente a los de Trigno se desplegará la siguiente ventana.')
         label_paso_1_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_1 = QtGui.QPixmap(':/Static/img/paso1.png')
+        img_paso_1 = QtGui.QPixmap('Static/img/paso1_dsp.png')
         lab1 = QtWidgets.QLabel()
         lab1.setPixmap(img_paso_1)
 
@@ -3200,14 +3251,14 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         label_paso_2_titulo.setStyleSheet("font: bold 13px;")
 
         label_paso_2_instruccion = QtWidgets.QLabel(
-            "Identificar el número de la fila donde se encuentran las columnas con la información obtenida por los sensores. En este ejemplo como se\npuede apreciar en la siguiente imagen las columnas se encuentran en la fila 789.")
+            "En la sección (1), si el usuario desea seleccionar las columnas del archivo debe hacer click sobre el botón “Seleccionar” (3).")
         label_paso_2_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_2 = QtGui.QPixmap(':/Static/img/paso2.png')
+        img_paso_2 = QtGui.QPixmap('Static/img/paso1_dsp_b.png')
         lab2 = QtWidgets.QLabel()
         lab2.setPixmap(img_paso_2)
 
-        widget_paso_2.layout().addWidget(label_paso_2_titulo)
+        #widget_paso_2.layout().addWidget(label_paso_2_titulo)
         widget_paso_2.layout().addWidget(label_paso_2_instruccion)
         widget_paso_2.layout().addWidget(lab2)
 
@@ -3221,14 +3272,14 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         label_paso_3_titulo.setStyleSheet("font: bold 13px;")
 
         label_paso_3_instruccion = QtWidgets.QLabel(
-            'Hacer click en el menú "Configuración" que se encuentra en la esquina superior izquiera y seleccionar la opción "Archivos".')
+            'Al hacer esto, se mostrará por cada columna, una casilla de verificación correspondiente, en la cual el usuario podrá seleccionar las que desee\nhaciendo click sobre la misma. (4)Si se desea deseleccionar todas las casillas marcadas, se debe hacer click en el botón de “Cancelar” (5).')
         label_paso_3_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_3 = QtGui.QPixmap(':/Static/img/paso3.png')
+        img_paso_3 = QtGui.QPixmap('Static/img/paso1_dsp_c.png')
         lab3 = QtWidgets.QLabel()
         lab3.setPixmap(img_paso_3)
 
-        widget_paso_3.layout().addWidget(label_paso_3_titulo)
+        #widget_paso_3.layout().addWidget(label_paso_3_titulo)
         widget_paso_3.layout().addWidget(label_paso_3_instruccion)
         widget_paso_3.layout().addWidget(lab3)
 
@@ -3242,14 +3293,14 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         label_paso_4_titulo.setStyleSheet("font: bold 13px;")
 
         label_paso_4_instruccion = QtWidgets.QLabel(
-            'Al finalizar el Paso 3 se abrirá a continuación una ventana que contiene el campo "Nro. fila de columnas" con un número configurado\npor defecto, este indica al software en que fila comienzan las columnas con la información dentros de los archivos csv. En este ejemplo\nlas columnas se ubican en la fila número 789 (Paso 2), por lo tanto ingresamos este número en el campo y hacemos click en el botón\n"Aplicar".')
+            'Adicionalmente, si se desea trabajar con todos los datos del archivo, se debe clickear sobre el botón “seleccionar todas” (6). Al hacer esto, se\nmarcarán automáticamente todas las casillas de verificación que no estén seleccionadas (7). Es debido a esto que el usuario no deberá\nseleccionarlas una por una. ')
         label_paso_4_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_4 = QtGui.QPixmap(':/Static/img/paso4.png')
+        img_paso_4 = QtGui.QPixmap('Static/img/paso1_dsp_d.png')
         lab4 = QtWidgets.QLabel()
         lab4.setPixmap(img_paso_4)
 
-        widget_paso_4.layout().addWidget(label_paso_4_titulo)
+        #widget_paso_4.layout().addWidget(label_paso_4_titulo)
         widget_paso_4.layout().addWidget(label_paso_4_instruccion)
         widget_paso_4.layout().addWidget(lab4)
 
@@ -3263,27 +3314,221 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         label_paso_5_titulo.setStyleSheet("font: bold 13px;")
 
         label_paso_5_instruccion = QtWidgets.QLabel(
-            'Como resultado final se debe de obtener una lista de directorios en la sección izquierda del software, cada uno de estos contiene las señales\ncorrespondientes a cada EMG.')
+            '''En la segunda sección (2), si se desean quitar las columnas seleccionadas, se debe clickear sobre el botón “Filtrar Seleccionados” (4).
+Por otro lado, si quiere quitar las no seleccionadas se debe clickear en “Filtrar no seleccionados” (5).
+Además, se pueden filtrar aquellas columnas del archivo que en su nombre contengan los caracteres ingresados en la caja de texto (6).
+Si se desea conservar aquellas columnas que cumplen con lo ingresado en el paso anterior, se debe desactivar la casilla de verificación
+llamada “Eliminar coincidencias”, y de lo contrario, se debe dejar dicha casilla verificada (7).
+Para que el filtro por caracteres se aplique sobre las columnas, se debe clickear sobre el botón “Filtrar” (8).
+
+Luego de realizar estos pasos, el usuario debe clickear sobre el botón “Siguiente” para poder continuar hacia la siguiente ventana de configuración.
+''')
         label_paso_5_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_5 = QtGui.QPixmap(':/Static/img/paso5.png')
+        img_paso_5 = QtGui.QPixmap('Static/img/paso1_dsp_e.png')
         lab5 = QtWidgets.QLabel()
         lab5.setPixmap(img_paso_5)
 
-        widget_paso_5.layout().addWidget(label_paso_5_titulo)
+        #widget_paso_5.layout().addWidget(label_paso_5_titulo)
         widget_paso_5.layout().addWidget(label_paso_5_instruccion)
         widget_paso_5.layout().addWidget(lab5)
 
+        #PASO 6
+
+        widget_paso_6 = QtWidgets.QWidget()
+        widget_paso_6.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_6.layout().setAlignment(Qt.AlignTop)
+        widget_paso_6.layout().setSpacing(8)
+
+        label_paso_6_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_6_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_6_instruccion = QtWidgets.QLabel(
+            '''Luego de realizar el paso (9), se mantendrá la sección izquierda con las columnas de archivos filtradas, y se mostrará una nueva sección
+llamada “Directorios”. En ella, el usuario podrá crear directorios donde se contendrán las columnas que el usuario desee. Esta función es
+útil a la hora de organizar todas las columnas que se van a importar. Para ello, deberá crear un nuevo directorio haciendo click sobre el
+botón “Nuevo directorio” (10)
+''')
+        label_paso_6_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_6 = QtGui.QPixmap('Static/img/paso1_dsp_f.png')
+        lab6 = QtWidgets.QLabel()
+        lab6.setPixmap(img_paso_6)
+
+        # widget_paso_6.layout().addWidget(label_paso_6_titulo)
+        widget_paso_6.layout().addWidget(label_paso_6_instruccion)
+        widget_paso_6.layout().addWidget(lab6)
+
+        #PASO 7
+
+        widget_paso_7 = QtWidgets.QWidget()
+        widget_paso_7.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_7.layout().setAlignment(Qt.AlignTop)
+        widget_paso_7.layout().setSpacing(8)
+
+        label_paso_7_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_7_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_7_instruccion = QtWidgets.QLabel(
+            '''hacer esto, se desplegará la siguiente ventana, en la que se podrá escoger un nombre para el directorio a crear (11).
+Para finalizar, se debe clickear sobre el botón “Confirmar” (12).
+''')
+        label_paso_7_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_7 = QtGui.QPixmap('Static/img/paso1_dsp_g.png')
+        lab7 = QtWidgets.QLabel()
+        lab7.setPixmap(img_paso_7)
+
+        # widget_paso_7.layout().addWidget(label_paso_7_titulo)
+        widget_paso_7.layout().addWidget(label_paso_7_instruccion)
+        widget_paso_7.layout().addWidget(lab7)
+
+        #PASO 8
+        widget_paso_8 = QtWidgets.QWidget()
+        widget_paso_8.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_8.layout().setAlignment(Qt.AlignTop)
+        widget_paso_8.layout().setSpacing(8)
+
+        label_paso_8_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_8_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_8_instruccion = QtWidgets.QLabel(
+            '''Una vez se tenga el directorio creado, el usuario deberá agregar columnas al mismo para poder confirmar su selección. Para realizar esto, se
+debe hacer click derecho sobre el directorio (13), lo cual desplegará el siguiente menú (14).
+
+En este menú, se podrán realizar las siguientes acciones para agregar las columnas del archivo seleccionadas al directorio:
+    1.  Importar columnas seleccionadas: Al hacer click sobre esta opción, se añadirán todas las columnas que se 
+         encuentren seleccionadas dentro del directorio.
+    2.  Importar rango de columnas: Se deben seleccionar únicamente 2 casillas de verificación de la sección de 
+         columnas del archivo, y se añadirán al directorio todas las que estén entre ese rango, incluyendo las que se seleccionaron.
+    3.  Eliminar columnas: Elimina todas las columnas que se encuentren dentro del directorio.
+    4.  Eliminar directorio: Remueve el directorio creado y todas las columnas que este contenga.
+''')
+        label_paso_8_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_8 = QtGui.QPixmap('Static/img/paso1_dsp_h.png')
+        lab8 = QtWidgets.QLabel()
+        lab8.setPixmap(img_paso_8)
+
+        #widget_paso_8.layout().addWidget(label_paso_8_titulo)
+        widget_paso_8.layout().addWidget(label_paso_8_instruccion)
+        widget_paso_8.layout().addWidget(lab8)
+
+        #PASO 9
+
+        widget_paso_9 = QtWidgets.QWidget()
+        widget_paso_9.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_9.layout().setAlignment(Qt.AlignTop)
+        widget_paso_9.layout().setSpacing(8)
+
+        label_paso_9_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_9_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_9_instruccion = QtWidgets.QLabel(
+            '''     5.  Cambiar nombre: Si por alguna razón el usuario desea cambiar el nombre del directorio creado anteriormente, al hacer click sobre
+          esta opción se muestra la siguiente pantalla en donde se deberá escribir el nuevo nombre del directorio (5.1) y luego se tendrá que clickear
+          sobre el botón “Confirmar” para aplicar los cambios (5.2). ''')
+        label_paso_9_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_9 = QtGui.QPixmap('Static/img/paso1_dsp_i.png')
+        lab9 = QtWidgets.QLabel()
+        lab9.setPixmap(img_paso_9)
+
+        # widget_paso_9.layout().addWidget(label_paso_9_titulo)
+        widget_paso_9.layout().addWidget(label_paso_9_instruccion)
+        widget_paso_9.layout().addWidget(lab9)
+
+        #PASO 10
+        widget_paso_10 = QtWidgets.QWidget()
+        widget_paso_10.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_10.layout().setAlignment(Qt.AlignTop)
+        widget_paso_10.layout().setSpacing(8)
+
+        label_paso_10_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_10_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_10_instruccion = QtWidgets.QLabel(
+            '''Cabe destacar que una vez agregadas las columnas a un directorio, si por determinado motivo el usuario lo desea, se pueden eliminar,
+haciendo click derecho sobre una de ellas y luego en “Eliminar” (15).''')
+
+        label_paso_10_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_10 = QtGui.QPixmap('Static/img/paso1_dsp_j.png')
+        lab10 = QtWidgets.QLabel()
+        lab10.setPixmap(img_paso_10)
+
+        # widget_paso_10.layout().addWidget(label_paso_10_titulo)
+        widget_paso_10.layout().addWidget(label_paso_10_instruccion)
+        widget_paso_10.layout().addWidget(lab10)
+
+        #PASO 11
+
+        widget_paso_11 = QtWidgets.QWidget()
+        widget_paso_11.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_11.layout().setAlignment(Qt.AlignTop)
+        widget_paso_11.layout().setSpacing(8)
+
+        label_paso_11_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_11_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_11_instruccion = QtWidgets.QLabel(
+            '''Por último, para confirmar los cambios, se deberá hacer click sobre el botón “Confirmar” (16)''')
+
+        label_paso_11_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_11 = QtGui.QPixmap('Static/img/paso1_dsp_k.png')
+        lab11 = QtWidgets.QLabel()
+        lab11.setPixmap(img_paso_11)
+
+        # widget_paso_11.layout().addWidget(label_paso_11_titulo)
+        widget_paso_11.layout().addWidget(label_paso_11_instruccion)
+        widget_paso_11.layout().addWidget(lab11)
+
+        #PASO 12
+        widget_paso_12 = QtWidgets.QWidget()
+        widget_paso_12.setLayout(QtWidgets.QVBoxLayout())
+        widget_paso_12.layout().setAlignment(Qt.AlignTop)
+        widget_paso_12.layout().setSpacing(8)
+
+        label_paso_12_titulo = QtWidgets.QLabel("Paso 6:")
+        label_paso_12_titulo.setStyleSheet("font: bold 13px;")
+
+        label_paso_12_instruccion = QtWidgets.QLabel(
+            '''Luego de realizar todos los pasos mencionados anteriormente se mostrará en el panel de archivos “.csv” ubicado en la sección izquierda de
+la pantalla principal, el siguiente resultado, es decir, los directorios creados y las columnas que fueron insertadas en los mismos.
+A continuación se podrán graficar dichas columnas.
+''')
+
+        label_paso_12_instruccion.setStyleSheet("font-size: 13px;")
+
+        img_paso_12 = QtGui.QPixmap('Static/img/paso1_dsp_l.png')
+        lab12 = QtWidgets.QLabel()
+        lab12.setPixmap(img_paso_12)
+
+        # widget_paso_12.layout().addWidget(label_paso_12_titulo)
+        widget_paso_12.layout().addWidget(label_paso_12_instruccion)
+        widget_paso_12.layout().addWidget(lab12)
+
+        #SE AGREGA TODOS LOS WIDGET
+        layout_scroll.addWidget(widget_observacion)
         layout_scroll.addWidget(widget_paso_1)
         layout_scroll.addWidget(widget_paso_2)
         layout_scroll.addWidget(widget_paso_3)
         layout_scroll.addWidget(widget_paso_4)
         layout_scroll.addWidget(widget_paso_5)
+        layout_scroll.addWidget(widget_paso_6)
+        layout_scroll.addWidget(widget_paso_7)
+        layout_scroll.addWidget(widget_paso_8)
+        layout_scroll.addWidget(widget_paso_9)
+        layout_scroll.addWidget(widget_paso_10)
+        layout_scroll.addWidget(widget_paso_11)
+        layout_scroll.addWidget(widget_paso_12)
 
         scroll_area.setWidget(widget_scroll)
         self.layout().addWidget(scroll_area, 10)
 
-
+    def xdd(self):
+        ventana_verayuda_antes_columnas(self).exec_()
 
 def load_fonts_from_dir(directory):
     families = set()

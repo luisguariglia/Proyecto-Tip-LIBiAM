@@ -562,4 +562,21 @@ QTabBar::tab {
 }
 
     """
+def estilos_btn_ver_guia():
+    return """
+        QPushButton{
+            color:#0d6efd;
+            border:none;
+            padding-top:3px;
+            font-size:13px;
+       
+        }
+        
+        QPushButton::hover{
+            
+            text-decoration: underline;
+        }
+    
+    """
+
 fuenteParametros = ("Open Sans", "Regular", 10)
