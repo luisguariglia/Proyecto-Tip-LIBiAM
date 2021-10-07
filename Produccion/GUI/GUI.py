@@ -3211,7 +3211,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
         widget_label_instruccion.layout().addWidget(label_paso_1_instruccion_a)
         widget_label_instruccion.layout().addWidget(widget_label_instruccion_b)
 
-        img_observacion = QtGui.QPixmap('Static/img/observacion_dsp.png')
+        img_observacion = QtGui.QPixmap(':/Static/img/observacion_dsp.png')
         lab_img_obs = QtWidgets.QLabel()
         lab_img_obs.setPixmap(img_observacion)
 
@@ -3233,7 +3233,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
             ' Al importar un archivo ".csv" diferente a los de Trigno se desplegará la siguiente ventana.')
         label_paso_1_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_1 = QtGui.QPixmap('Static/img/paso1_dsp.png')
+        img_paso_1 = QtGui.QPixmap(':/Static/img/paso1_dsp.png')
         lab1 = QtWidgets.QLabel()
         lab1.setPixmap(img_paso_1)
 
@@ -3254,7 +3254,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
             "En la sección (1), si el usuario desea seleccionar las columnas del archivo debe hacer click sobre el botón “Seleccionar” (3).")
         label_paso_2_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_2 = QtGui.QPixmap('Static/img/paso1_dsp_b.png')
+        img_paso_2 = QtGui.QPixmap(':/Static/img/paso1_dsp_b.png')
         lab2 = QtWidgets.QLabel()
         lab2.setPixmap(img_paso_2)
 
@@ -3275,7 +3275,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
             'Al hacer esto, se mostrará por cada columna, una casilla de verificación correspondiente, en la cual el usuario podrá seleccionar las que desee\nhaciendo click sobre la misma. (4)Si se desea deseleccionar todas las casillas marcadas, se debe hacer click en el botón de “Cancelar” (5).')
         label_paso_3_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_3 = QtGui.QPixmap('Static/img/paso1_dsp_c.png')
+        img_paso_3 = QtGui.QPixmap(':/Static/img/paso1_dsp_c.png')
         lab3 = QtWidgets.QLabel()
         lab3.setPixmap(img_paso_3)
 
@@ -3296,7 +3296,7 @@ class ventana_verayuda_despues_columnas(QtWidgets.QDialog):
             'Adicionalmente, si se desea trabajar con todos los datos del archivo, se debe clickear sobre el botón “seleccionar todas” (6). Al hacer esto, se\nmarcarán automáticamente todas las casillas de verificación que no estén seleccionadas (7). Es debido a esto que el usuario no deberá\nseleccionarlas una por una. ')
         label_paso_4_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_4 = QtGui.QPixmap('Static/img/paso1_dsp_d.png')
+        img_paso_4 = QtGui.QPixmap(':/Static/img/paso1_dsp_d.png')
         lab4 = QtWidgets.QLabel()
         lab4.setPixmap(img_paso_4)
 
@@ -3325,7 +3325,7 @@ Luego de realizar estos pasos, el usuario debe clickear sobre el botón “Sigui
 ''')
         label_paso_5_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_5 = QtGui.QPixmap('Static/img/paso1_dsp_e.png')
+        img_paso_5 = QtGui.QPixmap(':/Static/img/paso1_dsp_e.png')
         lab5 = QtWidgets.QLabel()
         lab5.setPixmap(img_paso_5)
 
@@ -3351,7 +3351,7 @@ botón “Nuevo directorio” (10)
 ''')
         label_paso_6_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_6 = QtGui.QPixmap('Static/img/paso1_dsp_f.png')
+        img_paso_6 = QtGui.QPixmap(':/Static/img/paso1_dsp_f.png')
         lab6 = QtWidgets.QLabel()
         lab6.setPixmap(img_paso_6)
 
@@ -3375,7 +3375,7 @@ Para finalizar, se debe clickear sobre el botón “Confirmar” (12).
 ''')
         label_paso_7_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_7 = QtGui.QPixmap('Static/img/paso1_dsp_g.png')
+        img_paso_7 = QtGui.QPixmap(':/Static/img/paso1_dsp_g.png')
         lab7 = QtWidgets.QLabel()
         lab7.setPixmap(img_paso_7)
 
@@ -3406,7 +3406,7 @@ En este menú, se podrán realizar las siguientes acciones para agregar las colu
 ''')
         label_paso_8_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_8 = QtGui.QPixmap('Static/img/paso1_dsp_h.png')
+        img_paso_8 = QtGui.QPixmap(':/Static/img/paso1_dsp_h.png')
         lab8 = QtWidgets.QLabel()
         lab8.setPixmap(img_paso_8)
 
@@ -3430,7 +3430,7 @@ En este menú, se podrán realizar las siguientes acciones para agregar las colu
           sobre el botón “Confirmar” para aplicar los cambios (5.2). ''')
         label_paso_9_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_9 = QtGui.QPixmap('Static/img/paso1_dsp_i.png')
+        img_paso_9 = QtGui.QPixmap(':/Static/img/paso1_dsp_i.png')
         lab9 = QtWidgets.QLabel()
         lab9.setPixmap(img_paso_9)
 
@@ -3453,7 +3453,7 @@ haciendo click derecho sobre una de ellas y luego en “Eliminar” (15).''')
 
         label_paso_10_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_10 = QtGui.QPixmap('Static/img/paso1_dsp_j.png')
+        img_paso_10 = QtGui.QPixmap(':/Static/img/paso1_dsp_j.png')
         lab10 = QtWidgets.QLabel()
         lab10.setPixmap(img_paso_10)
 
@@ -3476,7 +3476,7 @@ haciendo click derecho sobre una de ellas y luego en “Eliminar” (15).''')
 
         label_paso_11_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_11 = QtGui.QPixmap('Static/img/paso1_dsp_k.png')
+        img_paso_11 = QtGui.QPixmap(':/Static/img/paso1_dsp_k.png')
         lab11 = QtWidgets.QLabel()
         lab11.setPixmap(img_paso_11)
 
@@ -3501,7 +3501,7 @@ A continuación se podrán graficar dichas columnas.
 
         label_paso_12_instruccion.setStyleSheet("font-size: 13px;")
 
-        img_paso_12 = QtGui.QPixmap('Static/img/paso1_dsp_l.png')
+        img_paso_12 = QtGui.QPixmap(':/Static/img/paso1_dsp_l.png')
         lab12 = QtWidgets.QLabel()
         lab12.setPixmap(img_paso_12)
 

@@ -226,9 +226,11 @@ class ventana_principal(QWidget):
         wid_derecha_toolbar.layout().setAlignment(Qt.AlignLeft)
 
         #BOTONES WIDGET DERECHA TOOLBAR
-        btn_valores_en_bruto = QPushButton("Valores en bruto")
+        #Valores en bruto
+        btn_valores_en_bruto = QPushButton("Deshabilitado")
         btn_valores_en_bruto.clicked.connect(self.ventana_valoresEnBruto)
         btn_valores_en_bruto.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
+        btn_valores_en_bruto.setDisabled(True)
 
         btn_butter_filter = QPushButton("Filtrado")
         btn_butter_filter.clicked.connect(self.ventana_butter)
