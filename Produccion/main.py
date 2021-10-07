@@ -27,7 +27,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_valoresEnBruto,ventana_filtro,ventana_verayuda_antes_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
+from GUI.GUI import ventana_valoresEnBruto,ventana_filtro,ventana_verayuda_antes_columnas, ventana_verayuda_despues_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -685,8 +685,24 @@ class ventana_principal(QWidget):
             self.archivito.agregar_electromiografias(frame_archivo)
 
             if len(self.archivito.get_electromiografias()) == 0:
-                QMessageBox.about(self, "Error", "Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto")
+                #QMessageBox.about(self, "Error", "Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto")
+
+                msg = QMessageBox(self)
+                msg.setWindowTitle("Error")
+                msg.setText(
+                    'Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto')
+                yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
+                # yes_button.clicked.disconnect()
+                # yes_button.clicked.connect(self.show_graph)
+                # msg.setStyleSheet("background-color:red;")
+                msg.addButton(QMessageBox.Ok)
+                msg.exec_()
+
+                if msg.clickedButton() == yes_button:
+                    ventana_verayuda_despues_columnas(self).exec_()
+
                 ventana_conf_linea_archivo(self).exec_()
+
                 if not self.seguir_proceso:
                     return
                 else:
