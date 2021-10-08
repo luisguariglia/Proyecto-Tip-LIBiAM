@@ -149,9 +149,9 @@ class Grafica:
         self.__recortandoConClick = valor
 
     def aplicarValoresBrutos(self):
-        self.__filtro = None
+        self.__filtro = Filtro()
         self.__recorte = [0, 0]
-        self.__offset = [0, 0, True]  # [valor,valor,si se muestra o no]
+        self.__offset = [0, 0, False]  # [valor,valor,si se muestra o no]
         self.__valores_pico = None
         self.__integral = [0, 0, False]  # [valor,valor,si se muestra o no]
         self.__valores_pico_para_exportar = None

@@ -227,10 +227,10 @@ class ventana_principal(QWidget):
 
         #BOTONES WIDGET DERECHA TOOLBAR
         #Valores en bruto
-        btn_valores_en_bruto = QPushButton("Deshabilitado")
+        btn_valores_en_bruto = QPushButton("Valores en bruto")
         btn_valores_en_bruto.clicked.connect(self.ventana_valoresEnBruto)
         btn_valores_en_bruto.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
-        btn_valores_en_bruto.setDisabled(True)
+        #btn_valores_en_bruto.setDisabled(True)
 
         btn_butter_filter = QPushButton("Filtrado")
         btn_butter_filter.clicked.connect(self.ventana_butter)
@@ -1761,7 +1761,7 @@ class LineBuilder:
                                        xy=(event.xdata, event.ydata),
                                        xytext=(event.xdata, 0))
                     ancho = (self.grafica.getLimitesTiempo()[1]-self.grafica.getLimitesTiempo()[0])/1000
-                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 99999, color='r',alpha = 0.7)
+                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r',alpha = 0.5)
                     self.axes.add_patch(circle1)
                     self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
@@ -1769,7 +1769,7 @@ class LineBuilder:
                     self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
                                        xytext=(event.xdata, 0))
                     ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
-                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 99999, color='r',alpha = 0.7)
+                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r',alpha = 0.5)
                     self.axes.add_patch(circle1)
                     self.line.figure.canvas.draw()
                     self.line.figure.canvas.flush_events()
@@ -1786,7 +1786,8 @@ class LineBuilder:
                         self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
                                            xy=(event.xdata, event.ydata),
                                            xytext=(event.xdata, 0))
-                        circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                        ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
+                        circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r', alpha=0.5)
                         self.axes.add_patch(circle1)
                         self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
@@ -1794,7 +1795,8 @@ class LineBuilder:
                         max = event.xdata
                         self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
                                            xytext=(event.xdata, 0))
-                        circle1 = plt.Rectangle((event.xdata, 0), 0.015, 99999, color='r')
+                        ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
+                        circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r', alpha=0.5)
                         self.axes.add_patch(circle1)
                         self.line.figure.canvas.draw()
                         self.line.figure.canvas.flush_events()
@@ -1812,8 +1814,6 @@ def enter_axes(event):
     global cortandoVarios,graficaActual
     if cortandoVarios:
         graficaActual=sacarSegundoParametroAxesSubplot(str(event.inaxes))
-        event.canvas.draw()
-    else:
         event.canvas.draw()
 
 def leave_axes(event):
