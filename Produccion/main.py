@@ -1784,13 +1784,11 @@ class LineBuilder:
                         cont = 0
                         self.grafica.set_recortandoConClick(0)
                         setCortandoGraficoMain(False, cortandoVarios)
-
 def enter_axes(event):
     global cortandoVarios,graficaActual
     if cortandoVarios:
         graficaActual=sacarSegundoParametroAxesSubplot(str(event.inaxes))
         event.canvas.draw()
-
 def leave_axes(event):
     global graficaActual
     graficaActual= None
