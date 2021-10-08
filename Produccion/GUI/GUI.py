@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QCheckBox, QHBoxLayout, QMessageBox, QGroupBox
 from PyQt5.QtCore import QVariant, QUrl, QDir
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
@@ -1385,7 +1385,7 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_content_der.layout().addWidget(wid_desde)
         wid_content_der.layout().addWidget(wid_hasta)
         wid_content_der.layout().addWidget(btn_resetear)
-        wid_content_der.layout().addWidget(btn_RecortarConClicks)
+        #wid_content_der.layout().addWidget(btn_RecortarConClicks)
         wid_content_der.layout().addWidget(label_info)
 
         # BOTÓN APLICAR RECORTE
@@ -1402,7 +1402,13 @@ class ventana_cortar(QtWidgets.QDialog):
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
 
         wid_derecha.layout().addWidget(wid_content_der, 8)
-        wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
+
+        botones_layout = QtWidgets.QWidget()
+        botones_layout.setLayout(QtWidgets.QHBoxLayout())
+
+        botones_layout.layout().addWidget(btn_RecortarConClicks)
+        botones_layout.layout().addWidget(wid_btn_aplicar)
+        wid_derecha.layout().addWidget(botones_layout, 1)
 
         self.layout().addWidget(wid_izquierda, 5)
         self.layout().addWidget(wid_derecha, 5)
