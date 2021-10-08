@@ -1455,11 +1455,11 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
 
         #deselecciono todas
-        for i in range(cant_hijos):
-            hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, tree_widget_item_grafica):
-                if not hijo.checkState(0):
-                    hijo.setCheckState(0, Qt.Unchecked)
+        #for i in range(cant_hijos):
+            #hijo = self.tree_graficas.topLevelItem(i)
+            #if isinstance(hijo, tree_widget_item_grafica):
+                #if not hijo.checkState(0):
+                    #hijo.setCheckState(0, Qt.Unchecked)
 
         cont = 0
         for i in range(cant_hijos):

@@ -1702,7 +1702,7 @@ class ventana_principal(QWidget):
 
 #funcion principal para cortar haciendo click
 def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
-    global ventanaCortarInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes;
+    global ventanaCortarInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes
     cortandoVarios = varios
     if ventanaRecortar is not None:
         ventanaCortarInstance=ventanaRecortar
