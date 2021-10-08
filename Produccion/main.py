@@ -47,9 +47,10 @@ cant_graficas = 0
 cont = 0
 min=0
 max=0
-cortando=False
+cortando= "False"  #puede ser "integral" "True" "False" "rms"
 cortandoVarios=False
 ventanaCortarInstance= None
+ventanaIntegralInstance = None
 listaDeAxes = []
 graficaActual = None
 ##
@@ -1699,7 +1700,36 @@ class ventana_principal(QWidget):
 
     def setCortandoGrafico(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
         setCortandoGraficoMain(val,varios,ventanaRecortar)
-
+    def setIndicandoIntegral(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
+        setIndicandoIntegralMain(val,varios,ventanaRecortar)
+#funcion principal para cortar haciendo click
+def setIndicandoIntegralMain(val,varios,ventanaIntegral = None):
+    global ventanaIntegralInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes
+    cortandoVarios = varios
+    if ventanaIntegral is not None:
+        ventanaIntegralInstance=ventanaIntegral
+    cortando = val
+    if cortando=="False" and not cortandoVarios:   ##fin cortar uno solo
+        ventanaIntegralInstance.setRecorte(min,max)
+        ventanaIntegralInstance.seleccionar_todas_las_graficas()
+        datosCorrectos = ventanaIntegralInstance.aplicar_valores()
+        if not datosCorrectos:
+            ventanaIntegralInstance.show()
+    elif cortando=="False" and cortandoVarios:     #fin cortar con varios
+        ventanaIntegralInstance.setRecorte(min, max)
+        num=0
+        seleccionoAlguna = False
+        for aux in listaDeAxes:
+            if aux == graficaActual:
+                ventanaIntegralInstance.seleccionar_grafica(num)
+                seleccionoAlguna=True
+                break
+            num=num+1
+        if not seleccionoAlguna:   #para que no tire error
+                ventanaIntegralInstance.seleccionar_todas_las_graficas()
+        datosCorrectos = ventanaIntegralInstance.aplicar_valores()
+        if not datosCorrectos:
+            ventanaIntegralInstance.show()
 #funcion principal para cortar haciendo click
 def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
     global ventanaCortarInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes
@@ -1707,13 +1737,13 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
     if ventanaRecortar is not None:
         ventanaCortarInstance=ventanaRecortar
     cortando = val
-    if not cortando and not cortandoVarios:   ##fin cortar uno solo
+    if cortando =="False" and not cortandoVarios:   ##fin cortar uno solo
         ventanaCortarInstance.setRecorte(min,max)
         ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
-    elif not cortando and cortandoVarios:     #fin cortar con varios
+    elif cortando =="False" and cortandoVarios:     #fin cortar con varios
         ventanaCortarInstance.setRecorte(min, max)
         num=0
         seleccionoAlguna = False
@@ -1732,7 +1762,7 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
 #control para que no se haga otra cosa mientras se esta recortando
 def chequearSiEstaRecortando(self):
     global cortando;
-    if cortando:
+    if cortando!="False":
         QMessageBox.information(self, "Advertencia","Termine de recortar la grafica")
         return True
     else:
@@ -1749,41 +1779,47 @@ class LineBuilder:
         self.annotations = None
     def __call__(self, event):
         global cont,min,max,cortandoVarios,graficaActual,cortando
-        if cortando:
+        if cortando!="False":
             if not cortandoVarios:   #recortando una grafica
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     self.grafica.set_recortandoConClick(1)
                     min = event.xdata
                     cont = 1
-                    dibujarLineaEnGrafica(self.axes,event,'Inicio Recorte: ',self.grafica)
+                    dibujarLineaEnGrafica(self.axes,event,'Inicio: ',self.grafica)
                     self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
                     max = event.xdata
-                    dibujarLineaEnGrafica(self.axes,event,'Fin Recorte: ',self.grafica)
+                    dibujarLineaEnGrafica(self.axes,event,'Fin: ',self.grafica)
                     self.line.figure.canvas.draw()
                     self.line.figure.canvas.flush_events()
                     time.sleep(1)
                     cont = 0
                     self.grafica.set_recortandoConClick(0)
-                    setCortandoGraficoMain(False, cortandoVarios)
+                    if cortando == "True":
+                        setCortandoGraficoMain("False", cortandoVarios)
+                    if cortando == "integral":
+                        setIndicandoIntegralMain("False", cortandoVarios)
             else:                                                                           #recortando varias graficas
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
                         self.grafica.set_recortandoConClick(1)
                         min = event.xdata
                         cont = 1
-                        dibujarLineaEnGrafica(self.axes,event,'Inicio Recorte: ',self.grafica)
+                        dibujarLineaEnGrafica(self.axes,event,'Inicio: ',self.grafica)
                         self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
                     if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
                         max = event.xdata
-                        dibujarLineaEnGrafica(self.axes,event,'Fin Recorte: ',self.grafica)
+                        dibujarLineaEnGrafica(self.axes,event,'Fin: ',self.grafica)
                         self.line.figure.canvas.draw()
                         self.line.figure.canvas.flush_events()
                         time.sleep(1)
                         cont = 0
                         self.grafica.set_recortandoConClick(0)
-                        setCortandoGraficoMain(False, cortandoVarios)
+                        if cortando == "True":
+                            setCortandoGraficoMain("False", cortandoVarios)
+                        if cortando == "integral":
+                            setIndicandoIntegralMain("False", cortandoVarios)
 def enter_axes(event):
     global cortandoVarios,graficaActual
     if cortandoVarios:
