@@ -14,6 +14,9 @@ import config
 import funciones
 import sys
 import matplotlib
+
+from Helpers.recortarHelper import dibujarLineaEnGrafica
+
 matplotlib.use('Qt5Agg')
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -1156,7 +1159,7 @@ class ventana_principal(QWidget):
                                               aux, linewidth=0.3,
                                               label=f"{graficas[x].get_nombre_columna_grafica_vista()}")
 
-                        linebuilder = LineBuilder(line, axes[x], graficas[x], self, True)
+                        linebuilder = LineBuilder(line, axes[x], graficas[x], self)
 
 
                         # ------------------------------------- Aspecto
@@ -1453,7 +1456,7 @@ class ventana_principal(QWidget):
                     line,= ax1.plot(tiempoRecortado,
                              conOffset, linewidth=0.3, label=f"{graficas[x].get_nombre_columna_grafica()}")
 
-                    linebuilder = LineBuilder(line, ax1, graficas[x], self,True)
+                    linebuilder = LineBuilder(line, ax1, graficas[x], self)
                     #ax1.ticklabel_format(useOffset=False, style='plain')
                     # ------------------------------------- Aspecto
                     ax1.set(xlabel='tiempo (s)', ylabel='voltage (mV)')
@@ -1704,14 +1707,13 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
     if ventanaRecortar is not None:
         ventanaCortarInstance=ventanaRecortar
     cortando = val
-    if not cortando and not cortandoVarios:
+    if not cortando and not cortandoVarios:   ##fin cortar uno solo
         ventanaCortarInstance.setRecorte(min,max)
         ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
-
-    elif not cortando and cortandoVarios:
+    elif not cortando and cortandoVarios:     #fin cortar con varios
         ventanaCortarInstance.setRecorte(min, max)
         num=0
         seleccionoAlguna = False
@@ -1721,12 +1723,11 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
                 seleccionoAlguna=True
                 break
             num=num+1
-        if not seleccionoAlguna:
+        if not seleccionoAlguna:   #para que no tire error
                 ventanaCortarInstance.seleccionar_todas_las_graficas()
         datosCorrectos = ventanaCortarInstance.aplicar_recorte()
         if not datosCorrectos:
             ventanaCortarInstance.show()
-
 
 #control para que no se haga otra cosa mientras se esta recortando
 def chequearSiEstaRecortando(self):
@@ -1738,9 +1739,7 @@ def chequearSiEstaRecortando(self):
         return False
 #funcion para mostrar el recorte que se va a hacer, cuando se hace click
 class LineBuilder:
-    def __init__(self, line, axes,grafica,main,hayVarias=False):
-        self.hayVarias = hayVarias
-        self.main = main
+    def __init__(self, line, axes,grafica,main):
         self.grafica = grafica
         self.axes = axes
         self.line = line
@@ -1749,66 +1748,42 @@ class LineBuilder:
         self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
         self.annotations = None
     def __call__(self, event):
-        global cont,min,max,cortandoVarios,graficaActual
-
+        global cont,min,max,cortandoVarios,graficaActual,cortando
         if cortando:
             if not cortandoVarios:   #recortando una grafica
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     self.grafica.set_recortandoConClick(1)
                     min = event.xdata
-                    cont += 1
-                    self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
-                                       xy=(event.xdata, event.ydata),
-                                       xytext=(event.xdata, 0))
-                    ancho = (self.grafica.getLimitesTiempo()[1]-self.grafica.getLimitesTiempo()[0])/1000
-                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r',alpha = 0.5)
-                    self.axes.add_patch(circle1)
+                    cont = 1
+                    dibujarLineaEnGrafica(self.axes,event,'Inicio Recorte: ',self.grafica)
                     self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
                     max = event.xdata
-                    self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
-                                       xytext=(event.xdata, 0))
-                    ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
-                    circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r',alpha = 0.5)
-                    self.axes.add_patch(circle1)
+                    dibujarLineaEnGrafica(self.axes,event,'Fin Recorte: ',self.grafica)
                     self.line.figure.canvas.draw()
                     self.line.figure.canvas.flush_events()
                     time.sleep(1)
                     cont = 0
                     self.grafica.set_recortandoConClick(0)
                     setCortandoGraficoMain(False, cortandoVarios)
-            else:               #recortando varias graficas
+            else:                                                                           #recortando varias graficas
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
                         self.grafica.set_recortandoConClick(1)
                         min = event.xdata
-                        cont += 1
-                        self.axes.annotate('Inicio Recorte: ' + "{0:.2f}".format(event.xdata),
-                                           xy=(event.xdata, event.ydata),
-                                           xytext=(event.xdata, 0))
-                        ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
-                        circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r', alpha=0.5)
-                        self.axes.add_patch(circle1)
+                        cont = 1
+                        dibujarLineaEnGrafica(self.axes,event,'Inicio Recorte: ',self.grafica)
                         self.line.figure.canvas.draw()
                 elif cont == 1 and self.grafica.get_recortandoConClick() == 1:  # fin del recorte
                     if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
                         max = event.xdata
-                        self.axes.annotate('Fin Recorte: ' + "{0:.2f}".format(event.xdata), xy=(event.xdata, event.ydata),
-                                           xytext=(event.xdata, 0))
-                        ancho = (self.grafica.getLimitesTiempo()[1] - self.grafica.getLimitesTiempo()[0]) / 1000
-                        circle1 = plt.Rectangle((event.xdata, 0), ancho, 9999999, color='r', alpha=0.5)
-                        self.axes.add_patch(circle1)
+                        dibujarLineaEnGrafica(self.axes,event,'Fin Recorte: ',self.grafica)
                         self.line.figure.canvas.draw()
                         self.line.figure.canvas.flush_events()
                         time.sleep(1)
                         cont = 0
                         self.grafica.set_recortandoConClick(0)
                         setCortandoGraficoMain(False, cortandoVarios)
-                elif not self.hayVarias:
-                    QMessageBox.information(self.main, "Advertencia", "Termine de recortar la grafica Original")
-            if event.inaxes!=self.line.axes: return
-
-
 
 def enter_axes(event):
     global cortandoVarios,graficaActual
