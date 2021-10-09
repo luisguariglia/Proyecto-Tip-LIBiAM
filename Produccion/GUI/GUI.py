@@ -17,7 +17,6 @@ import numpy as np
 
 cont = 0
 
-
 class tree_widget_item_grafica(QtWidgets.QTreeWidgetItem):
     def __init__(self, text, id=None):
         super(tree_widget_item_grafica, self).__init__()
@@ -916,6 +915,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         widget_valores_pico.layout().addWidget(wid_checkbox)
 
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
+        btn_RecortarConClicks = QtWidgets.QPushButton("Indicar Haciendo Click")
+        btn_RecortarConClicks.clicked.connect(self.RecortarHaciendoClick)
+        btn_RecortarConClicks.setFixedWidth(140)
+        btn_RecortarConClicks.setStyleSheet(estilos.estilos_btn_exportar())
+
         wid_inicio = QtWidgets.QWidget()
         wid_inicio.setLayout(QtWidgets.QHBoxLayout())
         wid_inicio.layout().setContentsMargins(8, 8, 8, 0)
@@ -950,7 +954,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_fin.layout().addWidget(label_fin, 5)
         wid_fin.layout().addWidget(self.spinbox_fin, 2)
         widget_integral.layout().addWidget(wid_fin)
-
+        widget_integral.layout().addWidget(btn_RecortarConClicks)
         # checkbox
         wid_checkbox_integral = QtWidgets.QWidget()
         wid_checkbox_integral.setLayout(QtWidgets.QHBoxLayout())
@@ -1098,6 +1102,28 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         return super().eventFilter(source, event)
 
+    def RecortarHaciendoClick(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        if cant_hijos == 1:
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea realizar la integral")
+            self.parent.setIndicandoIntegral("integral", False, self)
+        else:
+            self.hide()
+            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea realizar la integral")
+            self.parent.setIndicandoIntegral("integral", True, self)
+
+    def seleccionar_grafica(self, num):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+
+        cont = 0
+        for i in range(cant_hijos):
+            hijo = self.tree_graficas.topLevelItem(i)
+            if isinstance(hijo, tree_widget_item_grafica):
+                if cont == num:
+                    if not hijo.checkState(0):
+                        hijo.setCheckState(0, Qt.Checked)
+            cont = cont + 1
     def aplicar_valores(self):
 
         hay_almenos_un_check = False
@@ -1200,6 +1226,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
             else:
                 QMessageBox.information(self, "Advertencia", "Seleccione al menos un grafico")
 
+        if self.graficas is not None and seguir:
+            return True
+        else:
+            self.parent.listar_graficas(True)
+            return False
     def showTime(self):
         self.msgBox.close()
 
@@ -1220,6 +1251,10 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         return grafica_aux
 
+    def setRecorte(self, min, max):
+        self.spinbox_inicio.setValue(min)
+        self.spinbox_fin.setValue(max)
+        self.checkbox_mostrar_integral.setChecked(True)
 
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None, v=""):
@@ -1426,11 +1461,11 @@ class ventana_cortar(QtWidgets.QDialog):
         if cant_hijos == 1:
             self.hide()
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
-            self.parent.setCortandoGrafico(True, False, self)
+            self.parent.setCortandoGrafico("True", False, self)
         else:
             self.hide()
             QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
-            self.parent.setCortandoGrafico(True, True, self)
+            self.parent.setCortandoGrafico("True", True, self)
 
     def mostrar(self):
         self.show()
@@ -1453,13 +1488,6 @@ class ventana_cortar(QtWidgets.QDialog):
                     hijo.setCheckState(0, Qt.Checked)
     def seleccionar_grafica(self,num):
         cant_hijos = self.tree_graficas.topLevelItemCount()
-
-        #deselecciono todas
-        for i in range(cant_hijos):
-            hijo = self.tree_graficas.topLevelItem(i)
-            if isinstance(hijo, tree_widget_item_grafica):
-                if not hijo.checkState(0):
-                    hijo.setCheckState(0, Qt.Unchecked)
 
         cont = 0
         for i in range(cant_hijos):
