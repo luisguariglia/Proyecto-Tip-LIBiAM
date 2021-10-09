@@ -35,8 +35,9 @@ def butterFilter(signal, datosFiltrado: Filtro):
 
 def fft(signal, datosFFT: Filtro_FFT):
     if datosFFT is not None:
-        signal = np.nan_to_num(signal, copy=False)
-        y = numpy.fft.fft(signal)
+        signal2 = np.nan_to_num(signal, copy=False)
+
+        y = numpy.fft.fft(a=signal2)
         return y
     return signal
 

@@ -1000,7 +1000,7 @@ class ventana_principal(QWidget):
                     #/########################        Aplicando valores de todas las ventanas        ########################/#
 
                     #aplico offset
-                    conOffset= self.aplicarOffset(archivo[graficas[0].get_nombre_columna_grafica()],archivo[graficas[0].get_nombre_columna_tiempo()],graficas[0].get_offset())
+                    conOffset= self.aplicarOffset(archivo[graficas[0].get_nombre_columna_grafica()], archivo[graficas[0].get_nombre_columna_tiempo()],graficas[0].get_offset())
 
                     #aplico butter y fft
                     filtrado = self.setFiltros(conOffset, graficas[0].get_filtro(), graficas[0].get_fastfouriertransform())
@@ -1011,6 +1011,10 @@ class ventana_principal(QWidget):
                     #aplico recorte
                     aux= recorte[0]
                     tiempoRecortado = recorte[1]
+
+                    # SI TIENE UNA FURIER APLICADA PASO EL TIEMPO A FRECUENCIA xd
+                    if graficas[0].get_fastfouriertransform() is not None:
+                        tiempoRecortado = numpy.fft.fftfreq(tiempoRecortado.size)
 
                     # calculo y muestro valores picos
                     if graficas[0].get_valores_picos() is not None:
