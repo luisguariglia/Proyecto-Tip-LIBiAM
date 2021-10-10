@@ -568,7 +568,9 @@ def estilos_btn_ver_guia():
             color:#0d6efd;
             border:none;
             padding-top:3px;
+            text-align:left;
             font-size:13px;
+            
        
         }
         

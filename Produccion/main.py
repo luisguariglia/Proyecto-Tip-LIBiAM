@@ -32,7 +32,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_valoresEnBruto,ventana_filtro,ventana_verayuda_antes_columnas, ventana_verayuda_despues_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
+from GUI.GUI import ventana_valoresEnBruto, Manualdeusuario,ventana_filtro,ventana_verayuda_antes_columnas, ventana_verayuda_despues_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -199,10 +199,15 @@ class ventana_principal(QWidget):
 
         confManual = QAction("Descargar manual de usuario", self)
         confManual.triggered.connect(self.descargar_manual)
+
+        ManualUsuario = QAction("Manual de usuario", self)
+        ManualUsuario.triggered.connect(self.manual_usuario)
+
         confAcercaDe = QAction("Acerca de", self)
 
         confMenuAyuda.addAction(confManual)
         confMenuAyuda.addAction(confAcercaDe)
+        confMenuAyuda.addAction(ManualUsuario)
 
         #TOOLBAR
         self.widget_toolbar = QWidget()
@@ -390,6 +395,10 @@ class ventana_principal(QWidget):
         self.treeView2.customContextMenuRequested.connect(self.handle_rightClicked)
         self.treeView2.setHeaderHidden(True)
         self.widget_izq.layout().addWidget(self.treeView2, 4)
+
+
+    def manual_usuario(self):
+        Manualdeusuario(self).exec_()
 
     def descargar_manual(self):
         try:

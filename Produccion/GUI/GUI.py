@@ -3564,9 +3564,186 @@ A continuación se podrán graficar dichas columnas.
     def xdd(self):
         ventana_verayuda_antes_columnas(self).exec_()
 
-def load_fonts_from_dir(directory):
-    families = set()
-    for fi in QDir(directory).entryInfoList(["*.ttf"]):
-        _id = QtGui.QFontDatabase.addApplicationFont(fi.absoluteFilePath())
-        families |= set(QtGui.QFontDatabase.applicationFontFamilies(_id))
-    return families
+
+class Manualdeusuario(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(Manualdeusuario, self).__init__()
+        self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Manual de usuario")
+        self.setFixedSize(900, 700)
+        self.setLayout(QtWidgets.QHBoxLayout())
+        #self.layout().setAlignment(Qt.AlignTop)
+        self.setStyleSheet("background-color:white;")
+        self.layout().setContentsMargins(2, 2, 2, 2)
+
+        wid_izquierda = QtWidgets.QWidget()
+        wid_izquierda.setStyleSheet("border-right:1px solid #BDBDBD;")
+        wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
+        wid_izquierda.layout().setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        wid_derecha = QtWidgets.QWidget()
+        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
+        wid_derecha.layout().setContentsMargins(0, 0, 0, 0)
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll.setStyleSheet(estilos.estilos_sroll_area())
+
+        wid_derecha.layout().addWidget(self.scroll , 10)
+
+        self.layout().addWidget(wid_izquierda, 3)
+        self.layout().addWidget(wid_derecha, 7)
+
+        #BOTONES INDICE
+        btn_inicio = QtWidgets.QPushButton()
+        btn_inicio.setText("1 Inicio")
+        btn_inicio.setFixedWidth(41)
+        btn_inicio.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_inicio.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_inicio.clicked.connect(self.inicio)
+        wid_izquierda.layout().addWidget(btn_inicio)
+
+
+        btn_manipular_archivo_csv = QtWidgets.QPushButton()
+        btn_manipular_archivo_csv.setText("1.2 Manipular archivos “.csv”")
+        btn_manipular_archivo_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_manipular_archivo_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_manipular_archivo_csv.clicked.connect(self.manipular_csv)
+        wid_izquierda.layout().addWidget(btn_manipular_archivo_csv)
+
+        btn_agregar_csv = QtWidgets.QPushButton()
+        btn_agregar_csv.setText("1.2.1 Agregar CSV")
+        btn_agregar_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_agregar_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_agregar_csv)
+
+        btn_agregar_csv_distinto = QtWidgets.QPushButton()
+        btn_agregar_csv_distinto.setText("1.2.2 Agregar “.csv” distinto de Trigno")
+        btn_agregar_csv_distinto.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_agregar_csv_distinto.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_agregar_csv_distinto)
+
+        btn_eliminar_csv = QtWidgets.QPushButton()
+        btn_eliminar_csv.setText("1.2.3 Eliminar CSV")
+        btn_eliminar_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_eliminar_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_eliminar_csv)
+
+        btn_manejo_vistas = QtWidgets.QPushButton()
+        btn_manejo_vistas.setText("1.4 Manejo de Vistas")
+        btn_manejo_vistas.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_manejo_vistas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_manejo_vistas)
+
+        btn_graficar_datos = QtWidgets.QPushButton()
+        btn_graficar_datos.setText("1.5 Graficar Datos")
+        btn_graficar_datos.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_graficar_datos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_graficar_datos)
+
+        btn_manipulacion_graficas = QtWidgets.QPushButton()
+        btn_manipulacion_graficas.setText("1.6 Manipulación de Gráficas")
+        btn_manipulacion_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_manipulacion_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_manipulacion_graficas)
+
+        btn_valores_bruto = QtWidgets.QPushButton()
+        btn_valores_bruto.setText("1.6.1 Valores en bruto")
+        btn_valores_bruto.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_valores_bruto.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_valores_bruto)
+
+        btn_rectificar_grafico = QtWidgets.QPushButton()
+        btn_rectificar_grafico.setText("1.6.2 Rectificar Gráfico")
+        btn_rectificar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_rectificar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_rectificar_grafico)
+
+        btn_aplicar_filtros = QtWidgets.QPushButton()
+        btn_aplicar_filtros.setText("1.6.3 Aplicar filtros")
+        btn_aplicar_filtros.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_aplicar_filtros.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_aplicar_filtros)
+
+        btn_recortar_grafico = QtWidgets.QPushButton()
+        btn_recortar_grafico.setText("1.6.4 Recortar Gráfico")
+        btn_recortar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_recortar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_recortar_grafico)
+
+        btn_valores_grafica = QtWidgets.QPushButton()
+        btn_valores_grafica.setText("1.6.5 Valores en la gráfica")
+        btn_valores_grafica.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_valores_grafica.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_valores_grafica)
+
+        btn_calcular_ymostrar_valores_picos = QtWidgets.QPushButton()
+        btn_calcular_ymostrar_valores_picos.setText("1.6.5.1 Calcular y mostrar valores picos")
+        btn_calcular_ymostrar_valores_picos.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_calcular_ymostrar_valores_picos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_calcular_ymostrar_valores_picos)
+
+        btn_calcular_ymostrar_integral = QtWidgets.QPushButton()
+        btn_calcular_ymostrar_integral.setText("1.6.5.2 Calcular y mostrar integral")
+        btn_calcular_ymostrar_integral.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_calcular_ymostrar_integral.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_calcular_ymostrar_integral)
+
+        btn_calcular_ymostrar_rms = QtWidgets.QPushButton()
+        btn_calcular_ymostrar_rms.setText("1.6.5.3 Calcular y mostrar valor RMS")
+        btn_calcular_ymostrar_rms.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_calcular_ymostrar_rms.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_calcular_ymostrar_rms)
+
+        btn_comparar = QtWidgets.QPushButton()
+        btn_comparar.setText("1.6.6 Comparar")
+        btn_comparar.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_comparar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_comparar)
+
+        btn_panel_superior_grafico = QtWidgets.QPushButton()
+        btn_panel_superior_grafico.setText("1.6.8 Panel superior del gráfico")
+        btn_panel_superior_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_panel_superior_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_panel_superior_grafico)
+
+        btn_configuracion_programa = QtWidgets.QPushButton()
+        btn_configuracion_programa.setText("1.7 Sección de Configuración del Programa")
+        btn_configuracion_programa.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_configuracion_programa.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_configuracion_programa)
+
+        btn_configuracion_archivos = QtWidgets.QPushButton()
+        btn_configuracion_archivos.setText("1.7.1 Configuración de archivos")
+        btn_configuracion_archivos.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_configuracion_archivos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_configuracion_archivos)
+
+        btn_configuracion_limite_graficas = QtWidgets.QPushButton()
+        btn_configuracion_limite_graficas.setText("1.7.2 Configuración de límite de gráficas")
+        btn_configuracion_limite_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_configuracion_limite_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_configuracion_limite_graficas)
+
+        btn_exportar = QtWidgets.QPushButton()
+        btn_exportar.setText("1.8 Exportar datos")
+        btn_exportar.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_exportar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_exportar)
+
+
+
+        #WIDGET SCROLL
+        widget_scroll = QtWidgets.QWidget()
+
+        widget_scroll.setLayout(QtWidgets.QVBoxLayout())
+        label_1 = QtWidgets.QLabel("En desarrollo - Ventana para reemplazar la descarga del PDF")
+        widget_scroll.layout().addWidget(label_1)
+        self.scroll.setWidget(widget_scroll)
+        self.scroll.widget().scroll(200, 200)
+
+    def inicio(self):
+        #eurek xd
+        self.scroll.verticalScrollBar().setValue(0)
+
+    def manipular_csv(self):
+        self.scroll.verticalScrollBar().setValue(300)
