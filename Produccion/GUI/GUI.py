@@ -1460,11 +1460,11 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Info", "Por favor haga 2 click en el grafico que desea recortar")
             self.parent.setCortandoGrafico("True", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Info", "Por favor haga 2 click en el grafico que desea recortar")
             self.parent.setCortandoGrafico("True", True, self)
 
     def mostrar(self):
@@ -2042,9 +2042,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         # ESTILOSjgkkjg
         wid_izquierda.setStyleSheet("background-color:white; border-radius:4px;")
-
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
-
         wid_izquierda.layout().setSpacing(20)
         wid_izquierda.layout().setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
@@ -2067,6 +2065,26 @@ class ventana_exportarVP(QtWidgets.QDialog):
                 item.setCheckState(0, Qt.Unchecked)
                 self.tree_graficas.addTopLevelItem(item)
 
+        # LISTA
+        db = QtGui.QFontDatabase()
+        font = db.font("Open Sans", "Regular", 10)
+        label_btype = QtWidgets.QLabel("Formatos para exportar: ")
+        label_btype.setStyleSheet("padding:0px;margin:0px;")
+        label_btype.setFont(font)
+
+        self.combobox_btype = QtWidgets.QComboBox()
+        self.combobox_btype.setFixedWidth(150)
+        self.combobox_btype.addItem(".CSV")
+        self.combobox_btype.addItem(".XLS")
+        self.combobox_btype.setCurrentIndex(1)
+        self.combobox_btype.setStyleSheet(estilos.estilos_combobox_filtro())
+
+        wid_combobox_btype = QtWidgets.QWidget()
+        wid_combobox_btype.setLayout(QtWidgets.QHBoxLayout())
+        wid_combobox_btype.layout().setContentsMargins(0, 0, 0, 0)
+        wid_combobox_btype.layout().setAlignment(Qt.AlignRight)
+        wid_combobox_btype.layout().addWidget(self.combobox_btype)
+
         btn_aplicar_a_todas = QtWidgets.QPushButton("SELECCIONAR TODAS")
         btn_aplicar_a_todas.clicked.connect(self.seleccionar_todas_las_graficas)
         btn_aplicar_a_todas.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
@@ -2076,9 +2094,10 @@ class ventana_exportarVP(QtWidgets.QDialog):
 
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
-        wid_btn.layout().addWidget(btn_aplicar_a_todas)
 
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
+        wid_izquierda.layout().addWidget(label_btype)
+        wid_izquierda.layout().addWidget(wid_combobox_btype)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
         # BOTÓN APLICAR FILTROS
@@ -2086,6 +2105,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
         btn_aplicar.clicked.connect(self.exportar_valores_pico)
         btn_aplicar.setStyleSheet(estilos.estilos_btn_aplicar_a_todas())
 
+        wid_btn.layout().addWidget(btn_aplicar_a_todas)
         wid_btn.layout().addWidget(btn_aplicar)
 
         self.layout().addWidget(wid_izquierda, 5)
@@ -2103,6 +2123,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
         graficas = []
         seguir = True
         hay_almenos_un_check = False
+        btype = self.combobox_btype.currentText()
 
         # *--------------------------------------------- CONTROLES --------------------------------------------------* #
         cant_hijos = self.tree_graficas.topLevelItemCount()
@@ -2131,7 +2152,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
                             graficas.append(grafica)
 
         if len(graficas) >= 1:
-            self.parent.exportar_VP(graficas)
+            self.parent.exportar_VP(graficas, btype)
             self.close()
 
     def get_grafica(self, id_grafica):

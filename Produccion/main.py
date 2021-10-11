@@ -1655,16 +1655,15 @@ class ventana_principal(QWidget):
                 self.vistas.pop(i)
                 break
 
-    def saveFileDialog(self):
+    def saveFileDialog(self, tipoExportacion):
         options = QFileDialog.Options()
-
-        fileName, _ = QFileDialog.getSaveFileName(self, "Guardar .csv", "ejemplo.csv",
-                                                  "*", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, "Guardar archivo", f"ejemplo{str.lower(tipoExportacion)}",
+                                                  "Archivos excel (*.csv *.xls)", options=options)
         if fileName:
             return fileName
 
 
-    def exportar_VP(self, graficas):
+    def exportar_VP(self, graficas, tipoExportacion):
         ninguna_grafica_con_filtro = False
 
         if len(graficas) != 0:
@@ -1677,7 +1676,7 @@ class ventana_principal(QWidget):
             if not ninguna_grafica_con_filtro:
                 cabecera = []
                 datos = []
-                nombre = self.saveFileDialog()
+                nombre = self.saveFileDialog(tipoExportacion)
                 if nombre:
                     with open(nombre, 'w', newline='') as file:
                         writer = csv.writer(file)
