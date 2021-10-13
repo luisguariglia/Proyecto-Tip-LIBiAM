@@ -1106,11 +1106,14 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea realizar la integral")
+            QMessageBox.information(self, "Info",
+                                    "Por favos haga 2 clicks en el Grafico que desea realizar la integral \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 click en el grafico que desea realizar la integral")
+            QMessageBox.information(self, "Info", "Por favos haga 2 clicks en el Grafico que desea realizar la integral \n"
+                                                  "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", True, self)
 
     def seleccionar_grafica(self, num):
@@ -1460,11 +1463,15 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favor haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Info",
+                                    "Por favos haga 2 clicks en el Grafico que desea recortar \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favor haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Info",
+                                    "Por favos haga 2 clicks en el Grafico que desea recortar \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", True, self)
 
     def mostrar(self):

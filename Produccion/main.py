@@ -1,5 +1,5 @@
 import numpy
-from PyQt5 import QtWidgets, QtCore, uic
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import (QLabel, QMessageBox, QDesktopWidget,QGraphicsDropShadowEffect, QMenuBar,QFileDialog,QWidget,QAction, QGraphicsScene, QGraphicsView ,QTreeWidget, QToolBar, QMenu,QComboBox, QTreeWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QTabWidget, QScrollArea)
 from PyQt5.QtGui import QIcon, QFont, QFontDatabase,QGuiApplication, QPixmap, QScreen
 from PyQt5.QtCore import QSize, QEvent,QEventLoop,Qt,pyqtSignal,QPoint,QEasingCurve,QPropertyAnimation,QDir
@@ -411,28 +411,6 @@ class ventana_principal(QWidget):
         except Exception as e:
             QMessageBox.about(self,"Error", "No se encontró el manual de usuario en los archivos del programa")
 
-    def eventFilter(self, source, event):
-        if source == self.widget_der.tabBar() and \
-            event.type() == event.MouseButtonPress and \
-            event.button() == Qt.LeftButton:
-                tab = self.widget_der.tabBar().tabAt(event.pos())
-                if tab >= 0 and tab != self.widget_der.currentIndex():
-                    return self.isInvalid()
-        elif source == self.widget_der and \
-            event.type() == event.KeyPress and \
-            event.key() in (Qt.Key_Tab, Qt.Key_Backtab) and \
-            event.modifiers() & Qt.ControlModifier:
-                return self.isInvalid()
-        return super().eventFilter(source, event)
-
-    def isInvalid(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if not continuar:
-            #QTimer.singleShot(0, lambda: QtWidgets.QMessageBox.about(
-                #self, "Warning", "You must complete the form"))
-            return True
-        return False
-
     def cerrar(self):
         sys.exit()
 
@@ -638,25 +616,25 @@ class ventana_principal(QWidget):
         menu.exec_(self.treeView2.viewport().mapToGlobal(pos))
 
     def remover_grafica(self, item : tree_widget_item_vista):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if item is None:
-                return
+        chequearSiEstaRecortando(self)
 
-            for vista in self.vistas:
-                graficas = vista.get_graficas()
-                cantidad_graficas = len(graficas)
-                for i in range(cantidad_graficas):
-                    if graficas[i].get_tree_item() == item:
-                        item_v : QTreeWidgetItem= vista.get_tree_widget_item()
-                        item_v.removeChild(graficas[i].get_tree_item())
-                        vista.get_graficas().pop(i)
-                        self.listar_graficas(True,widget_tab=vista.get_widget())
-                        return
+        if item is None:
+            return
+
+        for vista in self.vistas:
+            graficas = vista.get_graficas()
+            cantidad_graficas = len(graficas)
+            for i in range(cantidad_graficas):
+                if graficas[i].get_tree_item() == item:
+                    item_v : QTreeWidgetItem= vista.get_tree_widget_item()
+                    item_v.removeChild(graficas[i].get_tree_item())
+                    vista.get_graficas().pop(i)
+                    self.listar_graficas(True,widget_tab=vista.get_widget())
+                    return
 
 
     def print_burro(self):
-        print("no")
+        print("")
 
     def show_graph(self, father : QMessageBox):
         print('Show Graph')
@@ -667,79 +645,79 @@ class ventana_principal(QWidget):
             Función para agregar archivos .csv
         :return:
         """
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            options = QFileDialog.Options()
-            filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "", filter = f"{config.FILES_CSV}", options=options)
+        chequearSiEstaRecortando(self)
 
-            # Si se cancela la ventana emergente al seleccionar un archivo .csv
-            if not filepath[0]:
+        options = QFileDialog.Options()
+        filepath = QFileDialog.getOpenFileName(self, "Seleccione un archivo", "", filter = f"{config.FILES_CSV}", options=options)
+
+        # Si se cancela la ventana emergente al seleccionar un archivo .csv
+        if not filepath[0]:
+            return
+
+        try:
+            frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
+        except Exception as e:
+
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Error")
+            msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración -> Archivos.')
+            yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
+            #yes_button.clicked.disconnect()
+            #yes_button.clicked.connect(self.show_graph)
+            #msg.setStyleSheet("background-color:red;")
+            msg.addButton(QMessageBox.Ok)
+            msg.exec_()
+
+            if msg.clickedButton() == yes_button:
+                ventana_verayuda_antes_columnas(self).exec_()
+
+
+            #QMessageBox.about(self, "Error", "")
+            ventana_conf_archivos(self).exec_()
+            return
+
+        nombre_archivo = funciones.get_nombre_csv(filepath[0])
+        nombre_archivo += " - A" + str(self.id_archivo)
+
+        self.archivito = Archivo(nombre_archivo,frame_archivo)
+        self.archivito.agregar_electromiografias(frame_archivo)
+
+        if len(self.archivito.get_electromiografias()) == 0:
+            #QMessageBox.about(self, "Error", "Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto")
+
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Error")
+            msg.setText(
+                'Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto')
+            yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
+            # yes_button.clicked.disconnect()
+            # yes_button.clicked.connect(self.show_graph)
+            # msg.setStyleSheet("background-color:red;")
+            msg.addButton(QMessageBox.Ok)
+            msg.exec_()
+
+            if msg.clickedButton() == yes_button:
+                ventana_verayuda_despues_columnas(self).exec_()
+
+            ventana_conf_linea_archivo(self).exec_()
+
+            if not self.seguir_proceso:
                 return
-
-            try:
-                frame_archivo = pandas.read_csv(filepath[0], encoding=config.ENCODING, skiprows=config.ROW_COLUMNS)
-            except Exception as e:
-
-                msg = QMessageBox(self)
-                msg.setWindowTitle("Error")
-                msg.setText('Al parecer el número de fila que especificó no es correcto.\nVerifíquelo en Configuración -> Archivos.')
-                yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
-                #yes_button.clicked.disconnect()
-                #yes_button.clicked.connect(self.show_graph)
-                #msg.setStyleSheet("background-color:red;")
-                msg.addButton(QMessageBox.Ok)
-                msg.exec_()
-
-                if msg.clickedButton() == yes_button:
-                    ventana_verayuda_antes_columnas(self).exec_()
-
-
-                #QMessageBox.about(self, "Error", "")
-                ventana_conf_archivos(self).exec_()
-                return
-
-            nombre_archivo = funciones.get_nombre_csv(filepath[0])
-            nombre_archivo += " - A" + str(self.id_archivo)
-
-            self.archivito = Archivo(nombre_archivo,frame_archivo)
-            self.archivito.agregar_electromiografias(frame_archivo)
-
-            if len(self.archivito.get_electromiografias()) == 0:
-                #QMessageBox.about(self, "Error", "Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto")
-
-                msg = QMessageBox(self)
-                msg.setWindowTitle("Error")
-                msg.setText(
-                    'Al parecer este archivo csv no es de Trigno o el número\nde fila que especificó no es correcto')
-                yes_button = msg.addButton('Ver ayuda', QMessageBox.YesRole)
-                # yes_button.clicked.disconnect()
-                # yes_button.clicked.connect(self.show_graph)
-                # msg.setStyleSheet("background-color:red;")
-                msg.addButton(QMessageBox.Ok)
-                msg.exec_()
-
-                if msg.clickedButton() == yes_button:
-                    ventana_verayuda_despues_columnas(self).exec_()
-
-                ventana_conf_linea_archivo(self).exec_()
-
-                if not self.seguir_proceso:
-                    return
-                else:
-                    #dejarlo en el valor inicial
-                    self.seguir_proceso = False
-
-
-            self.archivos_csv.append(self.archivito)
-            text_current_index = self.combo.currentText()
-
-            if text_current_index == "Agregue un archivo csv":
-                self.combo.addItem(nombre_archivo)
-                self.combo.removeItem(self.combo.currentIndex())
-                self.combo.setItemData(self.combo.currentIndex(), self.id_archivo)
             else:
-                self.combo.addItem(nombre_archivo, self.id_archivo)
-            self.id_archivo += 1
+                #dejarlo en el valor inicial
+                self.seguir_proceso = False
+
+
+        self.archivos_csv.append(self.archivito)
+        text_current_index = self.combo.currentText()
+
+        if text_current_index == "Agregue un archivo csv":
+            self.combo.addItem(nombre_archivo)
+            self.combo.removeItem(self.combo.currentIndex())
+            self.combo.setItemData(self.combo.currentIndex(), self.id_archivo)
+        else:
+            self.combo.addItem(nombre_archivo, self.id_archivo)
+        self.id_archivo += 1
 
     def actualizar_tree(self):
         self.tree_widget.clear()
@@ -794,37 +772,37 @@ class ventana_principal(QWidget):
 
 
     def agregar_grafica_a_vista(self, item, col):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            current_widget = self.widget_der.currentWidget()
-            index = self.widget_der.indexOf(current_widget)
+        chequearSiEstaRecortando(self)
 
-            if not index == -1 and item.parent() is not None:
-                object_name = current_widget.objectName()
-                if not object_name == "Inicio":
-                    widget_tab = self.widget_der.currentWidget()
-                    vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+        current_widget = self.widget_der.currentWidget()
+        index = self.widget_der.indexOf(current_widget)
 
-                    limite_graficas = config.LIMITE_GRAFICAS_POR_VISTA
+        if not index == -1 and item.parent() is not None:
+            object_name = current_widget.objectName()
+            if not object_name == "Inicio":
+                widget_tab = self.widget_der.currentWidget()
+                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
 
-                    if len(vista.get_graficas()) == limite_graficas:
-                        QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite gráficas")
-                        return
+                limite_graficas = config.LIMITE_GRAFICAS_POR_VISTA
 
-                    numero_archivo = self.combo.currentData()
-                    numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
+                if len(vista.get_graficas()) == limite_graficas:
+                    QMessageBox.about(self, "Error", "El máximo de gráficas por vista es "+ str(limite_graficas)+ ".\nPuede modficar este limite en \nConfiguraciones -> Limite gráficas")
+                    return
 
-                    nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
-                    grafica_vista = QTreeWidgetItem([nombre_item])
-                    grafica_vista.setIcon(0, QIcon(config.ICONO_GRAFICAS))
-                    grafica_vista.setToolTip(0, nombre_item )
+                numero_archivo = self.combo.currentData()
+                numero_grafica = self.get_numero_grafica(vista, item.text(col), int(numero_archivo))
 
-                    vista.get_tree_widget_item().addChild(grafica_vista)
-                    grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item, numero_grafica, int(numero_archivo))
-                    vista.agregar_grafica(grafica)
-                    cant_vistas = vista.get_tree_widget_item().childCount()
-                    self.listar_graficas(False)
-                    self.treeView2.expandItem(vista.get_tree_widget_item())
+                nombre_item = item.text(col) + " - (" + str(numero_grafica)+") A" + str(numero_archivo)
+                grafica_vista = QTreeWidgetItem([nombre_item])
+                grafica_vista.setIcon(0, QIcon(config.ICONO_GRAFICAS))
+                grafica_vista.setToolTip(0, nombre_item )
+
+                vista.get_tree_widget_item().addChild(grafica_vista)
+                grafica : Grafica = self.get_grafica(item.text(col), grafica_vista, nombre_item, numero_grafica, int(numero_archivo))
+                vista.agregar_grafica(grafica)
+                cant_vistas = vista.get_tree_widget_item().childCount()
+                self.listar_graficas(False)
+                self.treeView2.expandItem(vista.get_tree_widget_item())
 
     def setFiltros(self, datos, datosFiltrado, datosFFT):
         filter_signal = filtersHelper.butterFilter(datos, datosFiltrado)
@@ -1006,7 +984,7 @@ class ventana_principal(QWidget):
 
                     graficas = vista.get_graficas()
                     archivo = graficas[0].get_archivo()
-
+                    graficas[0].set_recortandoConClick(0)
                     #/########################        Aplicando valores de todas las ventanas        ########################/#
 
                     #aplico offset
@@ -1126,6 +1104,7 @@ class ventana_principal(QWidget):
 
                     for x in range(cant_graficas):
                         archivo = graficas[x].get_archivo()
+                        graficas[x].set_recortandoConClick(0)
 
                         # /########################        Aplicando valores de todas las ventanas        ########################/#
 
@@ -1278,166 +1257,166 @@ class ventana_principal(QWidget):
         return frame_archivo
 
     def ventana_butter(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
+
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
 
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_filtro(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def ventana_valores_en_grafica(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_valores_en_graficas(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia", "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        else:
+            QMessageBox.information(self, "Advertencia", "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def ventana_comparar(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos 2 gráficas para comparar.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos 2 gráficas para comparar.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 2:
-                    graficas = vista.get_graficas()
-                    ventana_comparar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 2:
+                graficas = vista.get_graficas()
+                ventana_comparar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos 2 gráficas para comparar.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos dos gráficas para comparar")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos 2 gráficas para comparar.")
 
     def ventana_exportar_valores_pico(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_exportarVP(self, graficas).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_exportarVP(self, graficas).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def ventana_rectificar(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_rectificar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_rectificar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def ventana_valoresEnBruto(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_valoresEnBruto(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_valoresEnBruto(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
 
     def ventana_cortarMain(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if self.widget_der.currentIndex() == -1:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
-                return
+        chequearSiEstaRecortando(self)
 
-            widget_tab = self.widget_der.currentWidget()
-            object_name = widget_tab.objectName()
+        if self.widget_der.currentIndex() == -1:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+            return
 
-            if not object_name == "Inicio":
-                vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
-                cant_graficas = vista.get_tree_widget_item().childCount()
-                if cant_graficas >= 1:
-                    graficas = vista.get_graficas()
-                    ventana_cortar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
-                else:
-                    QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        widget_tab = self.widget_der.currentWidget()
+        object_name = widget_tab.objectName()
+
+        if not object_name == "Inicio":
+            vista: Vista = Vista.get_vista_by_widget(self.vistas, widget_tab)
+            cant_graficas = vista.get_tree_widget_item().childCount()
+            if cant_graficas >= 1:
+                graficas = vista.get_graficas()
+                ventana_cortar(self, graficas, self.widget_der.tabText(self.widget_der.currentIndex())).exec_()
             else:
-                QMessageBox.information(self, "Advertencia",
-                                        "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
+                QMessageBox.information(self, "Advertencia", "Debe insertar al menos una gráfica.")
+        else:
+            QMessageBox.information(self, "Advertencia",
+                                    "Debe crear una vista, posicionarte en ella e insertar al menos una gráfica.")
 
     def comparar_graficas(self, graficas):
         current_widget = self.widget_der.currentWidget()
@@ -1455,6 +1434,7 @@ class ventana_principal(QWidget):
 
                 for x in range(cant_graficas):
                     archivo = graficas[x].get_archivo()
+                    graficas[x].set_recortandoConClick(0)
                     aux = self.setFiltros(archivo[graficas[x].get_nombre_columna_grafica()],
                                           graficas[x].get_filtro(),  graficas[x].get_fastfouriertransform())
 
@@ -1505,83 +1485,83 @@ class ventana_principal(QWidget):
                 widget_tab.layout().addWidget(scroll_area)
 
     def nueva_vista(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            vista = None
-            widget = QWidget()
-            widget.setStyleSheet(estilos.estilos_barritas_gucci_scroll_area())
-            widget.setLayout(QVBoxLayout())
-            widget.layout().setContentsMargins(5, 5, 5, 20)
-            widget.layout().setSpacing(20)
-            canvas = FigureCanvas()
-            scroll_area = QScrollArea()
-            scroll_area.setWidget(canvas)
-            canvas.draw()
-            widget.layout().addWidget(scroll_area)
+        chequearSiEstaRecortando(self)
 
-            if len(self.vistas) == 0:
+        vista = None
+        widget = QWidget()
+        widget.setStyleSheet(estilos.estilos_barritas_gucci_scroll_area())
+        widget.setLayout(QVBoxLayout())
+        widget.layout().setContentsMargins(5, 5, 5, 20)
+        widget.layout().setSpacing(20)
+        canvas = FigureCanvas()
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(canvas)
+        canvas.draw()
+        widget.layout().addWidget(scroll_area)
 
-                widget.setObjectName("vista 1")
-                self.widget_der.insertTab(1, widget, "vista 1")
-                self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-                item_vista = tree_widget_item_vista(name="vista 1", text="vista 1")
-                item_vista.setIcon(0 , QIcon(config.ICONO_VISTA))
-                vista = Vista(item_vista, widget, 1, 1)
-                self.vistas.append(vista)
-                self.treeView2.addTopLevelItem(item_vista)
-            else:
-                rango = len(self.vistas)
+        if len(self.vistas) == 0:
+
+            widget.setObjectName("vista 1")
+            self.widget_der.insertTab(1, widget, "vista 1")
+            self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
+            item_vista = tree_widget_item_vista(name="vista 1", text="vista 1")
+            item_vista.setIcon(0 , QIcon(config.ICONO_VISTA))
+            vista = Vista(item_vista, widget, 1, 1)
+            self.vistas.append(vista)
+            self.treeView2.addTopLevelItem(item_vista)
+        else:
+            rango = len(self.vistas)
+            bandera = False
+            for i in range(rango):
+                for j in range(rango):
+                    if self.vistas[j].get_numero_vista() == i + 1:
+                        bandera = True
+                        break
+                if bandera and rango == i + 1:
+                    vista = "vista " + str(rango + 1)
+                    widget.setObjectName(vista)
+                    self.widget_der.insertTab(self.widget_der.count(), widget, vista)
+                    self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
+                    item_vista = tree_widget_item_vista(name=vista, text=vista)
+                    item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
+                    vista = Vista(item_vista, widget, rango + 1, rango + 1)
+                    self.vistas.append(vista)
+                    self.treeView2.addTopLevelItem(item_vista)
+                    break
+                elif not bandera and rango >= i + 1:
+                    vista = "vista " + str(i + 1)
+                    widget.setObjectName(vista)
+                    self.widget_der.insertTab(self.widget_der.count(), widget, vista)
+                    self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
+                    item_vista = tree_widget_item_vista(name=vista, text=vista)
+                    item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
+                    vista = Vista(item_vista, widget, i + 1, i + 1)
+                    self.vistas.append(vista)
+                    self.treeView2.addTopLevelItem(item_vista)
+                    break
                 bandera = False
-                for i in range(rango):
-                    for j in range(rango):
-                        if self.vistas[j].get_numero_vista() == i + 1:
-                            bandera = True
-                            break
-                    if bandera and rango == i + 1:
-                        vista = "vista " + str(rango + 1)
-                        widget.setObjectName(vista)
-                        self.widget_der.insertTab(self.widget_der.count(), widget, vista)
-                        self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-                        item_vista = tree_widget_item_vista(name=vista, text=vista)
-                        item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
-                        vista = Vista(item_vista, widget, rango + 1, rango + 1)
-                        self.vistas.append(vista)
-                        self.treeView2.addTopLevelItem(item_vista)
-                        break
-                    elif not bandera and rango >= i + 1:
-                        vista = "vista " + str(i + 1)
-                        widget.setObjectName(vista)
-                        self.widget_der.insertTab(self.widget_der.count(), widget, vista)
-                        self.widget_der.setCurrentIndex(self.widget_der.count() - 1)
-                        item_vista = tree_widget_item_vista(name=vista, text=vista)
-                        item_vista.setIcon(0, QIcon(config.ICONO_VISTA))
-                        vista = Vista(item_vista, widget, i + 1, i + 1)
-                        self.vistas.append(vista)
-                        self.treeView2.addTopLevelItem(item_vista)
-                        break
-                    bandera = False
-            vista.set_canvas(canvas)
-            vista.set_scroll(scroll_area)
-            self.vistas.sort(key=self.get_numero_vista)
+        vista.set_canvas(canvas)
+        vista.set_scroll(scroll_area)
+        self.vistas.sort(key=self.get_numero_vista)
 
-            #RANCIADA PARA ORDER EL ARBOL DE LAS VISTAS *unico comentario*
-            for v in self.vistas:
-                self.treeView2.invisibleRootItem().removeChild(v.get_tree_widget_item())
+        #RANCIADA PARA ORDER EL ARBOL DE LAS VISTAS *unico comentario*
+        for v in self.vistas:
+            self.treeView2.invisibleRootItem().removeChild(v.get_tree_widget_item())
 
-            for v in self.vistas:
-                self.treeView2.addTopLevelItem(v.get_tree_widget_item())
+        for v in self.vistas:
+            self.treeView2.addTopLevelItem(v.get_tree_widget_item())
 
     def get_numero_vista(self,vista):
         return vista.get_numero_vista()
 
     def eliminar_csv(self):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            if not self.combo.currentText() == "Agregue un archivo csv":
-                self.archivos_csv.pop(self.combo.currentIndex())
-                self.combo.removeItem(self.combo.currentIndex())
-                if self.combo.count() == 0:
-                    self.combo.addItem("Agregue un archivo csv")
+        chequearSiEstaRecortando(self)
+
+        if not self.combo.currentText() == "Agregue un archivo csv":
+            self.archivos_csv.pop(self.combo.currentIndex())
+            self.combo.removeItem(self.combo.currentIndex())
+            if self.combo.count() == 0:
+                self.combo.addItem("Agregue un archivo csv")
 
     def minimizar_panel(self):
         self.anim = QPropertyAnimation(self.widget_der, b"pos")
@@ -1633,21 +1613,21 @@ class ventana_principal(QWidget):
         self.anim_wid_izq.start()
 
     def eliminar_vista(self, tab_index):
-        continuar = not chequearSiEstaRecortando(self)
-        if continuar:
-            widget = self.widget_der.widget(tab_index)
-            cant_hijos = self.treeView2.topLevelItemCount()
-            if widget.objectName() == "Inicio":
-                self.widget_der.removeTab(tab_index)
-            else:
-                for x in range(cant_hijos):
-                    hijo = self.treeView2.topLevelItem(x)
-                    if isinstance(hijo, tree_widget_item_vista):
-                        if hijo.get_name_object() == widget.objectName():
-                            self.treeView2.takeTopLevelItem(self.treeView2.indexOfTopLevelItem(hijo))
-                            self.eliminar_vista_de_array(widget)
-                            self.widget_der.removeTab(tab_index)
-                            break
+        chequearSiEstaRecortando(self)
+
+        widget = self.widget_der.widget(tab_index)
+        cant_hijos = self.treeView2.topLevelItemCount()
+        if widget.objectName() == "Inicio":
+            self.widget_der.removeTab(tab_index)
+        else:
+            for x in range(cant_hijos):
+                hijo = self.treeView2.topLevelItem(x)
+                if isinstance(hijo, tree_widget_item_vista):
+                    if hijo.get_name_object() == widget.objectName():
+                        self.treeView2.takeTopLevelItem(self.treeView2.indexOfTopLevelItem(hijo))
+                        self.eliminar_vista_de_array(widget)
+                        self.widget_der.removeTab(tab_index)
+                        break
 
     def eliminar_vista_de_array(self,widget):
         for i in range(len(self.vistas)):
@@ -1773,12 +1753,21 @@ def setCortandoGraficoMain(val,varios,ventanaRecortar = None):
 
 #control para que no se haga otra cosa mientras se esta recortando
 def chequearSiEstaRecortando(self):
-    global cortando;
-    if cortando!="False":
-        QMessageBox.information(self, "Advertencia","Termine de recortar la grafica")
-        return True
-    else:
-        return False
+    global cortando,cont,min,max,cortandoVarios,ventanaCortarInstance,ventanaIntegralInstance,listaDeAxes,graficaActual
+
+    if cortando!="False":    #resetea tod0
+        cont = 0
+        min = 0
+        max = 0
+        cortando = "False"  # puede ser "integral" "True" "False" "rms"
+        cortandoVarios = False
+        ventanaCortarInstance = None
+        ventanaIntegralInstance = None
+        listaDeAxes = []
+        graficaActual = None
+        self.listar_graficas(True)
+
+
 #funcion para mostrar el recorte que se va a hacer, cuando se hace click
 class LineBuilder:
     def __init__(self, line, axes,grafica,main):
@@ -1804,7 +1793,7 @@ class LineBuilder:
                     dibujarLineaEnGrafica(self.axes,event,'Fin: ',self.grafica)
                     self.line.figure.canvas.draw()
                     self.line.figure.canvas.flush_events()
-                    time.sleep(1)
+                    time.sleep(0.5)
                     cont = 0
                     self.grafica.set_recortandoConClick(0)
                     if cortando == "True":
@@ -1825,7 +1814,7 @@ class LineBuilder:
                         dibujarLineaEnGrafica(self.axes,event,'Fin: ',self.grafica)
                         self.line.figure.canvas.draw()
                         self.line.figure.canvas.flush_events()
-                        time.sleep(1)
+                        time.sleep(0.5)
                         cont = 0
                         self.grafica.set_recortandoConClick(0)
                         if cortando == "True":
