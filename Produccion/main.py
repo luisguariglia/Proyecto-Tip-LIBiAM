@@ -51,6 +51,7 @@ cortando= "False"  #puede ser "integral" "True" "False" "rms"
 cortandoVarios=False
 ventanaCortarInstance= None
 ventanaIntegralInstance = None
+ventanaRMSInstance= None
 listaDeAxes = []
 graficaActual = None
 ##
@@ -891,8 +892,9 @@ class ventana_principal(QWidget):
         poly = Polygon(verts, facecolor='limegreen', edgecolor='darkgreen',alpha = 0.5)
         ax.add_patch(poly)
 
-        ax.set_xticks((a, b))
-        ax.set_xticklabels((a, b))
+        #ax.set_xticks((a, b))              #esto estaba descomentado
+        #ax.set_xticklabels((a, b))         #esto estaba descomentado
+
         #print(exponente)
         #print("integral_antes")
 
@@ -1692,9 +1694,38 @@ class ventana_principal(QWidget):
 
     def setCortandoGrafico(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
         setCortandoGraficoMain(val,varios,ventanaRecortar)
+    def setIndicandoRMS(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
+        setIndicandoRMSMain(val,varios,ventanaRecortar)
     def setIndicandoIntegral(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
         setIndicandoIntegralMain(val,varios,ventanaRecortar)
-#funcion principal para cortar haciendo click
+
+def setIndicandoRMSMain(val,varios,ventanaRMS = None):
+    global ventanaRMSInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes
+    cortandoVarios = varios
+    if ventanaRMS is not None:
+        ventanaRMSInstance=ventanaRMS
+    cortando = val
+    if cortando=="False" and not cortandoVarios:   ##fin cortar uno solo
+        ventanaRMSInstance.setRecorteRMS(min,max)
+        ventanaRMSInstance.seleccionar_todas_las_graficas()
+        datosCorrectos = ventanaRMSInstance.aplicar_valores()
+        if not datosCorrectos:
+            ventanaRMSInstance.show()
+    elif cortando=="False" and cortandoVarios:     #fin cortar con varios
+        ventanaRMSInstance.setRecorteRMS(min, max)
+        num=0
+        seleccionoAlguna = False
+        for aux in listaDeAxes:
+            if aux == graficaActual:
+                ventanaRMSInstance.seleccionar_grafica(num)
+                seleccionoAlguna=True
+                break
+            num=num+1
+        if not seleccionoAlguna:   #para que no tire error
+                ventanaRMSInstance.seleccionar_todas_las_graficas()
+        datosCorrectos = ventanaRMSInstance.aplicar_valores()
+        if not datosCorrectos:
+            ventanaRMSInstance.show()
 def setIndicandoIntegralMain(val,varios,ventanaIntegral = None):
     global ventanaIntegralInstance,cortando,min,max,cortandoVarios,graficaActual,listaDeAxes
     cortandoVarios = varios
@@ -1763,6 +1794,7 @@ def chequearSiEstaRecortando(self):
         cortandoVarios = False
         ventanaCortarInstance = None
         ventanaIntegralInstance = None
+        ventanaRMSInstance = None
         listaDeAxes = []
         graficaActual = None
         self.listar_graficas(True)
@@ -1800,6 +1832,8 @@ class LineBuilder:
                         setCortandoGraficoMain("False", cortandoVarios)
                     if cortando == "integral":
                         setIndicandoIntegralMain("False", cortandoVarios)
+                    if cortando == "rms":
+                        setIndicandoRMSMain("False", cortandoVarios)
             else:                                                                           #recortando varias graficas
                 if cont == 0 and self.grafica.get_recortandoConClick() == 0:  # inicio de recorte
                     if sacarSegundoParametroAxesSubplot(str(self.axes)) == graficaActual:
@@ -1821,6 +1855,8 @@ class LineBuilder:
                             setCortandoGraficoMain("False", cortandoVarios)
                         if cortando == "integral":
                             setIndicandoIntegralMain("False", cortandoVarios)
+                        if cortando == "rms":
+                            setIndicandoRMSMain("False", cortandoVarios)
 def enter_axes(event):
     global cortandoVarios,graficaActual
     if cortandoVarios:
