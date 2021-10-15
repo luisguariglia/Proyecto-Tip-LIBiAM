@@ -1666,11 +1666,15 @@ class ventana_principal(QWidget):
     def exportar_VP(self, graficas, tipoExportacion):
         ninguna_grafica_con_filtro = False
 
+        graficas_sin_filtro = 0
         if len(graficas) != 0:
             for grafica in graficas:
-                if grafica.get_valores_pico_para_exportar() is None and grafica.get_valor_integral_para_exportar()\
+                if grafica.get_valores_pico_para_exportar() is None and grafica.get_valor_integral_para_exportar() \
                         is None and grafica.get_rms() is None:
-                    graficas.remove(grafica)
+                    graficas_sin_filtro = graficas_sin_filtro + 1
+
+        if graficas_sin_filtro == len(graficas):
+            ninguna_grafica_con_filtro = True
 
         if len(graficas) != 0:
             if not ninguna_grafica_con_filtro:
@@ -1681,7 +1685,9 @@ class ventana_principal(QWidget):
                     with open(nombre, 'w', newline='') as file:
                         writer = csv.writer(file)
                         for grafica in graficas:
-                            writer.writerow([grafica.get_nombre_columna_grafica()])
+                            if grafica.get_valores_pico_para_exportar() is not None or grafica.get_valor_integral_para_exportar() \
+                                    is not None or grafica.get_rms() is not None:
+                                writer.writerow([grafica.get_nombre_columna_grafica()])
 
                             if grafica.get_valores_pico_para_exportar() is not None:
                                 valores_pico = grafica.get_valores_pico_para_exportar()
@@ -1707,8 +1713,8 @@ class ventana_principal(QWidget):
                             writer.writerow("")
 
                         QMessageBox.about(self, "Exito", "Se ha generado el archivo Excel correctamente.")
-        else:
-            QMessageBox.information(self, "Error", "Ninguna gráfica seleccionada tiene filtro.")
+            else:
+                QMessageBox.information(self, "Error", "Ninguna gráfica seleccionada tiene filtro.")
 
     def setCortandoGrafico(self,val,varios,ventanaRecortar): #esto lo uso para conectar el main con la ventana GUI
         setCortandoGraficoMain(val,varios,ventanaRecortar)
