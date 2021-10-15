@@ -914,9 +914,15 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_checkbox.layout().addWidget(label_checkbox)
         widget_valores_pico.layout().addWidget(wid_checkbox)
 
+        # GRAFICAS
+        self.tree_graficas = QtWidgets.QTreeWidget()
+        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
+        self.tree_graficas.setFixedWidth(300)
+        self.tree_graficas.setHeaderHidden(True)
+
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
         btn_RecortarConClicks = QtWidgets.QPushButton("Indicar Haciendo Click")
-        btn_RecortarConClicks.clicked.connect(self.RecortarHaciendoClick)
+        btn_RecortarConClicks.clicked.connect(self.RecortarIntegralHaciendoClick)
         btn_RecortarConClicks.setFixedWidth(140)
         btn_RecortarConClicks.setStyleSheet(estilos.estilos_btn_exportar())
 
@@ -974,6 +980,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         # -------------------------------------------------------------------------------INTEGRAL-----------------------------------------------------------------
 
         # -------------------------------------------------------------------------------RMS-----------------------------------------------------------------
+        btn_RecortarConClicksRms = QtWidgets.QPushButton("Indicar Haciendo Click")
+        btn_RecortarConClicksRms.clicked.connect(self.RecortarRMSHaciendoClick)
+        btn_RecortarConClicksRms.setFixedWidth(140)
+        btn_RecortarConClicksRms.setStyleSheet(estilos.estilos_btn_exportar())
+
         wid_inicioRMS = QtWidgets.QWidget()
         wid_inicioRMS.setLayout(QtWidgets.QHBoxLayout())
         wid_inicioRMS.layout().setContentsMargins(8, 8, 8, 0)
@@ -1008,6 +1019,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_finRMS.layout().addWidget(label_finRMS, 5)
         wid_finRMS.layout().addWidget(self.spinbox_finRMS, 2)
         widget_valor_rms.layout().addWidget(wid_finRMS)
+        widget_valor_rms.layout().addWidget(btn_RecortarConClicksRms)
 
         # checkbox
         wid_checkbox_RMS = QtWidgets.QWidget()
@@ -1038,11 +1050,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         wid_btn_aplicar.layout().addWidget(btn_aplicar)
         wid_derecha.layout().addWidget(wid_btn_aplicar, 1)
 
-        # GRAFICAS
-        self.tree_graficas = QtWidgets.QTreeWidget()
-        self.tree_graficas.setStyleSheet(estilos.estilos_barritas_gucci())
-        self.tree_graficas.setFixedWidth(300)
-        self.tree_graficas.setHeaderHidden(True)
+
 
         if self.graficas is not None:
             for grafica in self.graficas:
@@ -1102,17 +1110,32 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
 
         return super().eventFilter(source, event)
 
-    def RecortarHaciendoClick(self):
+    def RecortarIntegralHaciendoClick(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Información", "Por favor haga 2 click en el grafico que desea realizar la integral")
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea realizar la integral \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Información", "Por favor haga 2 click en el grafico que desea realizar la integral")
+            QMessageBox.information(self, "Información", "Por favor haga 2 clicks en el gráfico que desea realizar la integral \n"
+                                                  "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", True, self)
-
+    def RecortarRMSHaciendoClick(self):
+        cant_hijos = self.tree_graficas.topLevelItemCount()
+        if cant_hijos == 1:
+            self.hide()
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea realizar el calculo de RMS \n"
+                                    "Indicando el valor inicial y valor final")
+            self.parent.setIndicandoRMS("rms", False, self)
+        else:
+            self.hide()
+            QMessageBox.information(self, "Información", "Por favor haga 2 clicks en el gráfico que desea realizar el calculo de RMS \n"
+                                                  "Indicando el valor inicial y valor final")
+            self.parent.setIndicandoRMS("rms", True, self)
     def seleccionar_grafica(self, num):
         cant_hijos = self.tree_graficas.topLevelItemCount()
 
@@ -1231,6 +1254,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         else:
             self.parent.listar_graficas(True)
             return False
+            
     def showTime(self):
         self.msgBox.close()
 
@@ -1255,6 +1279,11 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.spinbox_inicio.setValue(min)
         self.spinbox_fin.setValue(max)
         self.checkbox_mostrar_integral.setChecked(True)
+
+    def setRecorteRMS(self, min, max):
+        self.spinbox_inicioRMS.setValue(min)
+        self.spinbox_finRMS.setValue(max)
+        self.checkbox_mostrar_RMS.setChecked(True)
 
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None, v=""):
@@ -1460,11 +1489,15 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Información", "Por favor haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea recortar \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Información", "Por favor haga 2 click en el grafico que desea recortar")
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea recortar \n"
+                                    "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", True, self)
 
     def mostrar(self):
