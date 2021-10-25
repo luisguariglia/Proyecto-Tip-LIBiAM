@@ -3624,7 +3624,7 @@ class Manualdeusuario(QtWidgets.QDialog):
         self.setWindowIcon(QtGui.QIcon(":/Static/img/LIBiAM.jpg"))
         self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle("Manual de usuario")
-        self.setFixedSize(900, 700)
+        self.setFixedSize(1140, 700)
         self.setLayout(QtWidgets.QHBoxLayout())
         #self.layout().setAlignment(Qt.AlignTop)
         self.setStyleSheet("background-color:white;")
@@ -3635,163 +3635,502 @@ class Manualdeusuario(QtWidgets.QDialog):
         wid_izquierda.setLayout(QtWidgets.QVBoxLayout())
         wid_izquierda.layout().setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
+        layout_wid_derecha = QtWidgets.QVBoxLayout()
+        layout_wid_derecha.setAlignment(Qt.AlignTop)
+        layout_wid_derecha.setContentsMargins(4, 4, 4, 4)
+        layout_wid_derecha.setSpacing(16)
+
+
         wid_derecha = QtWidgets.QWidget()
-        wid_derecha.setLayout(QtWidgets.QVBoxLayout())
-        wid_derecha.layout().setContentsMargins(0, 0, 0, 0)
+        wid_derecha.setLayout(layout_wid_derecha)
         self.scroll = QtWidgets.QScrollArea()
         self.scroll.setStyleSheet(estilos.estilos_sroll_area())
 
-        wid_derecha.layout().addWidget(self.scroll , 10)
+        #wid_derecha.layout().addWidget(self.scroll , 10)
 
         self.layout().addWidget(wid_izquierda, 3)
-        self.layout().addWidget(wid_derecha, 7)
+
 
         #BOTONES INDICE
         btn_inicio = QtWidgets.QPushButton()
-        btn_inicio.setText("1 Inicio")
-        btn_inicio.setFixedWidth(41)
+        btn_inicio.setText("1 Introducción")
         btn_inicio.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_inicio.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         btn_inicio.clicked.connect(self.inicio)
         wid_izquierda.layout().addWidget(btn_inicio)
 
-
         btn_manipular_archivo_csv = QtWidgets.QPushButton()
-        btn_manipular_archivo_csv.setText("1.2 Manipular archivos “.csv”")
+        btn_manipular_archivo_csv.setText("1.1 Manipular archivos en formato “.csv”")
         btn_manipular_archivo_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_manipular_archivo_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         btn_manipular_archivo_csv.clicked.connect(self.manipular_csv)
         wid_izquierda.layout().addWidget(btn_manipular_archivo_csv)
 
         btn_agregar_csv = QtWidgets.QPushButton()
-        btn_agregar_csv.setText("1.2.1 Agregar CSV")
+        btn_agregar_csv.setText("1.1.1 Importar archivo “.csv”")
         btn_agregar_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_agregar_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_agregar_csv.clicked.connect(self.importar_csv)
         wid_izquierda.layout().addWidget(btn_agregar_csv)
 
         btn_agregar_csv_distinto = QtWidgets.QPushButton()
-        btn_agregar_csv_distinto.setText("1.2.2 Agregar “.csv” distinto de Trigno")
+        btn_agregar_csv_distinto.setText("1.1.2 Importar archivo “.csv” con formato diferente a Trigno")
         btn_agregar_csv_distinto.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_agregar_csv_distinto.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_agregar_csv_distinto.clicked.connect(self.importar_csv_diferente)
         wid_izquierda.layout().addWidget(btn_agregar_csv_distinto)
 
         btn_eliminar_csv = QtWidgets.QPushButton()
-        btn_eliminar_csv.setText("1.2.3 Eliminar CSV")
+        btn_eliminar_csv.setText("1.1.3 Eliminar archivo “.csv”")
         btn_eliminar_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_eliminar_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_eliminar_csv)
 
         btn_manejo_vistas = QtWidgets.QPushButton()
-        btn_manejo_vistas.setText("1.4 Manejo de Vistas")
+        btn_manejo_vistas.setText("1.2 Manejo de Vistas")
         btn_manejo_vistas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_manejo_vistas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_manejo_vistas)
 
         btn_graficar_datos = QtWidgets.QPushButton()
-        btn_graficar_datos.setText("1.5 Graficar Datos")
+        btn_graficar_datos.setText("1.3 Graficar Datos")
         btn_graficar_datos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_graficar_datos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_graficar_datos)
 
         btn_manipulacion_graficas = QtWidgets.QPushButton()
-        btn_manipulacion_graficas.setText("1.6 Manipulación de Gráficas")
+        btn_manipulacion_graficas.setText("1.4 Manipulación de Gráficas")
         btn_manipulacion_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_manipulacion_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_manipulacion_graficas)
 
         btn_valores_bruto = QtWidgets.QPushButton()
-        btn_valores_bruto.setText("1.6.1 Valores en bruto")
+        btn_valores_bruto.setText("1.4.1 Valores en bruto")
         btn_valores_bruto.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_valores_bruto.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_valores_bruto)
 
         btn_rectificar_grafico = QtWidgets.QPushButton()
-        btn_rectificar_grafico.setText("1.6.2 Rectificar Gráfico")
+        btn_rectificar_grafico.setText("1.4.2 Rectificar Gráfico")
         btn_rectificar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_rectificar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_rectificar_grafico)
 
         btn_aplicar_filtros = QtWidgets.QPushButton()
-        btn_aplicar_filtros.setText("1.6.3 Aplicar filtros")
+        btn_aplicar_filtros.setText("1.4.3 Aplicar filtros")
         btn_aplicar_filtros.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_aplicar_filtros.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_aplicar_filtros)
 
         btn_recortar_grafico = QtWidgets.QPushButton()
-        btn_recortar_grafico.setText("1.6.4 Recortar Gráfico")
+        btn_recortar_grafico.setText("1.4.4 Recortar Gráfico")
         btn_recortar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_recortar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_recortar_grafico)
 
+        btn_recortar_grafico_clicki = QtWidgets.QPushButton()
+        btn_recortar_grafico_clicki.setText("1.4.5 Recortar gráfico haciendo click")
+        btn_recortar_grafico_clicki.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_recortar_grafico_clicki.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_recortar_grafico_clicki)
+
         btn_valores_grafica = QtWidgets.QPushButton()
-        btn_valores_grafica.setText("1.6.5 Valores en la gráfica")
+        btn_valores_grafica.setText("1.4.6 Valores en la gráfica")
         btn_valores_grafica.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_valores_grafica.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_valores_grafica)
 
         btn_calcular_ymostrar_valores_picos = QtWidgets.QPushButton()
-        btn_calcular_ymostrar_valores_picos.setText("1.6.5.1 Calcular y mostrar valores picos")
+        btn_calcular_ymostrar_valores_picos.setText("1.4.6.1 Calcular y mostrar valores picos")
         btn_calcular_ymostrar_valores_picos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_valores_picos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_valores_picos)
 
         btn_calcular_ymostrar_integral = QtWidgets.QPushButton()
-        btn_calcular_ymostrar_integral.setText("1.6.5.2 Calcular y mostrar integral")
+        btn_calcular_ymostrar_integral.setText("1.4.6.2 Calcular y mostrar integral")
         btn_calcular_ymostrar_integral.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_integral.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_integral)
 
+        btn_calcular_ymostrar_integral_clicki = QtWidgets.QPushButton()
+        btn_calcular_ymostrar_integral_clicki.setText("1.4.6.3 Calcular y mostrar integral haciendo click")
+        btn_calcular_ymostrar_integral_clicki.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_calcular_ymostrar_integral_clicki.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_calcular_ymostrar_integral_clicki)
+
         btn_calcular_ymostrar_rms = QtWidgets.QPushButton()
-        btn_calcular_ymostrar_rms.setText("1.6.5.3 Calcular y mostrar valor RMS")
+        btn_calcular_ymostrar_rms.setText("1.4.6.4 Calcular y mostrar valor RMS")
         btn_calcular_ymostrar_rms.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_rms.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_rms)
 
         btn_comparar = QtWidgets.QPushButton()
-        btn_comparar.setText("1.6.6 Comparar")
+        btn_comparar.setText("1.4.7 Comparar")
         btn_comparar.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_comparar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_comparar)
 
+        btn_eliminar_grafica = QtWidgets.QPushButton()
+        btn_eliminar_grafica.setText("1.4.8 Eliminar gráfica")
+        btn_eliminar_grafica.setStyleSheet(estilos.estilos_btn_ver_guia())
+        btn_eliminar_grafica.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        wid_izquierda.layout().addWidget(btn_eliminar_grafica)
+
         btn_panel_superior_grafico = QtWidgets.QPushButton()
-        btn_panel_superior_grafico.setText("1.6.8 Panel superior del gráfico")
+        btn_panel_superior_grafico.setText("1.4.9 Panel superior del gráfico")
         btn_panel_superior_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_panel_superior_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_panel_superior_grafico)
 
         btn_configuracion_programa = QtWidgets.QPushButton()
-        btn_configuracion_programa.setText("1.7 Sección de Configuración del Programa")
+        btn_configuracion_programa.setText("1.5 Sección de Configuración del Programa")
         btn_configuracion_programa.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_programa.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_configuracion_programa)
 
         btn_configuracion_archivos = QtWidgets.QPushButton()
-        btn_configuracion_archivos.setText("1.7.1 Configuración de archivos")
+        btn_configuracion_archivos.setText("1.5.1 Configuración de archivos")
         btn_configuracion_archivos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_archivos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_configuracion_archivos)
 
         btn_configuracion_limite_graficas = QtWidgets.QPushButton()
-        btn_configuracion_limite_graficas.setText("1.7.2 Configuración de límite de gráficas")
+        btn_configuracion_limite_graficas.setText("1.5.2 Configuración de límite de gráficas")
         btn_configuracion_limite_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_limite_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_configuracion_limite_graficas)
 
         btn_exportar = QtWidgets.QPushButton()
-        btn_exportar.setText("1.8 Exportar datos")
+        btn_exportar.setText("1.6 Exportar datos")
         btn_exportar.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_exportar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
         wid_izquierda.layout().addWidget(btn_exportar)
 
+        #WIDGET DERECHA (CONTENIDO)
 
+        #INTRODUCCIÓN
+        widget_introduccion = QtWidgets.QWidget()
+        widget_introduccion.setLayout(QtWidgets.QVBoxLayout())
+        widget_introduccion.layout().setAlignment(Qt.AlignTop)
+        widget_introduccion.layout().setContentsMargins(0,0,0,0)
+        widget_introduccion.layout().setSpacing(8)
+
+        label_introduccion = QtWidgets.QLabel("1 Introducción:")
+        label_introduccion.setStyleSheet("font: bold 13px;")
+
+        label_texto_introduccion = QtWidgets.QLabel(
+            """Analysis of Biomechanical Signal (ABS) es un software que tiene como objetivo facilitar el análisis de señales electromiográficas procedentes del aparato Trigno, ofreciendo la posibilidad de visualizar en forma de gráficas la información que se encuentra en los archivos .csv obtenidos por el mismo así como también, si el usuario lo desea, aplicar filtros y cálculos a dichas gráficas.
+
+Este software cuenta con tres distribuciones dependiendo de qué sistema operativo se utilice (Windows, Linux y MacOS). Dado que estas son portables no es necesario realizar una instalación del programa; solamente se deberá solicitar a los representantes del LIBiAM una copia de la carpeta correspondiente al sistema operativo instalado en el equipo del usuario.
+
+Para poder utilizar ABSse debe hacer doble click en el archivo ejecutable “ABS”,que se encuentra dentro de la carpeta mencionada anteriormente (se recomienda ubicarla en el Escritorio del equipo).
+
+Una vez realizado el paso anterior, se visualizará la pantalla principal, con las diferentes secciones que la componen. Estas serán explicadas a continuación.
+""")
+        label_texto_introduccion.setStyleSheet("font-size: 13px;")
+        label_texto_introduccion.setFixedWidth(735)
+        label_texto_introduccion.setWordWrap(True)
+
+
+        img_paso_1 = QtGui.QPixmap('Static/img/img1.png')
+        lab0 = QtWidgets.QLabel()
+        lab0.setPixmap(img_paso_1)
+
+        #(1)
+        label_a1 = QtWidgets.QLabel(
+            """(1) En esta sección se pueden realizar operaciones básicas tales como importar un archivo .csv, como se explica en el punto 1.1.1 de este manual. Asimismo, se pueden realizar configuraciones, tal como se detalla en el punto 1.5.""")
+        label_a1.setStyleSheet("font-size: 13px;margin-top:30px;")
+        label_a1.setFixedWidth(735)
+        label_a1.setWordWrap(True)
+
+        img2 = QtGui.QPixmap('Static/img/img2.png')
+        lab2 = QtWidgets.QLabel()
+        lab2.setPixmap(img2)
+
+        # (2)
+        label_a3 = QtWidgets.QLabel(
+            """(2) En esta sección se encuentra la barra superior de navegación, a través de la que se pueden acceder a las diferentes funcionalidades que brinda el software. Estas son: crear una nueva vista, agregar y quitar filtros a una gráfica, realizarle recortes, obtener valores de interés al aplicar cálculos matemáticos (valor RMS, valores máximos, integral) sobre una o varias gráficas, comparar gráficas y exportar datos.""")
+        label_a3.setStyleSheet("font-size: 13px;margin-top:30px;")
+        label_a3.setFixedWidth(735)
+        label_a3.setWordWrap(True)
+
+        img3 = QtGui.QPixmap('Static/img/img3.png')
+        lab3 = QtWidgets.QLabel()
+        lab3.setPixmap(img3)
+
+        # (3)
+
+        label_a4 = QtWidgets.QLabel(
+            """(3) Esta es la sección donde se muestran los archivos .csv que se hayan agregado con anterioridad al software. Los datos de estos archivos se encuentra organizado dentro de diferentes directorios y contienen las señales electromiográficas que posteriormente serán graficadas si el usuario lo desea. 
+También se puede agregar o eliminar archivos .csv y minimizar la sección, como se detalla en los puntos 1.1.1, 1.1.2 y 1.1.3 del manual
+""")
+        label_a4.setStyleSheet("font-size: 13px;margin-top:30px;")
+        label_a4.setFixedWidth(735)
+        label_a4.setWordWrap(True)
+
+        img4 = QtGui.QPixmap('Static/img/img4.png')
+        lab4 = QtWidgets.QLabel()
+        lab4.setPixmap(img4)
+
+        # (4)
+
+        label_a5 = QtWidgets.QLabel(
+            """(4) En esta sección se muestran las vistas creadas además de las señales que se encuentran abiertas en dichas vistas.""")
+        label_a5.setStyleSheet("font-size: 13px;margin-top:30px;")
+        label_a5.setFixedWidth(735)
+        label_a5.setWordWrap(True)
+
+        img5 = QtGui.QPixmap('Static/img/img5.png')
+        lab5 = QtWidgets.QLabel()
+        lab5.setPixmap(img5)
+
+        # (5)
+        label_a6 = QtWidgets.QLabel(
+            """(5) Esta es la sección donde se encuentran todas las vistas y se pueden ver las gráficas. Cuando se inicia el programa se mostrará una pestaña llamada “Inicio” la cual contiene información del LIBiAM.""")
+        label_a6.setStyleSheet("font-size: 13px;margin-top:30px;")
+        label_a6.setFixedWidth(735)
+        label_a6.setWordWrap(True)
+
+        img6 = QtGui.QPixmap('Static/img/img6.png')
+        lab6 = QtWidgets.QLabel()
+        lab6.setPixmap(img6)
+
+        # 1.1 Manipular archivos en formato .csv
+
+        label_manipular_archivos_csv = QtWidgets.QLabel("1.1 Manipular archivos en formato .csv")
+        label_manipular_archivos_csv.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a7 = QtWidgets.QLabel(
+            """Por defecto el sistema interpreta el archivo .csv con el formato obtenido del aparato Trigno, pero cabe destacar que también se pueden importar archivos de este tipo con un contenido distinto al de Trigno, como se indica en el punto 1.1.2 del manual.""")
+        label_a7.setStyleSheet("font-size: 13px;")
+        label_a7.setFixedWidth(735)
+        label_a7.setWordWrap(True)
+
+        # 1.1.1 Importar archivo .csv
+
+        label_importar_archivos_csv = QtWidgets.QLabel("1.1.1 Importar archivo .csv")
+        label_importar_archivos_csv.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a8 = QtWidgets.QLabel(
+            """El software permite importar uno o varios archivos .csv haciendo click en el menú “Archivo” (1) y luego en la opción “Abrir .CSV” (2).""")
+        label_a8.setStyleSheet("font-size: 13px;")
+        label_a8.setFixedWidth(735)
+        label_a8.setWordWrap(True)
+
+        img7 = QtGui.QPixmap('Static/img/img7.png')
+        lab7 = QtWidgets.QLabel()
+        lab7.setPixmap(img7)
+
+        label_a9 = QtWidgets.QLabel(
+            """También se puede lograr lo anteriormente mencionado haciendo click en el ícono de suma (“+”) en el menú principal (3).""")
+        label_a9.setStyleSheet("font-size: 13px;")
+        label_a9.setFixedWidth(735)
+        label_a9.setWordWrap(True)
+
+        img8 = QtGui.QPixmap('Static/img/img8.png')
+        lab8 = QtWidgets.QLabel()
+        lab8.setPixmap(img8)
+
+        label_a10 = QtWidgets.QLabel(
+            """Posteriormente se desplegará una ventana donde se puede abrir un archivo .csv proveniente de Trigno haciendo click sobre el mismo (4). Para finalizar la acción se da click en abrir (5).""")
+        label_a10.setStyleSheet("font-size: 13px;")
+        label_a10.setFixedWidth(735)
+        label_a10.setWordWrap(True)
+
+        img9 = QtGui.QPixmap('Static/img/img9.png')
+        lab9 = QtWidgets.QLabel()
+        lab9.setPixmap(img9)
+
+        label_a11 = QtWidgets.QLabel(
+            """Luego de esto el programa mostrará en el panel izquierdo el nombre del archivo importado y su contenido organizado en directorios. Dentro de ellos se encuentran contenidas las señales electromiográficas (6) que posteriormente serán graficadas si el usuario lo desea, tal como se indica en el punto 1.3 del manual. """)
+        label_a11.setStyleSheet("font-size: 13px;")
+        label_a11.setFixedWidth(735)
+        label_a11.setWordWrap(True)
+
+        img10 = QtGui.QPixmap('Static/img/img10.png')
+        lab10 = QtWidgets.QLabel()
+        lab10.setPixmap(img10)
+
+        # 1.1.2 Importar archivo .csv con formato diferente a Trigno
+
+        label_importar_archivos_csv_diferentes = QtWidgets.QLabel("1.1.2 Importar archivo .csv con formato diferente a Trigno")
+        label_importar_archivos_csv_diferentes.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a12 = QtWidgets.QLabel(
+            """Como se explicó anteriormente, el programa detecta por defecto el formato de archivo que genera el aparato Trigno. En caso de que suceda lo contrario, se mostrará el siguiente error. Este ocurre cuando, al importar un archivo, el número de la fila que se le especificó al software (como se indica en el punto 1.5.1 del manual) no corresponde a la del archivo .csv donde comienzan los datos correspondientes a cada sensor de electromiografía.""")
+        label_a12.setStyleSheet("font-size: 13px;")
+        label_a12.setFixedWidth(735)
+        label_a12.setWordWrap(True)
+
+        img11 = QtGui.QPixmap('Static/img/img11.png')
+        lab11= QtWidgets.QLabel()
+        lab11.setPixmap(img11)
+
+        label_a13 = QtWidgets.QLabel(
+            """Luego de clickear en el botón “OK”, se desplegará la siguiente ventana, la cual cuenta con dos secciones: una para seleccionar columnas (1) y la otra para el filtrado de aquellas columnas que no son de interés para el usuario (2).""")
+        label_a13.setStyleSheet("font-size: 13px;")
+        label_a13.setFixedWidth(735)
+        label_a13.setWordWrap(True)
+
+        img12 = QtGui.QPixmap('Static/img/img12.png')
+        lab12 = QtWidgets.QLabel()
+        lab12.setPixmap(img12)
+
+        label_a14 = QtWidgets.QLabel(
+            """Si se desean seleccionar las columnas del archivo se debe hacer click sobre el botón “Seleccionar”(3) en la sección (1).""")
+        label_a14.setStyleSheet("font-size: 13px;")
+        label_a14.setFixedWidth(735)
+        label_a14.setWordWrap(True)
+
+        img13 = QtGui.QPixmap('Static/img/img13.png')
+        lab13 = QtWidgets.QLabel()
+        lab13.setPixmap(img13)
+
+        label_a15 = QtWidgets.QLabel(
+            """Al hacer esto se mostrará por cada columna una casilla de verificación correspondiente, donde el usuario podrá seleccionar las de interés a utilizar haciendo click sobre ellas (4).
+Si se desea deseleccionar todas las casillas marcadas, se debe hacer click en el botón de “Desmarcar Todas” (5).
+""")
+        label_a15.setStyleSheet("font-size: 13px;")
+        label_a15.setFixedWidth(735)
+        label_a15.setWordWrap(True)
+
+        img14 = QtGui.QPixmap('Static/img/img14.png')
+        lab14 = QtWidgets.QLabel()
+        lab14.setPixmap(img14)
+
+        label_a16 = QtWidgets.QLabel(
+            """Adicionalmente, si se desea trabajar con todas las columnas del archivo, se debe clickear sobre el botón “Seleccionar todas” (6). Al hacer esto se marcarán automáticamente todas las casillas de verificación que no estén seleccionadas (7) y no será necesario seleccionarlas una por una.""")
+        label_a16.setStyleSheet("font-size: 13px;")
+        label_a16.setFixedWidth(735)
+        label_a16.setWordWrap(True)
+
+        img15 = QtGui.QPixmap('Static/img/img15.png')
+        lab15 = QtWidgets.QLabel()
+        lab15.setPixmap(img15)
+
+        label_a17 = QtWidgets.QLabel(
+            """Si se desean quitar las columnas seleccionadas, se debe clickear sobre el botón “Filtrar Seleccionados” (4) en la sección (2) del punto 1.1.2 del manual.
+Por otro lado, si quiere quitar las no seleccionadas se debe clickear en “Filtrar no seleccionados” (5).
+Además, se pueden filtrar aquellas columnas del archivo que en su nombre contengan los caracteres (alfanuméricos) que se ingresen en la caja de texto, con el fin de filtrar rápidamente aquellas columnas que no son de interés (6).
+Si se desea conservar aquellas columnas que cumplen con lo ingresado en el paso anterior, se debe desactivar la casilla de verificación llamada “Eliminar coincidencias”; de lo contrario, se debe dejar dicha casilla verificada (7).
+Para que el filtro por caracteres se aplique sobre las columnas se debe clickear sobre el botón “Filtrar” (8).
+Luego de realizar estos pasos, se debe clickear sobre el botón “Siguiente” para poder continuar hacia la siguiente ventana de configuración.
+""")
+        label_a17.setStyleSheet("font-size: 13px;")
+        label_a17.setFixedWidth(735)
+        label_a17.setWordWrap(True)
+
+        img16 = QtGui.QPixmap('Static/img/img16.png')
+        lab16 = QtWidgets.QLabel()
+        lab16.setPixmap(img16)
+
+        label_a18 = QtWidgets.QLabel(
+            """Luego de realizar el paso (9), se mantendrá la sección izquierda con las columnas de archivos filtradas, como se muestra en la sección (1) del punto 1.1.2 del manual de usuario, y se mostrará una nueva sección llamada “Directorios”.
+En ella, el usuario podrá crear directorios donde se contendrán las columnas que el usuario desee. Esta función es útil a la hora de organizar todas las columnas que se van a importar. Para ello, deberá crear un nuevo directorio haciendo click sobre el botón “Nuevo directorio” (10)
+""")
+        label_a18.setStyleSheet("font-size: 13px;")
+        label_a18.setFixedWidth(735)
+        label_a18.setWordWrap(True)
+
+        img17 = QtGui.QPixmap('Static/img/img17.png')
+        lab17 = QtWidgets.QLabel()
+        lab17.setPixmap(img17)
+
+        label_a19 = QtWidgets.QLabel(
+            """Al hacer esto se desplegará la siguiente ventana, en la que se podrá escoger un nombre para el directorio a crear (11). Para finalizar, se debe clickear sobre el botón “Confirmar” (12).""")
+        label_a19.setStyleSheet("font-size: 13px;")
+        label_a19.setFixedWidth(735)
+        label_a19.setWordWrap(True)
+
+        img18 = QtGui.QPixmap('Static/img/img18.png')
+        lab18 = QtWidgets.QLabel()
+        lab18.setPixmap(img18)
+
+        label_a20 = QtWidgets.QLabel(
+            """Una vez que se tenga el directorio creado, se deberá agregar columnas al mismo para poder confirmar su selección. Para realizar esto, es necesario hacer click derecho sobre el directorio (13), lo cual desplegará el siguiente menú (14)""")
+        label_a20.setStyleSheet("font-size: 13px;")
+        label_a20.setFixedWidth(735)
+        label_a20.setWordWrap(True)
+
+        img19 = QtGui.QPixmap('Static/img/img19.png')
+        lab19 = QtWidgets.QLabel()
+        lab19.setPixmap(img19)
+
+        img20 = QtGui.QPixmap('Static/img/img20.png')
+        lab20 = QtWidgets.QLabel()
+        lab20.setPixmap(img20)
+
+        label_a21 = QtWidgets.QLabel(
+            """En este menú se podrán realizar las siguientes acciones para agregar al directorio aquellas columnas cuyas casillas de verificación fueron seleccionadas:
+    1. Importar columnas seleccionadas: al hacer click sobre esta opción se añadirán todas las columnas que se encuentren seleccionadas dentro del directorio.
+    2. Importar rango de columnas: se deben seleccionar únicamente 2 casillas de verificación de la sección de columnas del archivo; luego se añadirán al directorio todas las que estén entre ese rango, incluyendo las que se eligieron.
+    3. Eliminar columnas: elimina todas las columnas que se encuentren dentro del directorio.
+    4. Eliminar directorio: remueve el directorio creado y todas las columnas que este contenga.
+    5. Cambiar nombre: si por alguna razón se desea cambiar el nombre del directorio creado anteriormente, al hacer click sobre esta opción se muestra la siguiente pantalla donde se deberá escribir el nuevo nombre del directorio (5.1) y luego clickear sobre el botón “Confirmar” para aplicar los cambios (5.2).
+""")
+        label_a21.setStyleSheet("font-size: 13px;")
+        label_a21.setFixedWidth(735)
+        label_a21.setWordWrap(True)
+
+        img21 = QtGui.QPixmap('Static/img/img21.png')
+        lab21 = QtWidgets.QLabel()
+        lab21.setPixmap(img21)
+
+        widget_introduccion.layout().addWidget(label_introduccion)
+        widget_introduccion.layout().addWidget(label_texto_introduccion)
+        widget_introduccion.layout().addWidget(lab0)
+        widget_introduccion.layout().addWidget(label_a1)
+        widget_introduccion.layout().addWidget(lab2)
+        widget_introduccion.layout().addWidget(label_a3)
+        widget_introduccion.layout().addWidget(lab3)
+        widget_introduccion.layout().addWidget(label_a4)
+        widget_introduccion.layout().addWidget(lab4)
+        widget_introduccion.layout().addWidget(label_a5)
+        widget_introduccion.layout().addWidget(lab5)
+        widget_introduccion.layout().addWidget(label_a6)
+        widget_introduccion.layout().addWidget(lab6)
+        widget_introduccion.layout().addWidget(label_manipular_archivos_csv)
+        widget_introduccion.layout().addWidget(label_a7)
+        widget_introduccion.layout().addWidget(label_importar_archivos_csv)
+        widget_introduccion.layout().addWidget(label_a8)
+        widget_introduccion.layout().addWidget(lab7)
+        widget_introduccion.layout().addWidget(label_a9)
+        widget_introduccion.layout().addWidget(lab8)
+        widget_introduccion.layout().addWidget(label_a10)
+        widget_introduccion.layout().addWidget(lab9)
+        widget_introduccion.layout().addWidget(label_a11)
+        widget_introduccion.layout().addWidget(lab10)
+        widget_introduccion.layout().addWidget(label_importar_archivos_csv_diferentes)
+        widget_introduccion.layout().addWidget(label_a12)
+        widget_introduccion.layout().addWidget(lab11)
+        widget_introduccion.layout().addWidget(label_a13)
+        widget_introduccion.layout().addWidget(lab12)
+        widget_introduccion.layout().addWidget(label_a14)
+        widget_introduccion.layout().addWidget(lab13)
+        widget_introduccion.layout().addWidget(label_a15)
+        widget_introduccion.layout().addWidget(lab14)
+        widget_introduccion.layout().addWidget(label_a16)
+        widget_introduccion.layout().addWidget(lab15)
+        widget_introduccion.layout().addWidget(label_a17)
+        widget_introduccion.layout().addWidget(lab16)
+        widget_introduccion.layout().addWidget(label_a18)
+        widget_introduccion.layout().addWidget(lab17)
+        widget_introduccion.layout().addWidget(label_a19)
+        widget_introduccion.layout().addWidget(lab18)
+        widget_introduccion.layout().addWidget(label_a20)
+        widget_introduccion.layout().addWidget(lab19)
+        widget_introduccion.layout().addWidget(lab20)
+        widget_introduccion.layout().addWidget(label_a21)
+        widget_introduccion.layout().addWidget(lab21)
+        #AGREGANDO CAPITULOS
+        layout_wid_derecha.addWidget(widget_introduccion)
 
         #WIDGET SCROLL
+        self.scroll.setWidget(wid_derecha)
+        self.layout().addWidget(self.scroll, 7)
+
         widget_scroll = QtWidgets.QWidget()
 
-        widget_scroll.setLayout(QtWidgets.QVBoxLayout())
-        label_1 = QtWidgets.QLabel("En desarrollo - Ventana para reemplazar la descarga del PDF")
-        widget_scroll.layout().addWidget(label_1)
-        self.scroll.setWidget(widget_scroll)
         self.scroll.widget().scroll(200, 200)
 
     def inicio(self):
@@ -3799,4 +4138,10 @@ class Manualdeusuario(QtWidgets.QDialog):
         self.scroll.verticalScrollBar().setValue(0)
 
     def manipular_csv(self):
-        self.scroll.verticalScrollBar().setValue(300)
+        self.scroll.verticalScrollBar().setValue(2050)
+
+    def importar_csv(self):
+        self.scroll.verticalScrollBar().setValue(2150)
+
+    def importar_csv_diferente(self):
+        self.scroll.verticalScrollBar().setValue(3700)
