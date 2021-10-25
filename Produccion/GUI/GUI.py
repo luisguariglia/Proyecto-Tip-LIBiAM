@@ -1114,26 +1114,26 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 clicks en el Grafico que desea realizar la integral \n"
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea realizar la integral \n"
                                     "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 clicks en el Grafico que desea realizar la integral \n"
+            QMessageBox.information(self, "Información", "Por favor haga 2 clicks en el gráfico que desea realizar la integral \n"
                                                   "Indicando el valor inicial y valor final")
             self.parent.setIndicandoIntegral("integral", True, self)
     def RecortarRMSHaciendoClick(self):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 clicks en el Grafico que desea realizar el calculo de RMS \n"
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea realizar el calculo de RMS \n"
                                     "Indicando el valor inicial y valor final")
             self.parent.setIndicandoRMS("rms", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info", "Por favos haga 2 clicks en el Grafico que desea realizar el calculo de RMS \n"
+            QMessageBox.information(self, "Información", "Por favor haga 2 clicks en el gráfico que desea realizar el calculo de RMS \n"
                                                   "Indicando el valor inicial y valor final")
             self.parent.setIndicandoRMS("rms", True, self)
     def seleccionar_grafica(self, num):
@@ -1254,6 +1254,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         else:
             self.parent.listar_graficas(True)
             return False
+            
     def showTime(self):
         self.msgBox.close()
 
@@ -1488,14 +1489,14 @@ class ventana_cortar(QtWidgets.QDialog):
         cant_hijos = self.tree_graficas.topLevelItemCount()
         if cant_hijos == 1:
             self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 clicks en el Grafico que desea recortar \n"
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea recortar \n"
                                     "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", False, self)
         else:
             self.hide()
-            QMessageBox.information(self, "Info",
-                                    "Por favos haga 2 clicks en el Grafico que desea recortar \n"
+            QMessageBox.information(self, "Información",
+                                    "Por favor haga 2 clicks en el gráfico que desea recortar \n"
                                     "Indicando el valor inicial y valor final")
             self.parent.setCortandoGrafico("True", True, self)
 
