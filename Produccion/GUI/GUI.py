@@ -1285,6 +1285,7 @@ class ventana_valores_en_graficas(QtWidgets.QDialog):
         self.spinbox_finRMS.setValue(max)
         self.checkbox_mostrar_RMS.setChecked(True)
 
+
 class ventana_cortar(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None, v=""):
         super(ventana_cortar, self).__init__()
@@ -2050,6 +2051,7 @@ class ventana_conf_vistas(QtWidgets.QDialog):
 
     def showTime(self):
         self.msgBox.close()
+
 
 class ventana_exportarVP(QtWidgets.QDialog):
     def __init__(self, parent=None, graficas=None):
@@ -3685,136 +3687,166 @@ class Manualdeusuario(QtWidgets.QDialog):
         btn_eliminar_csv.setText("1.1.3 Eliminar archivo “.csv”")
         btn_eliminar_csv.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_eliminar_csv.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_eliminar_csv.clicked.connect(self.eliminar_archivo)
         wid_izquierda.layout().addWidget(btn_eliminar_csv)
 
         btn_manejo_vistas = QtWidgets.QPushButton()
         btn_manejo_vistas.setText("1.2 Manejo de Vistas")
         btn_manejo_vistas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_manejo_vistas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_manejo_vistas.clicked.connect(self.manejo_vistas)
         wid_izquierda.layout().addWidget(btn_manejo_vistas)
 
         btn_graficar_datos = QtWidgets.QPushButton()
         btn_graficar_datos.setText("1.3 Graficar Datos")
         btn_graficar_datos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_graficar_datos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_graficar_datos.clicked.connect(self.graficar_datos)
         wid_izquierda.layout().addWidget(btn_graficar_datos)
 
         btn_manipulacion_graficas = QtWidgets.QPushButton()
         btn_manipulacion_graficas.setText("1.4 Manipulación de Gráficas")
         btn_manipulacion_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_manipulacion_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_manipulacion_graficas.clicked.connect(self.manipulacion_de_graficas)
         wid_izquierda.layout().addWidget(btn_manipulacion_graficas)
 
         btn_valores_bruto = QtWidgets.QPushButton()
         btn_valores_bruto.setText("1.4.1 Valores en bruto")
         btn_valores_bruto.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_valores_bruto.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_valores_bruto.clicked.connect(self.valores_en_bruto)
         wid_izquierda.layout().addWidget(btn_valores_bruto)
 
         btn_rectificar_grafico = QtWidgets.QPushButton()
         btn_rectificar_grafico.setText("1.4.2 Rectificar Gráfico")
         btn_rectificar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_rectificar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_rectificar_grafico.clicked.connect(self.rectificar_grafico)
         wid_izquierda.layout().addWidget(btn_rectificar_grafico)
 
         btn_aplicar_filtros = QtWidgets.QPushButton()
         btn_aplicar_filtros.setText("1.4.3 Aplicar filtros")
         btn_aplicar_filtros.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_aplicar_filtros.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_aplicar_filtros.clicked.connect(self.aplicar_filtros)
         wid_izquierda.layout().addWidget(btn_aplicar_filtros)
 
         btn_recortar_grafico = QtWidgets.QPushButton()
         btn_recortar_grafico.setText("1.4.4 Recortar Gráfico")
         btn_recortar_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_recortar_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_recortar_grafico.clicked.connect(self.recortar_grafico)
         wid_izquierda.layout().addWidget(btn_recortar_grafico)
 
         btn_recortar_grafico_clicki = QtWidgets.QPushButton()
         btn_recortar_grafico_clicki.setText("1.4.5 Recortar gráfico haciendo click")
         btn_recortar_grafico_clicki.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_recortar_grafico_clicki.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_recortar_grafico_clicki.clicked.connect(self.recortar_haciendo_click)
         wid_izquierda.layout().addWidget(btn_recortar_grafico_clicki)
 
         btn_valores_grafica = QtWidgets.QPushButton()
         btn_valores_grafica.setText("1.4.6 Valores en la gráfica")
         btn_valores_grafica.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_valores_grafica.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_valores_grafica.clicked.connect(self.valores_en_grafica)
         wid_izquierda.layout().addWidget(btn_valores_grafica)
 
         btn_calcular_ymostrar_valores_picos = QtWidgets.QPushButton()
         btn_calcular_ymostrar_valores_picos.setText("1.4.6.1 Calcular y mostrar valores picos")
         btn_calcular_ymostrar_valores_picos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_valores_picos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_calcular_ymostrar_valores_picos.clicked.connect(self.valores_picos)
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_valores_picos)
 
         btn_calcular_ymostrar_integral = QtWidgets.QPushButton()
         btn_calcular_ymostrar_integral.setText("1.4.6.2 Calcular y mostrar integral")
         btn_calcular_ymostrar_integral.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_integral.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_calcular_ymostrar_integral.clicked.connect(self.valores_integral)
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_integral)
 
         btn_calcular_ymostrar_integral_clicki = QtWidgets.QPushButton()
         btn_calcular_ymostrar_integral_clicki.setText("1.4.6.3 Calcular y mostrar integral haciendo click")
         btn_calcular_ymostrar_integral_clicki.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_integral_clicki.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_calcular_ymostrar_integral_clicki.clicked.connect(self.valores_integral_clicki)
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_integral_clicki)
 
         btn_calcular_ymostrar_rms = QtWidgets.QPushButton()
         btn_calcular_ymostrar_rms.setText("1.4.6.4 Calcular y mostrar valor RMS")
         btn_calcular_ymostrar_rms.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_calcular_ymostrar_rms.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_calcular_ymostrar_rms.clicked.connect(self.valores_rms)
         wid_izquierda.layout().addWidget(btn_calcular_ymostrar_rms)
 
         btn_comparar = QtWidgets.QPushButton()
         btn_comparar.setText("1.4.7 Comparar")
         btn_comparar.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_comparar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_comparar.clicked.connect(self.comparar)
         wid_izquierda.layout().addWidget(btn_comparar)
 
         btn_eliminar_grafica = QtWidgets.QPushButton()
         btn_eliminar_grafica.setText("1.4.8 Eliminar gráfica")
         btn_eliminar_grafica.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_eliminar_grafica.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_eliminar_grafica.clicked.connect(self.eliminar_grafica)
         wid_izquierda.layout().addWidget(btn_eliminar_grafica)
 
         btn_panel_superior_grafico = QtWidgets.QPushButton()
         btn_panel_superior_grafico.setText("1.4.9 Panel superior del gráfico")
         btn_panel_superior_grafico.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_panel_superior_grafico.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_panel_superior_grafico.clicked.connect(self.panel_superior)
         wid_izquierda.layout().addWidget(btn_panel_superior_grafico)
 
         btn_configuracion_programa = QtWidgets.QPushButton()
         btn_configuracion_programa.setText("1.5 Sección de Configuración del Programa")
         btn_configuracion_programa.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_programa.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_configuracion_programa.clicked.connect(self.seccion_configuraciones)
         wid_izquierda.layout().addWidget(btn_configuracion_programa)
 
         btn_configuracion_archivos = QtWidgets.QPushButton()
         btn_configuracion_archivos.setText("1.5.1 Configuración de archivos")
         btn_configuracion_archivos.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_archivos.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_configuracion_archivos.clicked.connect(self.configuraciones_archivos)
         wid_izquierda.layout().addWidget(btn_configuracion_archivos)
 
         btn_configuracion_limite_graficas = QtWidgets.QPushButton()
         btn_configuracion_limite_graficas.setText("1.5.2 Configuración de límite de gráficas")
         btn_configuracion_limite_graficas.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_configuracion_limite_graficas.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_configuracion_limite_graficas.clicked.connect(self.configuraciones_limites_graficas)
         wid_izquierda.layout().addWidget(btn_configuracion_limite_graficas)
+
 
         btn_exportar = QtWidgets.QPushButton()
         btn_exportar.setText("1.6 Exportar datos")
         btn_exportar.setStyleSheet(estilos.estilos_btn_ver_guia())
         btn_exportar.setCursor(QtGui.QCursor(Qt.PointingHandCursor))
+        btn_exportar.clicked.connect(self.exportar_datos)
         wid_izquierda.layout().addWidget(btn_exportar)
 
         #WIDGET DERECHA (CONTENIDO)
 
         #INTRODUCCIÓN
         widget_introduccion = QtWidgets.QWidget()
+
         widget_introduccion.setLayout(QtWidgets.QVBoxLayout())
         widget_introduccion.layout().setAlignment(Qt.AlignTop)
         widget_introduccion.layout().setContentsMargins(0,0,0,0)
         widget_introduccion.layout().setSpacing(8)
+
+        widget_introduccion2 = QtWidgets.QWidget()
+
+        widget_introduccion2.setLayout(QtWidgets.QVBoxLayout())
+        widget_introduccion2.layout().setAlignment(Qt.AlignTop)
+        widget_introduccion2.layout().setContentsMargins(0, 0, 0, 0)
+        widget_introduccion2.layout().setSpacing(8)
 
         label_introduccion = QtWidgets.QLabel("1 Introducción:")
         label_introduccion.setStyleSheet("font: bold 13px;")
@@ -3833,7 +3865,7 @@ Una vez realizado el paso anterior, se visualizará la pantalla principal, con l
         label_texto_introduccion.setWordWrap(True)
 
 
-        img_paso_1 = QtGui.QPixmap('Static/img/img1.png')
+        img_paso_1 = QtGui.QPixmap(':/Static/img/img1.png')
         lab0 = QtWidgets.QLabel()
         lab0.setPixmap(img_paso_1)
 
@@ -3844,7 +3876,7 @@ Una vez realizado el paso anterior, se visualizará la pantalla principal, con l
         label_a1.setFixedWidth(735)
         label_a1.setWordWrap(True)
 
-        img2 = QtGui.QPixmap('Static/img/img2.png')
+        img2 = QtGui.QPixmap(':/Static/img/img2.png')
         lab2 = QtWidgets.QLabel()
         lab2.setPixmap(img2)
 
@@ -3855,7 +3887,7 @@ Una vez realizado el paso anterior, se visualizará la pantalla principal, con l
         label_a3.setFixedWidth(735)
         label_a3.setWordWrap(True)
 
-        img3 = QtGui.QPixmap('Static/img/img3.png')
+        img3 = QtGui.QPixmap(':/Static/img/img3.png')
         lab3 = QtWidgets.QLabel()
         lab3.setPixmap(img3)
 
@@ -3869,7 +3901,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a4.setFixedWidth(735)
         label_a4.setWordWrap(True)
 
-        img4 = QtGui.QPixmap('Static/img/img4.png')
+        img4 = QtGui.QPixmap(':/Static/img/img4.png')
         lab4 = QtWidgets.QLabel()
         lab4.setPixmap(img4)
 
@@ -3881,7 +3913,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a5.setFixedWidth(735)
         label_a5.setWordWrap(True)
 
-        img5 = QtGui.QPixmap('Static/img/img5.png')
+        img5 = QtGui.QPixmap(':/Static/img/img5.png')
         lab5 = QtWidgets.QLabel()
         lab5.setPixmap(img5)
 
@@ -3892,7 +3924,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a6.setFixedWidth(735)
         label_a6.setWordWrap(True)
 
-        img6 = QtGui.QPixmap('Static/img/img6.png')
+        img6 = QtGui.QPixmap(':/Static/img/img6.png')
         lab6 = QtWidgets.QLabel()
         lab6.setPixmap(img6)
 
@@ -3918,7 +3950,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a8.setFixedWidth(735)
         label_a8.setWordWrap(True)
 
-        img7 = QtGui.QPixmap('Static/img/img7.png')
+        img7 = QtGui.QPixmap(':/Static/img/img7.png')
         lab7 = QtWidgets.QLabel()
         lab7.setPixmap(img7)
 
@@ -3928,7 +3960,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a9.setFixedWidth(735)
         label_a9.setWordWrap(True)
 
-        img8 = QtGui.QPixmap('Static/img/img8.png')
+        img8 = QtGui.QPixmap(':/Static/img/img8.png')
         lab8 = QtWidgets.QLabel()
         lab8.setPixmap(img8)
 
@@ -3938,7 +3970,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a10.setFixedWidth(735)
         label_a10.setWordWrap(True)
 
-        img9 = QtGui.QPixmap('Static/img/img9.png')
+        img9 = QtGui.QPixmap(':/Static/img/img9.png')
         lab9 = QtWidgets.QLabel()
         lab9.setPixmap(img9)
 
@@ -3948,7 +3980,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a11.setFixedWidth(735)
         label_a11.setWordWrap(True)
 
-        img10 = QtGui.QPixmap('Static/img/img10.png')
+        img10 = QtGui.QPixmap(':/Static/img/img10.png')
         lab10 = QtWidgets.QLabel()
         lab10.setPixmap(img10)
 
@@ -3963,7 +3995,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a12.setFixedWidth(735)
         label_a12.setWordWrap(True)
 
-        img11 = QtGui.QPixmap('Static/img/img11.png')
+        img11 = QtGui.QPixmap(':/Static/img/img11.png')
         lab11= QtWidgets.QLabel()
         lab11.setPixmap(img11)
 
@@ -3973,7 +4005,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a13.setFixedWidth(735)
         label_a13.setWordWrap(True)
 
-        img12 = QtGui.QPixmap('Static/img/img12.png')
+        img12 = QtGui.QPixmap(':/Static/img/img12.png')
         lab12 = QtWidgets.QLabel()
         lab12.setPixmap(img12)
 
@@ -3983,7 +4015,7 @@ También se puede agregar o eliminar archivos .csv y minimizar la sección, como
         label_a14.setFixedWidth(735)
         label_a14.setWordWrap(True)
 
-        img13 = QtGui.QPixmap('Static/img/img13.png')
+        img13 = QtGui.QPixmap(':/Static/img/img13.png')
         lab13 = QtWidgets.QLabel()
         lab13.setPixmap(img13)
 
@@ -3995,7 +4027,7 @@ Si se desea deseleccionar todas las casillas marcadas, se debe hacer click en el
         label_a15.setFixedWidth(735)
         label_a15.setWordWrap(True)
 
-        img14 = QtGui.QPixmap('Static/img/img14.png')
+        img14 = QtGui.QPixmap(':/Static/img/img14.png')
         lab14 = QtWidgets.QLabel()
         lab14.setPixmap(img14)
 
@@ -4005,7 +4037,7 @@ Si se desea deseleccionar todas las casillas marcadas, se debe hacer click en el
         label_a16.setFixedWidth(735)
         label_a16.setWordWrap(True)
 
-        img15 = QtGui.QPixmap('Static/img/img15.png')
+        img15 = QtGui.QPixmap(':/Static/img/img15.png')
         lab15 = QtWidgets.QLabel()
         lab15.setPixmap(img15)
 
@@ -4021,7 +4053,7 @@ Luego de realizar estos pasos, se debe clickear sobre el botón “Siguiente” 
         label_a17.setFixedWidth(735)
         label_a17.setWordWrap(True)
 
-        img16 = QtGui.QPixmap('Static/img/img16.png')
+        img16 = QtGui.QPixmap(':/Static/img/img16.png')
         lab16 = QtWidgets.QLabel()
         lab16.setPixmap(img16)
 
@@ -4033,7 +4065,7 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         label_a18.setFixedWidth(735)
         label_a18.setWordWrap(True)
 
-        img17 = QtGui.QPixmap('Static/img/img17.png')
+        img17 = QtGui.QPixmap(':/Static/img/img17.png')
         lab17 = QtWidgets.QLabel()
         lab17.setPixmap(img17)
 
@@ -4043,7 +4075,7 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         label_a19.setFixedWidth(735)
         label_a19.setWordWrap(True)
 
-        img18 = QtGui.QPixmap('Static/img/img18.png')
+        img18 = QtGui.QPixmap(':/Static/img/img18.png')
         lab18 = QtWidgets.QLabel()
         lab18.setPixmap(img18)
 
@@ -4053,11 +4085,11 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         label_a20.setFixedWidth(735)
         label_a20.setWordWrap(True)
 
-        img19 = QtGui.QPixmap('Static/img/img19.png')
+        img19 = QtGui.QPixmap(':/Static/img/img19.png')
         lab19 = QtWidgets.QLabel()
         lab19.setPixmap(img19)
 
-        img20 = QtGui.QPixmap('Static/img/img20.png')
+        img20 = QtGui.QPixmap(':/Static/img/img20.png')
         lab20 = QtWidgets.QLabel()
         lab20.setPixmap(img20)
 
@@ -4073,9 +4105,792 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         label_a21.setFixedWidth(735)
         label_a21.setWordWrap(True)
 
-        img21 = QtGui.QPixmap('Static/img/img21.png')
+        img21 = QtGui.QPixmap(':/Static/img/img21.png')
         lab21 = QtWidgets.QLabel()
         lab21.setPixmap(img21)
+
+        label_a22 = QtWidgets.QLabel(
+            """Cabe destacar que, una vez agregadas las columnas a un directorio, si se desea se pueden eliminar haciendo click derecho sobre una de ellas y luego click izquierdo en “Eliminar” (15).
+""")
+        label_a22.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a22.setFixedWidth(735)
+        label_a22.setWordWrap(True)
+
+        img22 = QtGui.QPixmap(':/Static/img/img22.png')
+        lab22 = QtWidgets.QLabel()
+        lab22.setPixmap(img22)
+
+        label_a23 = QtWidgets.QLabel(
+            """Por último, para confirmar los cambios se deberá hacer click sobre el botón “Confirmar” (16)""")
+        label_a23.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a23.setFixedWidth(735)
+        label_a23.setWordWrap(True)
+
+        img23 = QtGui.QPixmap(':/Static/img/img23.png')
+        lab23 = QtWidgets.QLabel()
+        lab23.setPixmap(img23)
+
+        label_a24 = QtWidgets.QLabel(
+            """Luego de realizar todos los pasos mencionados anteriormente se mostrará en el panel de archivos .csv, ubicado en la sección izquierda de la pantalla principal, los directorios creados y las columnas que fueron insertadas en los mismos""")
+        label_a24.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a24.setFixedWidth(735)
+        label_a24.setWordWrap(True)
+
+        img24 = QtGui.QPixmap(':/Static/img/img24.png')
+        lab24 = QtWidgets.QLabel()
+        lab24.setPixmap(img24)
+
+        label_a25 = QtWidgets.QLabel(
+            """A continuación, se podrán graficar dichas columnas tal como se muestra en el paso 1.3 de este manual.""")
+        label_a25.setStyleSheet("font-size: 13px;")
+        label_a25.setFixedWidth(735)
+        label_a25.setWordWrap(True)
+
+        # 1.1.3 Eliminar archivo .csv
+
+        label_eliminar_archivos_csv = QtWidgets.QLabel("1.1.3 Eliminar archivo .csv")
+        label_eliminar_archivos_csv.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a26 = QtWidgets.QLabel(
+            """Si se desea eliminar un archivo .csv se lo debe seleccionar desde la lista de .csv que se encuentran cargados en el sistema (1) y luego hacer click sobre el símbolo de papelera (2). Posteriormente se quita el archivo y este deja de estar disponible para su utilización en el software.""")
+        label_a26.setStyleSheet("font-size: 13px;")
+        label_a26.setFixedWidth(735)
+        label_a26.setWordWrap(True)
+
+        img25 = QtGui.QPixmap(':/Static/img/img25.png')
+        lab25 = QtWidgets.QLabel()
+        lab25.setPixmap(img25)
+
+        # 1.2 MANEJO DE VISTAS
+
+        label_manejo_vistas = QtWidgets.QLabel("1.2 Manejo de Vistas")
+        label_manejo_vistas.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a27 = QtWidgets.QLabel(
+            """El programa permite la creación de varias pestañas denominadas como “vistas”. En estas se mostrarán las gráficas que el usuario desee visualizar con el fin de permitirle organizarlas y dividirlas.
+Para crear una nueva vista se debe clickear sobre el botón “Nueva Vista” ubicado en la barra superior de navegación en la esquina superior izquierda de la pantalla (1).
+""")
+        label_a27.setStyleSheet("font-size: 13px;")
+        label_a27.setFixedWidth(735)
+        label_a27.setWordWrap(True)
+
+        img26 = QtGui.QPixmap(':/Static/img/img26.png')
+        lab26 = QtWidgets.QLabel()
+        lab26.setPixmap(img26)
+
+        label_a28 = QtWidgets.QLabel(
+            """Al clickear este botón se creará la vista nueva que originalmente se encuentra vacía debido a que aún no se le han insertado gráficas. (2)
+Posteriormente, si se desea se puede eliminar esta vista pulsando sobre la cruz roja (3), lo cual hará que la misma se remueva de la sección de vistas quitando también las gráficas que estén presentes en ella, si es que cuenta con alguna.
+""")
+        label_a28.setStyleSheet("font-size: 13px;")
+        label_a28.setFixedWidth(735)
+        label_a28.setWordWrap(True)
+
+        img27 = QtGui.QPixmap(':/Static/img/img27.png')
+        lab27 = QtWidgets.QLabel()
+        lab27.setPixmap(img27)
+
+        # 1.3 GRAFICAR DATOS
+
+        label_graficar_datos = QtWidgets.QLabel("1.3 Graficar Datos")
+        label_graficar_datos.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a29 = QtWidgets.QLabel(
+            """Cabe destacar que para graficar una señal electromiográfica debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual.
+Para graficar una señal electromiográfica se debe dirigir a la carpeta ubicada en la sección (3) de la introducción, donde se encuentra la señal que desee graficar y hacer doble click sobre ella. (1)
+""")
+        label_a29.setStyleSheet("font-size: 13px;")
+        label_a29.setFixedWidth(735)
+        label_a29.setWordWrap(True)
+
+        img28 = QtGui.QPixmap(':/Static/img/img28.png')
+        lab28 = QtWidgets.QLabel()
+        lab28.setPixmap(img28)
+
+        label_a30 = QtWidgets.QLabel(
+            """Posteriormente se desplegarán todas las señales que contenga la carpeta que se abrió. (2)""")
+        label_a30.setStyleSheet("font-size: 13px;")
+        label_a30.setFixedWidth(735)
+        label_a30.setWordWrap(True)
+
+        img29 = QtGui.QPixmap(':/Static/img/img29.png')
+        lab29 = QtWidgets.QLabel()
+        lab29.setPixmap(img29)
+
+        label_a31 = QtWidgets.QLabel(
+            """Al realizar doble click sobre una de estas señales, esta se graficará automáticamente y se mostrará la gráfica correspondiente en la vista actual (3).""")
+        label_a31.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a31.setFixedWidth(735)
+        label_a31.setWordWrap(True)
+
+        img30 = QtGui.QPixmap(':/Static/img/img30.png')
+        lab30 = QtWidgets.QLabel()
+        lab30.setPixmap(img30)
+
+        label_shrek = QtWidgets.QLabel(
+            """Este procedimiento puede repetirse si se desea graficar varias señales EMG en la misma vista.""")
+        label_shrek.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_shrek.setFixedWidth(735)
+        label_shrek.setWordWrap(True)
+
+        # 1.4 MANIPULACIÓN DE GRÁFICAS
+
+        label_manipulacion_de_graficasxd = QtWidgets.QLabel("1.4 Manipulación de gráficas")
+        label_manipulacion_de_graficasxd.setStyleSheet("font: bold 15px;margin-top:30px;")
+
+        # 1.4.1 VALORES EN BRUTOS
+
+        label_valores_en_brutos = QtWidgets.QLabel("1.4.1 Valores en bruto")
+        label_valores_en_brutos.setStyleSheet("font: bold 13px;margin-top:4px;")
+
+        label_a32 = QtWidgets.QLabel(
+            """Cabe destacar que para aplicar valores en bruto a una señal EMG debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y haberse graficado alguna señal, como se indica en la sección 1.3 de este manual.
+
+Para aplicar los valores en bruto a una señal electromiográfica, es decir quitar todos los filtros con los que cuenta por defecto, se debe acceder a la barra de navegación superior haciendo click en el botón de Valores En Bruto (1).
+""")
+        label_a32.setStyleSheet("font-size: 13px;")
+        label_a32.setFixedWidth(735)
+        label_a32.setWordWrap(True)
+
+        img31 = QtGui.QPixmap(':/Static/img/img31.png')
+        lab31 = QtWidgets.QLabel()
+        lab31.setPixmap(img31)
+
+        label_a33 = QtWidgets.QLabel(
+            """Posteriormente se desplegará una ventana en la cual se debe indicar el o los gráficos a los que se desean aplicar valores en bruto, haciendo click en la casilla de verificación correspondiente (1). Adicionalmente, si se desea se pueden seleccionar todas las gráficas haciendo click sobre el botón “Seleccionar todas” (2).
+Por último, para guardar los cambios y actualizar la gráfica se debe dar click en aplicar (3).
+""")
+        label_a33.setStyleSheet("font-size: 13px;")
+        label_a33.setFixedWidth(735)
+        label_a33.setWordWrap(True)
+
+        img32 = QtGui.QPixmap(':/Static/img/img32.png')
+        lab32 = QtWidgets.QLabel()
+        lab32.setPixmap(img32)
+
+        # 1.4.2 VALORES EN BRUTOS
+
+        label_rectificar_grafico = QtWidgets.QLabel("1.4.2 Rectificar gráfico")
+        label_rectificar_grafico.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a34 = QtWidgets.QLabel(
+            """Cabe destacar que para rectificar un gráfico debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y haberse graficado los datos según la sección 1.3 de este manual.
+Para rectificar uno o varios gráficos es necesario acceder a la barra de navegación superior haciendo click en el botón de Rectificar (1).
+""")
+        label_a34.setStyleSheet("font-size: 13px;")
+        label_a34.setFixedWidth(735)
+        label_a34.setWordWrap(True)
+
+        img33 = QtGui.QPixmap(':/Static/img/img33.png')
+        lab33 = QtWidgets.QLabel()
+        lab33.setPixmap(img33)
+
+        label_a35 = QtWidgets.QLabel(
+            """Posteriormente se desplegará una ventana en la cual se debe indicar el o los gráficos que se desean rectificar haciendo click en la casilla de verificación correspondiente (2), pudiéndose seleccionar todos los gráficos existentes en la vista pulsando el botón “Seleccionar todas” (3).""")
+        label_a35.setStyleSheet("font-size: 13px;")
+        label_a35.setFixedWidth(735)
+        label_a35.setWordWrap(True)
+
+        img34 = QtGui.QPixmap(':/Static/img/img34.png')
+        lab34 = QtWidgets.QLabel()
+        lab34.setPixmap(img34)
+
+        label_a36 = QtWidgets.QLabel(
+            """Luego de esto se debe configurar desde el periodo que se van a tomar los datos, ingresando los parámetros Inicio y Fin que corresponden al tiempo en segundos de una señal (4).
+Si se desea que todos los valores del gráfico sean absolutos se debe seleccionar la casilla de verificación (5).
+Por último, para guardar los cambios y actualizar la o las gráficas seleccionadasse debe hacer click en aplicar (6).
+""")
+        label_a36.setStyleSheet("font-size: 13px;")
+        label_a36.setFixedWidth(735)
+        label_a36.setWordWrap(True)
+
+        img35 = QtGui.QPixmap(':/Static/img/img35.png')
+        lab35 = QtWidgets.QLabel()
+        lab35.setPixmap(img35)
+
+        # 1.4.3 APLICAR FILTROS
+
+        label_aplicar_filtros = QtWidgets.QLabel("1.4.3 Aplicar filtros")
+        label_aplicar_filtros.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a37 = QtWidgets.QLabel(
+            """Cabe destacar que para aplicar filtros a una señal EMG con el objetivo de eliminar el ruido y mejorar la calidad de la misma, debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y graficado los datos,según la sección 1.3 de este manual.
+Para aplicar filtros a una o más gráficas, es necesario acceder a la barra de navegación superior y hacer click al botón Filtrado (1).
+""")
+        label_a37.setStyleSheet("font-size: 13px;")
+        label_a37.setFixedWidth(735)
+        label_a37.setWordWrap(True)
+
+        img36 = QtGui.QPixmap(':/Static/img/img36.png')
+        lab36 = QtWidgets.QLabel()
+        lab36.setPixmap(img36)
+
+        label_a38 = QtWidgets.QLabel(
+            """Luego de esto se desplegará una ventana en la cual se podrán seleccionar los gráficos en los que se desee aplicar filtros haciendo click en la casilla de verificación correspondiente (2), pudiéndose seleccionar todas las gráficas existentes en la vista pulsando el botón “Seleccionar todas” (3).""")
+        label_a38.setStyleSheet("font-size: 13px;")
+        label_a38.setFixedWidth(735)
+        label_a38.setWordWrap(True)
+
+        img37 = QtGui.QPixmap(':/Static/img/img37.png')
+        lab37 = QtWidgets.QLabel()
+        lab37.setPixmap(img37)
+
+        label_a39 = QtWidgets.QLabel(
+            """Posteriormente se podrán indicar los parámetros del filtro:
+    • Orden del filtro (4): describe el grado de aceptación o rechazo de frecuencias por arriba o por debajo de la respectiva
+      frecuencia de corte.
+    • Frecuencias críticas (5): son las frecuencias críticas indicadas en Hertz.
+    • Tipo de filtro (6): entre ellos se encuentran los tipos ‘lowpass’, ‘highpass’, ‘bandpass’ y bandstop’.
+    • Si es analógico o no (7): cuando el valor de la lista está en “True” (Verdadero), la gráfica se muestra en forma analógica;
+      de lo contrario se muestra un filtro digital.
+
+Para que los valores ingresados se apliquen a la/s gráfica/s, debe chequearse la casilla de verificación “Aplicar Filtro Butterworth” (8).Una vez indicados estos valores se da click en Aplicar (9).
+""")
+        label_a39.setStyleSheet("font-size: 13px;")
+        label_a39.setFixedWidth(735)
+        label_a39.setWordWrap(True)
+
+        img38 = QtGui.QPixmap(':/Static/img/img38.png')
+        lab38 = QtWidgets.QLabel()
+        lab38.setPixmap(img38)
+
+        # 1.4.4 RECORTAR GRAFICO
+
+        label_recortar_grafico = QtWidgets.QLabel("1.4.4 Recortar gráfico")
+        label_recortar_grafico.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a40 = QtWidgets.QLabel(
+            """Cabe destacar que para recortar un segmento de un gráfico debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y graficado los datos, según la sección 1.3 de este manual.
+Para recortar un gráfico es necesario accederá la barra de navegación superior y hacer click en el botón Cortar (1).
+ """)
+        label_a40.setStyleSheet("font-size: 13px;")
+        label_a40.setFixedWidth(735)
+        label_a40.setWordWrap(True)
+
+        img39 = QtGui.QPixmap(':/Static/img/img39.png')
+        lab39 = QtWidgets.QLabel()
+        lab39.setPixmap(img39)
+
+        label_a41 = QtWidgets.QLabel(
+            """Luego de esto se desplegará una ventana en la cual se podrán seleccionar los gráficos a recortar haciendo click en la casilla de verificación correspondiente (2), pudiéndose seleccionar todas las gráficas existentes en la vista pulsando el botón “Seleccionar todas” (3).""")
+        label_a41.setStyleSheet("font-size: 13px;")
+        label_a41.setFixedWidth(735)
+        label_a41.setWordWrap(True)
+
+        img40 = QtGui.QPixmap(':/Static/img/img40.png')
+        lab40 = QtWidgets.QLabel()
+        lab40.setPixmap(img40)
+
+        label_a42 = QtWidgets.QLabel(
+            """A continuación, se indica el tramo de la gráfica que se va a recortar, ingresando el tiempo desde donde empieza el recorte hasta el tiempo en el que finaliza (4).Una vez indicados estos valores se dará click en Aplicar (5).""")
+        label_a42.setStyleSheet("font-size: 13px;")
+        label_a42.setFixedWidth(735)
+        label_a42.setWordWrap(True)
+
+        img41 = QtGui.QPixmap(':/Static/img/img41.png')
+        lab41 = QtWidgets.QLabel()
+        lab41.setPixmap(img41)
+
+        label_a43 = QtWidgets.QLabel(
+            """Alternativamente, si se desea volver al gráfico original, es decir sin recortarlo, se debe hacer click en el botón “Resetear” (6) y posteriormente en Aplicar (7).""")
+        label_a43.setStyleSheet("font-size: 13px;")
+        label_a43.setFixedWidth(735)
+        label_a43.setWordWrap(True)
+
+        img42 = QtGui.QPixmap(':/Static/img/img42.png')
+        lab42 = QtWidgets.QLabel()
+        lab42.setPixmap(img42)
+
+        # 1.4.5 RECORTAR HACIENDO CLICK
+
+        label_recortar_haciendo_click = QtWidgets.QLabel("1.4.5 Recortar gráfico haciendo click")
+        label_recortar_haciendo_click.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a44 = QtWidgets.QLabel(
+            """Cabe destacar que para recortar un segmento de un gráfico debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y graficado los datos, según la sección 1.3 de este manual.
+Para recortar un gráfico es necesario acceder a la barra de navegación superior y hacer click en el botón Cortar (1).
+""")
+        label_a44.setStyleSheet("font-size: 13px;")
+        label_a44.setFixedWidth(735)
+        label_a44.setWordWrap(True)
+
+        img43 = QtGui.QPixmap(':/Static/img/img43.png')
+        lab43 = QtWidgets.QLabel()
+        lab43.setPixmap(img43)
+
+        label_a45 = QtWidgets.QLabel(
+            """Luego de esto se desplegará una ventana en la cual se podrán seleccionar los gráficos a recortar haciendo click en la casilla de verificación correspondiente (2), pudiéndose seleccionar todas las gráficas existentes en la vista pulsando el botón “Seleccionar todas” (3).""")
+        label_a45.setStyleSheet("font-size: 13px;")
+        label_a45.setFixedWidth(735)
+        label_a45.setWordWrap(True)
+
+        img44 = QtGui.QPixmap(':/Static/img/img44.png')
+        lab44 = QtWidgets.QLabel()
+        lab44.setPixmap(img44)
+
+        label_a46 = QtWidgets.QLabel(
+            """Posteriormente es requerido hacer click sobre el botón “Recortar Haciendo Click" para continuar (4).""")
+        label_a46.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a46.setFixedWidth(735)
+        label_a46.setWordWrap(True)
+
+        img45 = QtGui.QPixmap(':/Static/img/img45.png')
+        lab45 = QtWidgets.QLabel()
+        lab45.setPixmap(img45)
+
+        label_a47 = QtWidgets.QLabel(
+            """A continuación, se desplegará un mensaje de información y, al hacer click en el botón “OK”, se podrá continuar con el recorte (5).""")
+        label_a47.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a47.setFixedWidth(735)
+        label_a47.setWordWrap(True)
+
+        img46 = QtGui.QPixmap(':/Static/img/img46.png')
+        lab46 = QtWidgets.QLabel()
+        lab46.setPixmap(img46)
+
+        label_a48 = QtWidgets.QLabel(
+            """Luego se indicará el tramo de la gráfica que se desea recortar, haciendo click sobre ella, especificando el tiempo desde donde empieza el recorte (6) hasta el tiempo en el que finaliza (7).""")
+        label_a48.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a48.setFixedWidth(735)
+        label_a48.setWordWrap(True)
+
+        img47 = QtGui.QPixmap(':/Static/img/img47.png')
+        lab47 = QtWidgets.QLabel()
+        lab47.setPixmap(img47)
+
+        label_a49 = QtWidgets.QLabel(
+            """Se obtendrá el siguiente resultado: una gráfica recortada que comienza desde el valor inicial indicado en el punto (6) y finaliza en el punto (7), sustituyendo la anterior""")
+        label_a49.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a49.setFixedWidth(735)
+        label_a49.setWordWrap(True)
+
+        img48 = QtGui.QPixmap(':/Static/img/img48.png')
+        lab48 = QtWidgets.QLabel()
+        lab48.setPixmap(img48)
+
+        # 1.4.6 VALORES EN GRÁFICA
+
+        label_valores_en_grafica = QtWidgets.QLabel("1.4.6 Valores en la gráfica")
+        label_valores_en_grafica.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a50 = QtWidgets.QLabel(
+            """Cabe destacar que para aplicar valores en gráfica de una señal EMG debe haberse creado una vista previamente, tal como se muestra en la sección 1.2 de este manual, y haber graficado los datos según la sección 1.3 de este manual.
+Para aplicar los cálculos correspondientes a valores picos, integral y valor RMS en las gráficas, es necesario hacer click en el botón de “Valores en Gráfica” (1).
+""")
+        label_a50.setStyleSheet("font-size: 13px;")
+        label_a50.setFixedWidth(735)
+        label_a50.setWordWrap(True)
+
+        img49 = QtGui.QPixmap(':/Static/img/img49.png')
+        lab49 = QtWidgets.QLabel()
+        lab49.setPixmap(img49)
+
+        label_a51 = QtWidgets.QLabel(
+            """Al realizar esto se desplegará una ventana con dos secciones distintas (2 y 3); una para seleccionar gráficas y otra para aplicar cálculos.""")
+        label_a51.setStyleSheet("font-size: 13px;")
+        label_a51.setFixedWidth(735)
+        label_a51.setWordWrap(True)
+
+        img50 = QtGui.QPixmap(':/Static/img/img50.png')
+        lab50 = QtWidgets.QLabel()
+        lab50.setPixmap(img50)
+
+        label_a52 = QtWidgets.QLabel(
+            """En la sección “Seleccionar gráficas” se podrán escoger los gráficos a los cuales se le aplicarán cálculos haciendo click en la casilla de verificación correspondiente (4), pudiéndose también seleccionar todas las gráficas existentes en la vista pulsando el botón “Seleccionar todas” (5).""")
+        label_a52.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a52.setFixedWidth(735)
+        label_a52.setWordWrap(True)
+
+        img51 = QtGui.QPixmap(':/Static/img/img51.png')
+        #img51.scaledToHeight(200)
+        lab51 = QtWidgets.QLabel()
+
+        #lab51.setStyleSheet("background-color:red;border:1px solid blue;")
+        #lab51.setFixedHeight(500)
+        lab51.setPixmap(img51)
+
+        label_a53 = QtWidgets.QLabel(
+            """En la segunda sección se mostrarán los cálculos anteriormente mencionados, que se pueden aplicar a las gráficas seleccionadas (6).Cada cálculo será explicado a continuación.""")
+        label_a53.setStyleSheet("font-size: 13px;margin-top:12px;")
+        label_a53.setFixedWidth(735)
+        label_a53.setWordWrap(True)
+
+        img52 = QtGui.QPixmap(':/Static/img/img52.png')
+        lab52 = QtWidgets.QLabel()
+        lab52.setPixmap(img52)
+
+        # 1.4.6.1 CALCULAR Y MOSTRAR VALORES PICOS
+
+        label_valores_picos = QtWidgets.QLabel("1.4.6.1 Calcular y mostrar valores picos")
+        label_valores_picos.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a54 = QtWidgets.QLabel(
+            """Para mostrar los valores pico de las gráficas seleccionadas se deberá de acceder a la pestaña “Valores picos" (1).
+Luego es necesario indicar la altura mínima (2), el umbral (3) y la distancia (4).
+Para que los valores ingresados se apliquen a la/s gráfica/s, es requerido chequear la casilla de verificación “Mostrar picos” (5). Por último, se debe clickear en el botón “Aplicar” (6).
+""")
+        label_a54.setStyleSheet("font-size: 13px;")
+        label_a54.setFixedWidth(735)
+        label_a54.setWordWrap(True)
+
+        img53 = QtGui.QPixmap(':/Static/img/img53.png')
+        lab53 = QtWidgets.QLabel()
+        lab53.setPixmap(img53)
+
+        label_a55 = QtWidgets.QLabel(
+            """Luego de esto se visualizarán en la o las gráficas seleccionadas sus valores picos, marcados con un círculo en rojo tal como se muestra en la imagen a continuación.""")
+        label_a55.setStyleSheet("font-size: 13px;")
+        label_a55.setFixedWidth(735)
+        label_a55.setWordWrap(True)
+
+        img54 = QtGui.QPixmap(':/Static/img/img54.png')
+        lab54 = QtWidgets.QLabel()
+        lab54.setPixmap(img54)
+
+        # 1.4.6.2 CALCULAR Y MOSTRAR INTEGRAL
+
+        label_valores_de_integral = QtWidgets.QLabel("1.4.6.2 Calcular y mostrar integral")
+        label_valores_de_integral.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a56 = QtWidgets.QLabel(
+            """Para mostrar la integral de las gráficas seleccionadas se deberá clickear sobre la pestaña “Integral” (1). A continuación es necesario indicar el valor inicial y el valor final (2).
+Para que los valores ingresados se apliquen a la/s gráfica/s, se requiere chequear la casilla de verificación “Mostrar Integral” (3) y por último clickear en el botón “Aplicar” (4).
+""")
+        label_a56.setStyleSheet("font-size: 13px;")
+        label_a56.setFixedWidth(735)
+        label_a56.setWordWrap(True)
+
+        img55 = QtGui.QPixmap(':/Static/img/img55.png')
+        lab55 = QtWidgets.QLabel()
+        lab55.setPixmap(img55)
+
+        # 1.4.6.3 CALCULAR Y MOSTRAR INTEGRAL haciendo clicki
+
+        label_valores_de_integral_clicki = QtWidgets.QLabel("1.4.6.3 Calcular y mostrar integral haciendo click")
+        label_valores_de_integral_clicki.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a57 = QtWidgets.QLabel(
+            """Para mostrar la integral de las gráficas seleccionadas se deberá clickear sobre la pestaña “Integral” (1).Luego es necesario clickear sobre el botón “Indicar haciendo click” (2).""")
+        label_a57.setStyleSheet("font-size: 13px;")
+        label_a57.setFixedWidth(735)
+        label_a57.setWordWrap(True)
+
+        img56 = QtGui.QPixmap(':/Static/img/img56.png')
+        lab56 = QtWidgets.QLabel()
+        lab56.setPixmap(img56)
+
+        label_a58 = QtWidgets.QLabel(
+            """A continuación se desplegará un mensaje de información y, al hacer click en el botón “OK”, se podrá continuar con el cálculo de la integral (3).""")
+        label_a58.setStyleSheet("font-size: 13px;")
+        label_a58.setFixedWidth(735)
+        label_a58.setWordWrap(True)
+
+        img57 = QtGui.QPixmap(':/Static/img/img57.png')
+        lab57 = QtWidgets.QLabel()
+        lab57.setPixmap(img57)
+
+        label_a59 = QtWidgets.QLabel(
+            """Por último, se indicará el tramo de la gráfica al que se le desea calcular la integral haciendo click sobre ella e indicando el tiempo desde donde empieza (4) hasta el tiempo en el que finaliza (5).""")
+        label_a59.setStyleSheet("font-size: 13px;")
+        label_a59.setFixedWidth(735)
+        label_a59.setWordWrap(True)
+
+        img58 = QtGui.QPixmap(':/Static/img/img58.png')
+        lab58 = QtWidgets.QLabel()
+        lab58.setPixmap(img58)
+
+        label_a60 = QtWidgets.QLabel(
+            """Luego de realizar todos los pasos mencionados anteriormente se mostrará en la o las gráficas seleccionadas el siguiente resultado, indicando el valor de la integral y su área coloreada en verde.""")
+        label_a60.setStyleSheet("font-size: 13px;")
+        label_a60.setFixedWidth(735)
+        label_a60.setWordWrap(True)
+
+        img59 = QtGui.QPixmap(':/Static/img/img59.png')
+        lab59 = QtWidgets.QLabel()
+        lab59.setPixmap(img59)
+
+        # 1.4.6.4 CALCULAR Y MOSTRAR valor RMS
+
+        label_valores_rms = QtWidgets.QLabel("1.4.6.4 Calcular y mostrar valor RMS")
+        label_valores_rms.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a61 = QtWidgets.QLabel(
+            """Para mostrar el valor RMS de la o las gráficas seleccionadas se deberá clickear sobre la pestaña “valor RMS” (1). Luego es necesario indicar el valor inicial y el valor final (2).
+Para que los valores ingresados se apliquen a la/s gráfica/s se requiere chequear la casilla de verificación “Mostrar Valor RMS” (3) y por último clickear en el botón “Aplicar” (4).
+""")
+        label_a61.setStyleSheet("font-size: 13px;")
+        label_a61.setFixedWidth(735)
+        label_a61.setWordWrap(True)
+
+        img60 = QtGui.QPixmap(':/Static/img/img60.png')
+        lab60 = QtWidgets.QLabel()
+        lab60.setPixmap(img60)
+
+        label_a62 = QtWidgets.QLabel(
+            """Luego de realizar todos los pasos mencionados anteriormente se mostrará en las gráficas seleccionadas el siguiente resultado indicando su valor RMS, marcado en un rectángulo gris.""")
+        label_a62.setStyleSheet("font-size: 13px;")
+        label_a62.setFixedWidth(735)
+        label_a62.setWordWrap(True)
+
+        img61 = QtGui.QPixmap(':/Static/img/img61.png')
+        lab61 = QtWidgets.QLabel()
+        lab61.setPixmap(img61)
+
+        # 1.4.7 Comparar
+
+        label_comparar = QtWidgets.QLabel("1.4.7 Comparar")
+        label_comparar.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a63 = QtWidgets.QLabel(
+            """Una vez teniendo disponibles dos o más gráficas en pantalla en una misma vista se las puede comparar haciendo click en el botón “Comparar gráficas”, situado en la barra superior de navegación (1).""")
+        label_a63.setStyleSheet("font-size: 13px;")
+        label_a63.setFixedWidth(735)
+        label_a63.setWordWrap(True)
+
+        img62 = QtGui.QPixmap(':/Static/img/img62.png')
+        lab62 = QtWidgets.QLabel()
+        lab62.setPixmap(img62)
+
+        label_a64 = QtWidgets.QLabel(
+            """A continuación, se deberán seleccionar al menos dos de las señales graficadas (2) o, si se desea, se pueden elegir todas las gráficas existentes en la vista pulsando sobre el botón “Seleccionar todas” (3). Por último, se debe clickear sobre el botón “Aplicar” """)
+        label_a64.setStyleSheet("font-size: 13px;")
+        label_a64.setFixedWidth(735)
+        label_a64.setWordWrap(True)
+
+        img63 = QtGui.QPixmap(':/Static/img/img63.png')
+        lab63 = QtWidgets.QLabel()
+        lab63.setPixmap(img63)
+
+        label_a65 = QtWidgets.QLabel(
+            """Esto mostrará las dos señales en una misma gráfica con distintos colores aleatorios para poder compararlas (5).""")
+        label_a65.setStyleSheet("font-size: 13px;")
+        label_a65.setFixedWidth(735)
+        label_a65.setWordWrap(True)
+
+        img64 = QtGui.QPixmap(':/Static/img/img64.png')
+        lab64 = QtWidgets.QLabel()
+        lab64.setPixmap(img64)
+
+        # 1.4.8 eliminar gráfica
+
+        label_eliminar_grafica = QtWidgets.QLabel("1.4.8 Eliminar gráfica")
+        label_eliminar_grafica.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a66 = QtWidgets.QLabel(
+            """Una vez que se tenga una vista creada (ver sección 1.2 de este manual) y al menos una gráfica en la misma (ver sección 1.3), en el panel inferior izquierdo se mostrará la vista y su/s gráfica/s correspondiente/s (1).""")
+        label_a66.setStyleSheet("font-size: 13px;")
+        label_a66.setFixedWidth(735)
+        label_a66.setWordWrap(True)
+
+        img65 = QtGui.QPixmap(':/Static/img/img65.png')
+        lab65 = QtWidgets.QLabel()
+        lab65.setPixmap(img65)
+
+        label_a67 = QtWidgets.QLabel(
+            """Luego se debe hacer click derecho en el botón sobre la señal graficada en la vista (2) y por último click izquierdo sobre “Remover gráfica” (3).""")
+        label_a67.setStyleSheet("font-size: 13px;")
+        label_a67.setFixedWidth(735)
+        label_a67.setWordWrap(True)
+
+        img66 = QtGui.QPixmap(':/Static/img/img66.png')
+        lab66 = QtWidgets.QLabel()
+        lab66.setPixmap(img66)
+
+        label_final_boss = QtWidgets.QLabel(
+            """Esto quitará la gráfica de la vista, pero mantendrá las demás gráficas, si es que existen.""")
+        label_final_boss.setStyleSheet("font-size: 13px;")
+        label_final_boss.setFixedWidth(735)
+        label_final_boss.setWordWrap(True)
+
+        # 1.4.9 PANEL SUPERIOR DEL GRAFICO
+
+        label_panel_superior = QtWidgets.QLabel("1.4.9 Panel superior del gráfico")
+        label_panel_superior.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a68 = QtWidgets.QLabel(
+            """Una vez que se tenga una vista creada (ver sección 1.2 de este manual) y al menos una gráfica en la misma (ver sección 1.3), en la parte superior de la gráfica se mostrarán las siguientes opciones que permitirán interactuar con la misma.""")
+        label_a68.setStyleSheet("font-size: 13px;")
+        label_a68.setFixedWidth(735)
+        label_a68.setWordWrap(True)
+
+        img67 = QtGui.QPixmap(':/Static/img/img67.png')
+        lab67 = QtWidgets.QLabel()
+        lab67.setPixmap(img67)
+
+        label_a69 = QtWidgets.QLabel(
+            """Referencias de la imagen:
+    • (1) Esta opción permite volver a la posición original del gráfico si se movió anteriormente con los botones indicados (4) y
+       (5).
+    • (2 y 3) Estas opciones permiten retroceder y avanzar los movimientos que se realizaron sobre el gráfico, dependiendo de si
+       se movió o se hizo zoom utilizando los botones del punto 4 y 5.
+    • (4) Haciendo click en esta herramienta y arrastrando el mouse, el usuario se puede desplazar a través de la gráfica.
+    • (5) Con esta herramienta se permite seleccionar un área determinada y hacerle zoom. Esto se realiza haciendo click
+       y arrastrando el mouse en una gráfica.
+    • (6) Esta herramienta despliega una ventana que permite configurar los márgenes (6.1) y el espaciado (6.2) de cada
+       gráfico. Adicionalmente posibilita ajustar el gráfico a la ventana actual (6.3).
+""")
+        label_a69.setStyleSheet("font-size: 13px;")
+        label_a69.setFixedWidth(735)
+        label_a69.setWordWrap(True)
+
+        img68 = QtGui.QPixmap(':/Static/img/img68.png')
+        lab68 = QtWidgets.QLabel()
+        lab68.setPixmap(img68)
+
+        label_a70 = QtWidgets.QLabel(
+            """• Haciendo click en esta herramienta, si se tiene más de un gráfico en la vista actual se desplegará la siguiente ventana en la cual se debe elegir cuál de ellos se desea modificar.""")
+        label_a70.setStyleSheet("font-size: 13px;")
+        label_a70.setFixedWidth(735)
+        label_a70.setWordWrap(True)
+
+        img69 = QtGui.QPixmap(':/Static/img/img69.png')
+        lab69 = QtWidgets.QLabel()
+        lab69.setPixmap(img69)
+
+        label_a71 = QtWidgets.QLabel(
+            """En caso contrario, o luego de haber seleccionado una gráfica, se desplegará una ventana que contiene dos secciones distintas.
+La sección de “Axes” permite cambiar el título de dicha gráfica o insertar uno si no lo tiene (7.1), modificar la posición de los ejes (7.2) y actualizar el nombre de cada uno de estos (7.3).
+Por último, para aplicar los cambios se debe hacer click sobre el botón “Apply” (7.4).
+""")
+        label_a71.setStyleSheet("font-size: 13px;")
+        label_a71.setFixedWidth(735)
+        label_a71.setWordWrap(True)
+
+        img70 = QtGui.QPixmap(':/Static/img/img70.png')
+        lab70 = QtWidgets.QLabel()
+        lab70.setPixmap(img70)
+
+        label_a72 = QtWidgets.QLabel(
+            """Por otra parte, en la sección de “Curves” se pueden cambiar la leyenda de la gráfica (7.5), su estilo (7.6), su grosor (7.7), sus colores (7.8) y el tamaño de los puntos que la forman (7.9).""")
+        label_a72.setStyleSheet("font-size: 13px;")
+        label_a72.setFixedWidth(735)
+        label_a72.setWordWrap(True)
+
+        img71 = QtGui.QPixmap(':/Static/img/img71.png')
+        lab71 = QtWidgets.QLabel()
+        lab71.setPixmap(img71)
+
+        label_a73 = QtWidgets.QLabel(
+            """• (8) Esta opción despliega una ventana que permite guardar todos los gráficos de una vista en el formato que se seleccione, como por ejemplo .png, .jpg, .pdf, etc. (8.1).""")
+        label_a73.setStyleSheet("font-size: 13px;")
+        label_a73.setFixedWidth(735)
+        label_a73.setWordWrap(True)
+
+        img72 = QtGui.QPixmap(':/Static/img/img72.png')
+        lab72 = QtWidgets.QLabel()
+        lab72.setPixmap(img72)
+
+        label_a74 = QtWidgets.QLabel(
+            """Una vez que se elige el nombre y el formato deseado, se debe hacer click en Guardar. (8.2)""")
+        label_a74.setStyleSheet("font-size: 13px;")
+        label_a74.setFixedWidth(735)
+        label_a74.setWordWrap(True)
+
+        img73 = QtGui.QPixmap(':/Static/img/img73.png')
+        lab73 = QtWidgets.QLabel()
+        lab73.setPixmap(img73)
+
+        # 1.5 SECCION DE CONFIGURACIONES DEL PROGRAMA
+
+        label_configuraciones_programa = QtWidgets.QLabel("1.5 Sección de configuración del programa")
+        label_configuraciones_programa.setStyleSheet("font: bold 15px;margin-top:30px;")
+
+        # 1.5.1 CONFIGURACIONES DEL ARCHIVO
+
+        label_configuraciones_archivo = QtWidgets.QLabel("1.5.1 Configuración de archivos")
+        label_configuraciones_archivo.setStyleSheet("font: bold 13px;margin-top:15px;")
+
+        label_a75 = QtWidgets.QLabel(
+            """Para configurar la línea desde la cual el software comenzará a leer los datos de los archivos .csv se debe clickear en la barra superior en el menú “Configuración” (1) y luego en la opción “Archivos” (2).""")
+        label_a75.setStyleSheet("font-size: 13px;")
+        label_a75.setFixedWidth(735)
+        label_a75.setWordWrap(True)
+
+        img74 = QtGui.QPixmap(':/Static/img/img74.png')
+        lab74 = QtWidgets.QLabel()
+        lab74.setPixmap(img74)
+
+        label_a76 = QtWidgets.QLabel(
+            """Posteriormente se desplegará una ventana en la cual es necesario indicar la línea deseada (3) y luego clickear en “Aplicar” (4).""")
+        label_a76.setStyleSheet("font-size: 13px;")
+        label_a76.setFixedWidth(735)
+        label_a76.setWordWrap(True)
+
+        img75 = QtGui.QPixmap(':/Static/img/img75.png')
+        lab75 = QtWidgets.QLabel()
+        lab75.setPixmap(img75)
+
+        # 1.5.2 CONFIGURACIONES LIMITE DE GRÁFICAS
+
+        label_configuraciones_limite_grafica = QtWidgets.QLabel("1.5.2 Configuración de límite de gráficas")
+        label_configuraciones_limite_grafica.setStyleSheet("font: bold 13px;margin-top:30px;")
+
+        label_a77 = QtWidgets.QLabel(
+            """Para configurar el límite de gráficas de una vista se debe clickear en la barra superior en el menú “Configuración” (1) y luego hacer click en la opción “Límite gráficas” (2).""")
+        label_a77.setStyleSheet("font-size: 13px;")
+        label_a77.setFixedWidth(735)
+        label_a77.setWordWrap(True)
+
+        img76 = QtGui.QPixmap(':/Static/img/img76.png')
+        lab76 = QtWidgets.QLabel()
+        lab76.setPixmap(img76)
+
+        label_a78 = QtWidgets.QLabel(
+            """Posteriormente se desplegará una ventana en la cual se requiere indicar la cantidad máxima de gráficas y luego click en “Aplicar” (4).""")
+        label_a78.setStyleSheet("font-size: 13px;")
+        label_a78.setFixedWidth(735)
+        label_a78.setWordWrap(True)
+
+        img77 = QtGui.QPixmap(':/Static/img/img77.png')
+        lab77 = QtWidgets.QLabel()
+        lab77.setPixmap(img77)
+
+        # 1.6 EXPORTAR DATOS
+
+        label_exportar_datos = QtWidgets.QLabel("1.6 Exportar datos")
+        label_exportar_datos.setStyleSheet("font: bold 15px;margin-top:30px;")
+
+        label_a80 = QtWidgets.QLabel(
+            """Una vez que se tenga una vista creada y al menos una gráfica en la misma, con uno o más filtros aplicados (valores pico, integral o RMS promedio) (1), haciendo click en el botón “Exportar datos” situado en la barra superior de navegación (2), se podrán exportar estos filtros a un archivo .csv.""")
+        label_a80.setStyleSheet("font-size: 13px;")
+        label_a80.setFixedWidth(735)
+        label_a80.setWordWrap(True)
+
+        img79 = QtGui.QPixmap(':/Static/img/img79.png')
+        lab79 = QtWidgets.QLabel()
+        lab79.setPixmap(img79)
+
+        label_a81 = QtWidgets.QLabel(
+            """Para ello es necesario seleccionar las gráficas a las cuales se deseen exportar sus filtros (3) o bien clickear sobre el botón “Seleccionar todas” (4). Por último se debe hacer click en Aplicar (5).""")
+        label_a81.setStyleSheet("font-size: 13px;")
+        label_a81.setFixedWidth(735)
+        label_a81.setWordWrap(True)
+
+        img80 = QtGui.QPixmap(':/Static/img/img80.png')
+        lab80 = QtWidgets.QLabel()
+        lab80.setPixmap(img80)
+
+        label_a82 = QtWidgets.QLabel(
+            """Se podrá especificar en qué carpeta se guardará este archivo situándose sobre ella (6). Posteriormente se requiere ingresar el nombre del archivo que se va a guardar (7).
+Por último, se deberá clickear sobre el botón “Guardar” para guardarlo.
+""")
+        label_a82.setStyleSheet("font-size: 13px;")
+        label_a82.setFixedWidth(735)
+        label_a82.setWordWrap(True)
+
+        img81 = QtGui.QPixmap(':/Static/img/img81.png')
+        lab81 = QtWidgets.QLabel()
+        lab81.setPixmap(img81)
+
+        label_a83 = QtWidgets.QLabel(
+            """Al acceder al mismo archivo exportado se podrán ver los datos correspondientes a cada filtro aplicado. (8)""")
+        label_a83.setStyleSheet("font-size: 13px;")
+        label_a83.setFixedWidth(735)
+        label_a83.setWordWrap(True)
+
+        img82 = QtGui.QPixmap(':/Static/img/img82.png')
+        lab82 = QtWidgets.QLabel()
+        lab82.setPixmap(img82)
 
         widget_introduccion.layout().addWidget(label_introduccion)
         widget_introduccion.layout().addWidget(label_texto_introduccion)
@@ -4123,8 +4938,158 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         widget_introduccion.layout().addWidget(lab20)
         widget_introduccion.layout().addWidget(label_a21)
         widget_introduccion.layout().addWidget(lab21)
+        widget_introduccion.layout().addWidget(label_a22)
+        widget_introduccion.layout().addWidget(lab22)
+        widget_introduccion.layout().addWidget(label_a23)
+        widget_introduccion.layout().addWidget(lab23)
+        widget_introduccion.layout().addWidget(label_a24)
+        widget_introduccion.layout().addWidget(lab24)
+        widget_introduccion.layout().addWidget(label_a25)
+        widget_introduccion.layout().addWidget(label_eliminar_archivos_csv)
+        widget_introduccion.layout().addWidget(label_a26)
+        widget_introduccion.layout().addWidget(lab25)
+        widget_introduccion.layout().addWidget(label_manejo_vistas)
+        widget_introduccion.layout().addWidget(label_a27)
+        widget_introduccion.layout().addWidget(lab26)
+        widget_introduccion.layout().addWidget(label_a28)
+        widget_introduccion.layout().addWidget(lab27)
+        widget_introduccion.layout().addWidget(label_graficar_datos)
+        widget_introduccion.layout().addWidget(label_a29)
+        widget_introduccion.layout().addWidget(lab28)
+        widget_introduccion.layout().addWidget(label_a30)
+        widget_introduccion.layout().addWidget(lab29)
+        widget_introduccion.layout().addWidget(label_a31)
+        widget_introduccion.layout().addWidget(lab30)
+        widget_introduccion.layout().addWidget(label_shrek)
+        widget_introduccion.layout().addWidget(label_manipulacion_de_graficasxd)
+        widget_introduccion.layout().addWidget(label_valores_en_brutos)
+        widget_introduccion.layout().addWidget(label_a32)
+        widget_introduccion.layout().addWidget(lab31)
+        widget_introduccion.layout().addWidget(label_a33)
+        widget_introduccion.layout().addWidget(lab32)
+        widget_introduccion.layout().addWidget(label_rectificar_grafico)
+        widget_introduccion.layout().addWidget(label_a34)
+        widget_introduccion.layout().addWidget(lab33)
+        widget_introduccion.layout().addWidget(label_a35)
+        widget_introduccion.layout().addWidget(lab34)
+        widget_introduccion.layout().addWidget(label_a36)
+        widget_introduccion.layout().addWidget(lab35)
+        widget_introduccion.layout().addWidget(label_aplicar_filtros)
+        widget_introduccion.layout().addWidget(label_a37)
+        widget_introduccion.layout().addWidget(lab36)
+        widget_introduccion.layout().addWidget(label_a38)
+        widget_introduccion.layout().addWidget(lab37)
+        widget_introduccion.layout().addWidget(label_a39)
+        widget_introduccion.layout().addWidget(lab38)
+        widget_introduccion.layout().addWidget(label_recortar_grafico)
+        widget_introduccion.layout().addWidget(label_a40)
+        widget_introduccion.layout().addWidget(lab39)
+        widget_introduccion.layout().addWidget(label_a41)
+        widget_introduccion.layout().addWidget(lab40)
+        widget_introduccion.layout().addWidget(label_a42)
+        widget_introduccion.layout().addWidget(lab41)
+        widget_introduccion.layout().addWidget(label_a43)
+        widget_introduccion.layout().addWidget(lab42)
+        widget_introduccion.layout().addWidget(label_recortar_haciendo_click)
+        widget_introduccion.layout().addWidget(label_a44)
+        widget_introduccion.layout().addWidget(lab43)
+        widget_introduccion.layout().addWidget(label_a45)
+        widget_introduccion.layout().addWidget(lab44)
+        widget_introduccion.layout().addWidget(label_a46)
+        widget_introduccion.layout().addWidget(lab45)
+        widget_introduccion.layout().addWidget(label_a47)
+        widget_introduccion.layout().addWidget(lab46)
+        widget_introduccion.layout().addWidget(label_a48)
+        widget_introduccion.layout().addWidget(lab47)
+        widget_introduccion.layout().addWidget(label_a49)
+        widget_introduccion.layout().addWidget(lab48)
+        widget_introduccion.layout().addWidget(label_valores_en_grafica)
+        widget_introduccion.layout().addWidget(label_a50)
+        widget_introduccion.layout().addWidget(lab49)
+        widget_introduccion.layout().addWidget(label_a51)
+        widget_introduccion.layout().addWidget(lab50)
+        widget_introduccion.layout().addWidget(label_a52)
+        widget_introduccion.layout().addWidget(lab51)
+        widget_introduccion.layout().addWidget(label_a53)
+        widget_introduccion.layout().addWidget(lab52)
+        widget_introduccion.layout().addWidget(label_valores_picos)
+        widget_introduccion.layout().addWidget(label_a54)
+        widget_introduccion.layout().addWidget(lab53)
+        widget_introduccion.layout().addWidget(label_a55)
+        widget_introduccion.layout().addWidget(lab54)
+
+        # EMPIEZO A PONER EN OTRO WIDGET XQ SINO SE DEFORMA LA ALTURA DE LAS IMAGENES X ALGUNA RAZÓN xd
+        widget_introduccion2.layout().addWidget(label_valores_de_integral)
+        widget_introduccion2.layout().addWidget(label_a56)
+        widget_introduccion2.layout().addWidget(lab55)
+        widget_introduccion2.layout().addWidget(label_valores_de_integral_clicki)
+        widget_introduccion2.layout().addWidget(label_a57)
+        widget_introduccion2.layout().addWidget(lab56)
+        widget_introduccion2.layout().addWidget(label_a58)
+        widget_introduccion2.layout().addWidget(lab57)
+        widget_introduccion2.layout().addWidget(label_a59)
+        widget_introduccion2.layout().addWidget(lab58)
+        widget_introduccion2.layout().addWidget(label_a60)
+        widget_introduccion2.layout().addWidget(lab59)
+        widget_introduccion2.layout().addWidget(label_valores_rms)
+        widget_introduccion2.layout().addWidget(label_a61)
+        widget_introduccion2.layout().addWidget(lab60)
+        widget_introduccion2.layout().addWidget(label_a62)
+        widget_introduccion2.layout().addWidget(lab61)
+        widget_introduccion2.layout().addWidget(label_comparar)
+        widget_introduccion2.layout().addWidget(label_a63)
+        widget_introduccion2.layout().addWidget(lab62)
+        widget_introduccion2.layout().addWidget(label_a64)
+        widget_introduccion2.layout().addWidget(lab63)
+        widget_introduccion2.layout().addWidget(label_a65)
+        widget_introduccion2.layout().addWidget(lab64)
+        widget_introduccion2.layout().addWidget(label_eliminar_grafica)
+        widget_introduccion2.layout().addWidget(label_a66)
+        widget_introduccion2.layout().addWidget(lab65)
+        widget_introduccion2.layout().addWidget(label_a67)
+        widget_introduccion2.layout().addWidget(lab66)
+        widget_introduccion2.layout().addWidget(label_final_boss)
+        widget_introduccion2.layout().addWidget(label_panel_superior)
+        widget_introduccion2.layout().addWidget(label_a68)
+        widget_introduccion2.layout().addWidget(lab67)
+        widget_introduccion2.layout().addWidget(label_a69)
+        widget_introduccion2.layout().addWidget(lab68)
+        widget_introduccion2.layout().addWidget(label_a70)
+        widget_introduccion2.layout().addWidget(lab69)
+        widget_introduccion2.layout().addWidget(label_a71)
+        widget_introduccion2.layout().addWidget(lab70)
+        widget_introduccion2.layout().addWidget(label_a72)
+        widget_introduccion2.layout().addWidget(lab71)
+        widget_introduccion2.layout().addWidget(label_a73)
+        widget_introduccion2.layout().addWidget(lab72)
+        widget_introduccion2.layout().addWidget(label_a74)
+        widget_introduccion2.layout().addWidget(lab73)
+        widget_introduccion2.layout().addWidget(label_configuraciones_programa)
+        widget_introduccion2.layout().addWidget(label_configuraciones_archivo)
+        widget_introduccion2.layout().addWidget(label_a75)
+        widget_introduccion2.layout().addWidget(lab74)
+        widget_introduccion2.layout().addWidget(label_a76)
+        widget_introduccion2.layout().addWidget(lab75)
+        widget_introduccion2.layout().addWidget(label_configuraciones_limite_grafica)
+        widget_introduccion2.layout().addWidget(label_a77)
+        widget_introduccion2.layout().addWidget(lab76)
+        widget_introduccion2.layout().addWidget(label_a78)
+        widget_introduccion2.layout().addWidget(lab77)
+        widget_introduccion2.layout().addWidget(label_exportar_datos)
+        widget_introduccion2.layout().addWidget(label_a80)
+        widget_introduccion2.layout().addWidget(lab79)
+        widget_introduccion2.layout().addWidget(label_a81)
+        widget_introduccion2.layout().addWidget(lab80)
+        widget_introduccion2.layout().addWidget(label_a82)
+        widget_introduccion2.layout().addWidget(lab81)
+        widget_introduccion2.layout().addWidget(label_a83)
+        widget_introduccion2.layout().addWidget(lab82)
+
+
         #AGREGANDO CAPITULOS
         layout_wid_derecha.addWidget(widget_introduccion)
+        layout_wid_derecha.addWidget(widget_introduccion2)
+
 
         #WIDGET SCROLL
         self.scroll.setWidget(wid_derecha)
@@ -4135,7 +5100,6 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         self.scroll.widget().scroll(200, 200)
 
     def inicio(self):
-        #eurek xd
         self.scroll.verticalScrollBar().setValue(0)
 
     def manipular_csv(self):
@@ -4145,4 +5109,88 @@ En ella, el usuario podrá crear directorios donde se contendrán las columnas q
         self.scroll.verticalScrollBar().setValue(2150)
 
     def importar_csv_diferente(self):
-        self.scroll.verticalScrollBar().setValue(3700)
+        self.scroll.verticalScrollBar().setValue(3680)
+
+    def eliminar_archivo(self):
+        self.scroll.verticalScrollBar().setValue(9660)
+
+    def manejo_vistas(self):
+        self.scroll.verticalScrollBar().setValue(10130)
+
+    def graficar_datos(self):
+        self.scroll.verticalScrollBar().setValue(11000)
+
+    def manipulacion_de_graficas(self):
+        self.scroll.verticalScrollBar().setValue(12180)
+
+    def valores_en_bruto(self):
+        self.scroll.verticalScrollBar().setValue(12210)
+
+    def rectificar_grafico(self):
+        self.scroll.verticalScrollBar().setValue(12920)
+
+    def aplicar_filtros(self):
+        self.scroll.verticalScrollBar().setValue(14210)
+
+    def recortar_grafico(self):
+        self.scroll.verticalScrollBar().setValue(15550)
+
+    def recortar_haciendo_click(self):
+        self.scroll.verticalScrollBar().setValue(17120)
+
+    def valores_en_grafica(self):
+        self.scroll.verticalScrollBar().setValue(19400)
+
+    def valores_picos(self):
+        self.scroll.verticalScrollBar().setValue(20640)
+
+    def valores_integral(self):
+        self.scroll.verticalScrollBar().setValue(21460)
+
+    def valores_integral_clicki(self):
+        self.scroll.verticalScrollBar().setValue(21980)
+
+    def valores_rms(self):
+        self.scroll.verticalScrollBar().setValue(23290)
+
+    def comparar(self):
+        self.scroll.verticalScrollBar().setValue(24090)
+
+    def eliminar_grafica(self):
+        self.scroll.verticalScrollBar().setValue(25050)
+
+    def panel_superior(self):
+        self.scroll.verticalScrollBar().setValue(25740)
+
+    def seccion_configuraciones(self):
+        self.scroll.verticalScrollBar().setValue(28640)
+
+    def configuraciones_archivos(self):
+        self.scroll.verticalScrollBar().setValue(28685)
+
+    def configuraciones_limites_graficas(self):
+        self.scroll.verticalScrollBar().setValue(29160)
+
+    def exportar_datos(self):
+        self.scroll.verticalScrollBar().setValue(29710)
+
+class acerca_de(QtWidgets.QDialog):
+    def __init__(self,parent=None):
+        super(acerca_de, self).__init__()
+
+        self.setWindowIcon(QtGui.QIcon("Static/img/LIBiAM.jpg"))
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowTitle("Acerca de")
+        self.setFixedSize(720, 500)
+
+        self.setLayout(QtWidgets.QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setAlignment(Qt.AlignTop)
+        self.layout().setSpacing(0)
+
+        label = QtWidgets.QLabel()
+        img_paso_1 = QtGui.QPixmap(':/Static/img/splashscreenLibiam2.jpg')
+        label.setPixmap(img_paso_1)
+
+
+        self.layout().addWidget(label)

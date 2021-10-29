@@ -32,7 +32,7 @@ from Modelo.Vista import Vista
 from Modelo.Archivo import Archivo
 from Modelo.Grafica import Grafica
 from Modelo.Pico import Pico
-from GUI.GUI import ventana_valoresEnBruto, Manualdeusuario,ventana_filtro,ventana_verayuda_antes_columnas, ventana_verayuda_despues_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
+from GUI.GUI import ventana_valoresEnBruto, acerca_de,Manualdeusuario,ventana_filtro,ventana_verayuda_antes_columnas, ventana_verayuda_despues_columnas, ventana_conf_vistas, ventana_exportarVP, ventana_cortar, ventana_rectificar,ventana_valores_en_graficas,ventana_comparar, ventana_conf_archivos, ventana_conf_linea_archivo
 from matplotlib.patches import Polygon
 import scipy
 import csv
@@ -205,8 +205,9 @@ class ventana_principal(QWidget):
         ManualUsuario.triggered.connect(self.manual_usuario)
 
         confAcercaDe = QAction("Acerca de", self)
+        confAcercaDe.triggered.connect(self.acerca_dexd)
 
-        confMenuAyuda.addAction(confManual)
+        #confMenuAyuda.addAction(confManual)
         confMenuAyuda.addAction(confAcercaDe)
         confMenuAyuda.addAction(ManualUsuario)
 
@@ -449,7 +450,7 @@ class ventana_principal(QWidget):
         lab_ANEP_UTU.setFixedWidth(img_ANEP_UTU.width())
         lab_ANEP_UTU.setPixmap(img_ANEP_UTU)
 
-        img_LIBiAM = QPixmap(':/Static/img/LIBiAM2.jpg')
+        img_LIBiAM = QPixmap(':/Static/img/LIBiAM.jpg').scaled(120, 120)
         lab_LIBiAM = QLabel()
         lab_LIBiAM.setFixedWidth(img_LIBiAM.width())
         lab_LIBiAM.setPixmap(img_LIBiAM)
@@ -473,11 +474,12 @@ class ventana_principal(QWidget):
         widget_inicio.layout().addWidget(widget_contenido, 9)
         widget_inicio.setObjectName("Inicio")
 
-        label1 = QLabel("LIBiAM")
-        label1.setStyleSheet("color:black;font:bold 28px;")
+        label1 = QLabel("ABS  (Analysis of Biomechanical Signal) o Análisis Biomecánica de Señales ")
+        label1.setStyleSheet("color:black;font:bold 22px;")
+        label1.setWordWrap(True)
 
         label2 = QLabel()
-        label2.setText(strings.descripcion_de_LIBiAM() + "\n\n" + strings.descripcion_de_LIBiAM2())
+        label2.setText(strings.descripcion_de_LIBiAM())
         label2.setWordWrap(True)
         label2.setMinimumHeight(230)
         label2.setAlignment(Qt.AlignTop)
@@ -490,9 +492,11 @@ class ventana_principal(QWidget):
         widget_labels = QWidget()
         widget_labels.setLayout(QVBoxLayout())
         widget_labels.setMaximumWidth(600)
+        widget_labels.setMaximumHeight(310)
         widget_labels.setStyleSheet("QWidget{background-color:white;border-radius:4px} QLabel{margin:0px;}")
         widget_labels.setGraphicsEffect(shadow2)
         widget_labels.layout().setSpacing(16)
+
         widget_labels.layout().setAlignment(Qt.AlignHCenter)
         widget_labels.layout().setContentsMargins(14,10,10,30)
 
@@ -524,9 +528,11 @@ class ventana_principal(QWidget):
         widget_imagenes.setFixedHeight(305)
         widget_contenedor_imagenes.layout().addWidget(widget_imagenes)
 
+        img3 = QPixmap(':/Static/img/imglib2.png').scaled(455, 305)
+        img2 = QPixmap(':/Static/img/img_content.jpg').scaled(455, 305)
         img1 = QPixmap(':/Static/img/imglib1.png').scaled(455, 305)
-        img2 = QPixmap(':/Static/img/imglib2.png').scaledToHeight(305)
-        img3 = QPixmap(':/Static/img/img_content.jpg').scaledToHeight(305).scaledToWidth(455)
+
+
 
         lab1 = QLabel(widget_imagenes)
         lab1.setPixmap(img1)
@@ -1637,6 +1643,9 @@ class ventana_principal(QWidget):
                 self.vistas.pop(i)
                 break
 
+    def acerca_dexd(self):
+        acerca_de(self).exec_()
+
     def saveFileDialog(self, tipoExportacion):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getSaveFileName(self, "Guardar archivo", f"ejemplo{str.lower(tipoExportacion)}",
@@ -1879,7 +1888,7 @@ def sacarSegundoParametroAxesSubplot(texto):
 def main():
 
     app = QApplication(sys.argv)
-    pixmap = QPixmap(":/Static/img/splashscreenLibiam.jpg")
+    pixmap = QPixmap(":/Static/img/splashscreenLibiam2.jpg")
     splash = QSplashScreen(pixmap)
     splash.show()
 

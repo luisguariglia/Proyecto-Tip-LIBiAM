@@ -33,6 +33,7 @@
     <file>Static/fonts/Roboto-Light.ttf</file>
     <file>Static/img/tooltip.png</file>
     <file>Static/img/splashscreenLibiam.jpg</file>
+    <file>Static/img/splashscreenLibiam2.jpg</file>
     <file>Static/img/line-graph.svg</file>
     <file>Static/img/folder.svg</file>
     <file>Static/img/view.svg</file>
@@ -56,5 +57,96 @@
     <file>Static/img/paso1_dsp_j.png</file>
     <file>Static/img/paso1_dsp_k.png</file>
     <file>Static/img/paso1_dsp_l.png</file>
+
+    <file>Static/img/img1.png</file>
+    <file>Static/img/img2.png</file>
+    <file>Static/img/img3.png</file>
+    <file>Static/img/img4.png</file>
+    <file>Static/img/img5.png</file>
+    <file>Static/img/img6.png</file>
+    <file>Static/img/img7.png</file>
+    <file>Static/img/img8.png</file>
+    <file>Static/img/img9.png</file>
+
+    <file>Static/img/img10.png</file>
+    <file>Static/img/img11.png</file>
+    <file>Static/img/img12.png</file>
+    <file>Static/img/img13.png</file>
+    <file>Static/img/img14.png</file>
+    <file>Static/img/img15.png</file>
+    <file>Static/img/img16.png</file>
+    <file>Static/img/img17.png</file>
+    <file>Static/img/img18.png</file>
+    <file>Static/img/img19.png</file>
+
+    <file>Static/img/img20.png</file>
+    <file>Static/img/img21.png</file>
+    <file>Static/img/img22.png</file>
+    <file>Static/img/img23.png</file>
+    <file>Static/img/img24.png</file>
+    <file>Static/img/img25.png</file>
+    <file>Static/img/img26.png</file>
+    <file>Static/img/img27.png</file>
+    <file>Static/img/img28.png</file>
+    <file>Static/img/img29.png</file>
+
+    <file>Static/img/img30.png</file>
+    <file>Static/img/img31.png</file>
+    <file>Static/img/img32.png</file>
+    <file>Static/img/img33.png</file>
+    <file>Static/img/img34.png</file>
+    <file>Static/img/img35.png</file>
+    <file>Static/img/img36.png</file>
+    <file>Static/img/img37.png</file>
+    <file>Static/img/img38.png</file>
+    <file>Static/img/img39.png</file>
+
+    <file>Static/img/img40.png</file>
+    <file>Static/img/img41.png</file>
+    <file>Static/img/img42.png</file>
+    <file>Static/img/img43.png</file>
+    <file>Static/img/img44.png</file>
+    <file>Static/img/img45.png</file>
+    <file>Static/img/img46.png</file>
+    <file>Static/img/img47.png</file>
+    <file>Static/img/img48.png</file>
+    <file>Static/img/img49.png</file>
+
+    <file>Static/img/img50.png</file>
+    <file>Static/img/img51.png</file>
+    <file>Static/img/img52.png</file>
+    <file>Static/img/img53.png</file>
+    <file>Static/img/img54.png</file>
+    <file>Static/img/img55.png</file>
+    <file>Static/img/img56.png</file>
+    <file>Static/img/img57.png</file>
+    <file>Static/img/img58.png</file>
+    <file>Static/img/img59.png</file>
+
+    <file>Static/img/img60.png</file>
+    <file>Static/img/img61.png</file>
+    <file>Static/img/img62.png</file>
+    <file>Static/img/img63.png</file>
+    <file>Static/img/img64.png</file>
+    <file>Static/img/img65.png</file>
+    <file>Static/img/img66.png</file>
+    <file>Static/img/img67.png</file>
+    <file>Static/img/img68.png</file>
+    <file>Static/img/img69.png</file>
+
+    <file>Static/img/img70.png</file>
+    <file>Static/img/img71.png</file>
+    <file>Static/img/img72.png</file>
+    <file>Static/img/img73.png</file>
+    <file>Static/img/img74.png</file>
+    <file>Static/img/img75.png</file>
+    <file>Static/img/img76.png</file>
+    <file>Static/img/img77.png</file>
+    <file>Static/img/img79.png</file>
+
+    <file>Static/img/img80.png</file>
+    <file>Static/img/img81.png</file>
+    <file>Static/img/img82.png</file>
+
   </qresource>
 </RCC>
