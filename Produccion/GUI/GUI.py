@@ -2115,6 +2115,7 @@ class ventana_exportarVP(QtWidgets.QDialog):
         self.combobox_btype.setStyleSheet(estilos.estilos_combobox_filtro())
 
         wid_combobox_btype = QtWidgets.QWidget()
+
         wid_combobox_btype.setLayout(QtWidgets.QHBoxLayout())
         wid_combobox_btype.layout().setContentsMargins(0, 0, 0, 0)
         wid_combobox_btype.layout().setAlignment(Qt.AlignRight)
@@ -2130,9 +2131,14 @@ class ventana_exportarVP(QtWidgets.QDialog):
         wid_btn.setFixedWidth(350)
         wid_btn.setLayout(QtWidgets.QHBoxLayout())
 
+        wid_rancio = QtWidgets.QWidget()
+
+        wid_rancio.setLayout(QtWidgets.QHBoxLayout())
+        wid_rancio.layout().setAlignment(Qt.AlignTop)
+        wid_rancio.layout().addWidget(label_btype)
+        wid_rancio.layout().addWidget(wid_combobox_btype)
         wid_izquierda.layout().addWidget(self.tree_graficas, 8)
-        wid_izquierda.layout().addWidget(label_btype)
-        wid_izquierda.layout().addWidget(wid_combobox_btype)
+        wid_izquierda.layout().addWidget(wid_rancio)
         wid_izquierda.layout().addWidget(wid_btn, 1)
 
         # BOTÓN APLICAR FILTROS
